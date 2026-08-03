@@ -12,6 +12,7 @@
 		<welcome-file>default.xhtml</welcome-file>
 	</welcome-file-list>
 	
+
 	<resource-ref>
 		<res-ref-name>jdbc/art_studio</res-ref-name>
 		<res-type>javax.sql.DataSource</res-type>
