@@ -52,6 +52,7 @@ CREATE TABLE prodotto (
     descrizione TEXT NULL,
     prezzo DECIMAL(10, 2) NOT NULL,
     disponibile BOOLEAN NOT NULL DEFAULT TRUE, 
+    immagine VARCHAR(255) DEFAULT 'default.jpg',
     PRIMARY KEY (id_prodotto)
 );
 
