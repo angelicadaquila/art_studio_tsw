@@ -6,22 +6,22 @@ public class ElementoCarrello implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Prodotto prodotto;
+    private Prodotto prod;
     private int quantita;
 
     public ElementoCarrello() {}
 
-    public ElementoCarrello(Prodotto prodotto, int quantita) {
-        this.prodotto = prodotto;
+    public ElementoCarrello(Prodotto prod, int quantita) {
+        this.prod = prod;
         this.quantita = quantita;
     }
 
     public Prodotto getProdotto() {
-        return prodotto;
+        return prod;
     }
 
-    public void setProdotto(Prodotto prodotto) {
-        this.prodotto = prodotto;
+    public void setProdotto(Prodotto prod) {
+        this.prod = prod;
     }
 
     public int getQuantita() {
@@ -33,6 +33,6 @@ public class ElementoCarrello implements Serializable {
     }
 
     public double getTotale() {
-        return prodotto.getPrezzo() * quantita;
+        return prod.getPrezzo() * quantita;
     }
 }
