@@ -1,3 +1,4 @@
+
 CREATE DATABASE IF NOT EXISTS art_studio;
 USE art_studio;
 
@@ -90,3 +91,15 @@ CREATE TABLE bozza (
     PRIMARY KEY (id_bozza),
     FOREIGN KEY (id_ordine, id_prodotto) REFERENCES riga_ordine (id_ordine, id_prodotto) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+INSERT INTO prodotto (is_fisico, nome, descrizione, prezzo, disponibile, immagine) 
+VALUES (TRUE, 'Stampa BuonCompleanno', 'Stampa su cartoncino', 15.00, TRUE, 'stampa1.png');
+
+INSERT INTO stampa (id_prodotto, dimensione) 
+VALUES (LAST_INSERT_ID(), 'A5');
+
+INSERT INTO prodotto (is_fisico, nome, descrizione, prezzo, disponibile, immagine) 
+VALUES (FALSE, 'Commissione Fullbody', 'Ritratto digitale personalizzato', 60.00, TRUE, 'commissione1.jpg');
+
+INSERT INTO commissione (id_prodotto, tempo) 
+VALUES (LAST_INSERT_ID(), '7-10 giorni lavorativi');
