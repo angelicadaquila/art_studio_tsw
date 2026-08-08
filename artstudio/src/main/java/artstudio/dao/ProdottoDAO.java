@@ -10,6 +10,8 @@ public interface ProdottoDAO {
 	public void doSave(Prodotto prod) throws SQLException;
 	
 	public boolean doUpdateImage(Prodotto prod) throws SQLException;
+	
+	public boolean doUpdateQuantita(int idProdotto, int nuovaQuantita) throws SQLException;
 
 	public boolean doDelete(int idProdotto) throws SQLException;
 

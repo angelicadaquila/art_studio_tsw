@@ -74,6 +74,24 @@ public class ProdottoDAOImp implements ProdottoDAO {
             return rowsUpdated != 0;
         }
     }
+    
+    @Override
+    public synchronized boolean doUpdateQuantita(int idProdotto, int nuovaQuantita) throws SQLException {
+        Prodotto prod = doRetrieveByKey(idProdotto);
+        
+        if (prod != null && prod instanceof Stampa) {
+            String sql = "UPDATE stampa SET quantita = ? WHERE id_prodotto = ?";
+            try (Connection connection = ds.getConnection();
+                 PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setInt(1, nuovaQuantita);
+                ps.setInt(2, idProdotto);
+                int rowsUpdated = ps.executeUpdate();
+                return rowsUpdated != 0;
+            }
+        }
+        
+        return false;
+    }
 
     @Override
     public synchronized Prodotto doRetrieveByKey(int idProdotto) throws SQLException {
