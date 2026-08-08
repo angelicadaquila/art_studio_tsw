@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.sql.Statement;
 
 import javax.sql.DataSource;
 
@@ -25,26 +26,34 @@ public class ProdottoDAOImp implements ProdottoDAO {
     @Override
     public synchronized void doSave(Prodotto prod) throws SQLException {
         String insertProdottoSQL = "INSERT INTO " + TABLE_NAME 
-                + " (id_prodotto, is_fisico, nome, descrizione, prezzo, disponibile, immagine) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                + " (is_fisico, nome, descrizione, prezzo, disponibile, immagine) VALUES (?, ?, ?, ?, ?, ?)";
 
+        int idGenerato = -1;
+        
         try (Connection connection = ds.getConnection();
-            PreparedStatement psProdotto = connection.prepareStatement(insertProdottoSQL)) {
-            psProdotto.setInt(1, prod.getIdProdotto());
-            psProdotto.setBoolean(2, prod.isFisico());
-            psProdotto.setString(3, prod.getNome());
-            psProdotto.setString(4, prod.getDescrizione());
-            psProdotto.setDouble(5, prod.getPrezzo());
-            psProdotto.setBoolean(6, prod.isDisponibile());
-            psProdotto.setString(7, prod.getImmagine());
+            PreparedStatement psProdotto = connection.prepareStatement(insertProdottoSQL, Statement.RETURN_GENERATED_KEYS)) {
+            psProdotto.setBoolean(1, prod.isFisico());
+            psProdotto.setString(2, prod.getNome());
+            psProdotto.setString(3, prod.getDescrizione());
+            psProdotto.setDouble(4, prod.getPrezzo());
+            psProdotto.setBoolean(5, prod.isDisponibile());
+            psProdotto.setString(6, prod.getImmagine());
             psProdotto.executeUpdate();
+            
+            try (ResultSet rs = psProdotto.getGeneratedKeys()) {
+                if (rs.next()) {
+                    idGenerato = rs.getInt(1);
+                    prod.setIdProdotto(idGenerato);
+                }
+            }
         }
-
+        
         if (prod instanceof Stampa) {
             Stampa stampa = (Stampa) prod;
             String insertStampaSQL = "INSERT INTO stampa (id_prodotto, dimensione, quantita) VALUES (?, ?, ?)";
             try (Connection connection = ds.getConnection();
                 PreparedStatement psStampa = connection.prepareStatement(insertStampaSQL)) { 
-                psStampa.setInt(1, stampa.getIdProdotto());
+                psStampa.setInt(1, idGenerato);
                 psStampa.setString(2, stampa.getDimensione());
                 psStampa.setInt(3, stampa.getQuantita());
                 psStampa.executeUpdate();
@@ -54,7 +63,7 @@ public class ProdottoDAOImp implements ProdottoDAO {
             String insertCommissioneSQL = "INSERT INTO commissione (id_prodotto, tempo) VALUES (?, ?)";
             try (Connection connection = ds.getConnection();
                 PreparedStatement psComm = connection.prepareStatement(insertCommissioneSQL)) { 
-                psComm.setInt(1, commissione.getIdProdotto());
+                psComm.setInt(1, idGenerato);
                 psComm.setString(2, commissione.getTempo()); 
                 psComm.executeUpdate();
             }
@@ -135,7 +144,7 @@ public class ProdottoDAOImp implements ProdottoDAO {
     @Override
     public synchronized Prodotto doRetrieveByKey(int idProdotto) throws SQLException {
         Prodotto bean = new Prodotto();
-        String selectSQL = "SELECT p.*, s.dimensione, c.tempo " +
+        String selectSQL = "SELECT p.*, s.dimensione, s.quantita, c.tempo " +
                 "FROM " + TABLE_NAME + " p " +
                 "LEFT JOIN stampa s ON p.id_prodotto = s.id_prodotto " +
                 "LEFT JOIN commissione c ON p.id_prodotto = c.id_prodotto " +
