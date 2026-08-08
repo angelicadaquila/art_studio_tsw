@@ -42,7 +42,6 @@ public class ProdottoDAOImp implements ProdottoDAO {
         if (prod instanceof Stampa) {
             Stampa stampa = (Stampa) prod;
             String insertStampaSQL = "INSERT INTO stampa (id_prodotto, dimensione, quantita) VALUES (?, ?, ?)";
-            
             try (Connection connection = ds.getConnection();
                 PreparedStatement psStampa = connection.prepareStatement(insertStampaSQL)) { 
                 psStampa.setInt(1, stampa.getIdProdotto());
@@ -53,7 +52,6 @@ public class ProdottoDAOImp implements ProdottoDAO {
         } else if (prod instanceof Commissione) {
             Commissione commissione = (Commissione) prod;
             String insertCommissioneSQL = "INSERT INTO commissione (id_prodotto, tempo) VALUES (?, ?)";
-            
             try (Connection connection = ds.getConnection();
                 PreparedStatement psComm = connection.prepareStatement(insertCommissioneSQL)) { 
                 psComm.setInt(1, commissione.getIdProdotto());
@@ -76,13 +74,54 @@ public class ProdottoDAOImp implements ProdottoDAO {
     }
     
     @Override
+    public synchronized boolean doUpdate(Prodotto prod) throws SQLException {
+        if (prod == null) return false;
+        String updateProdottoSQL = "UPDATE " + TABLE_NAME + " SET is_fisico = ?, nome = ?, descrizione = ?, prezzo = ?, disponibile = ?, immagine = ? WHERE id_prodotto = ?";
+        try (Connection connection = ds.getConnection();
+            PreparedStatement ps = connection.prepareStatement(updateProdottoSQL)) {
+            ps.setBoolean(1, prod.isFisico());
+            ps.setString(2, prod.getNome());
+            ps.setString(3, prod.getDescrizione());
+            ps.setDouble(4, prod.getPrezzo());
+            ps.setBoolean(5, prod.isDisponibile());
+            ps.setString(6, prod.getImmagine());
+            ps.setInt(7, prod.getIdProdotto());
+            ps.executeUpdate();
+        }
+
+        if (prod instanceof Stampa) {
+            Stampa stampa = (Stampa) prod;
+            String updateStampaSQL = "UPDATE stampa SET dimensione = ?, quantita = ? WHERE id_prodotto = ?";
+            try (Connection connection = ds.getConnection();
+                PreparedStatement ps = connection.prepareStatement(updateStampaSQL)) {
+                ps.setString(1, stampa.getDimensione());
+                ps.setInt(2, stampa.getQuantita());
+                ps.setInt(3, stampa.getIdProdotto());
+                int rowsUpdated = ps.executeUpdate();
+                return rowsUpdated != 0;
+            }
+        } else if (prod instanceof Commissione) {
+            Commissione commissione = (Commissione) prod;
+            String updateCommissioneSQL = "UPDATE commissione SET tempo = ? WHERE id_prodotto = ?";
+            try (Connection connection = ds.getConnection();
+                PreparedStatement ps = connection.prepareStatement(updateCommissioneSQL)) {
+                ps.setString(1, commissione.getTempo());
+                ps.setInt(2, commissione.getIdProdotto());
+                int rowsUpdated = ps.executeUpdate();
+                return rowsUpdated != 0;
+            }
+        }
+
+        return true;
+    }
+    
+    @Override
     public synchronized boolean doUpdateQuantita(int idProdotto, int nuovaQuantita) throws SQLException {
-        Prodotto prod = doRetrieveByKey(idProdotto);
-        
+        Prodotto prod = doRetrieveByKey(idProdotto); 
         if (prod != null && prod instanceof Stampa) {
             String sql = "UPDATE stampa SET quantita = ? WHERE id_prodotto = ?";
             try (Connection connection = ds.getConnection();
-                 PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
                 ps.setInt(1, nuovaQuantita);
                 ps.setInt(2, idProdotto);
                 int rowsUpdated = ps.executeUpdate();
@@ -134,8 +173,7 @@ public class ProdottoDAOImp implements ProdottoDAO {
     public synchronized boolean doDelete(int idProdotto) throws SQLException {
         String deleteSQL = "DELETE FROM " + TABLE_NAME + " WHERE id_prodotto = ?";
         try (Connection connection = ds.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
-
+            PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
             preparedStatement.setInt(1, idProdotto);
             int result = preparedStatement.executeUpdate();
             return result != 0;
@@ -145,7 +183,6 @@ public class ProdottoDAOImp implements ProdottoDAO {
     @Override
     public synchronized List<Prodotto> doRetrieveAll(String ordine) throws SQLException {
         List<Prodotto> products = new LinkedList<>();
-        
         String selectSQL = "SELECT p.*, s.dimensione, c.tempo "
                 + "FROM " + TABLE_NAME + " p "
                 + "LEFT JOIN stampa s ON p.id_prodotto = s.id_prodotto "
