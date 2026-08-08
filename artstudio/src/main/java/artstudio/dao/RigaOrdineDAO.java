@@ -1,0 +1,16 @@
+package artstudio.dao;
+
+import java.sql.SQLException;
+import java.util.List;
+import artstudio.model.RigaOrdine;
+
+public interface RigaOrdineDAO {
+    
+    public void doSave(RigaOrdine rigaord) throws SQLException;
+   
+    public RigaOrdine doRetrieveByKey(int idOrdine, int idProdotto) throws SQLException;
+    
+    public List<RigaOrdine> doRetrieveByOrdine(int idOrdine) throws SQLException;
+}
+
+
