@@ -41,12 +41,13 @@ public class ProdottoDAOImp implements ProdottoDAO {
 
         if (prod instanceof Stampa) {
             Stampa stampa = (Stampa) prod;
-            String insertStampaSQL = "INSERT INTO stampa (id_prodotto, dimensione) VALUES (?, ?)";
+            String insertStampaSQL = "INSERT INTO stampa (id_prodotto, dimensione, quantita) VALUES (?, ?, ?)";
             
             try (Connection connection = ds.getConnection();
                 PreparedStatement psStampa = connection.prepareStatement(insertStampaSQL)) { 
                 psStampa.setInt(1, stampa.getIdProdotto());
                 psStampa.setString(2, stampa.getDimensione());
+                psStampa.setInt(3, stampa.getQuantita());
                 psStampa.executeUpdate();
             }
         } else if (prod instanceof Commissione) {
@@ -93,6 +94,7 @@ public class ProdottoDAOImp implements ProdottoDAO {
                     if (isFisico) {
                         bean = new Stampa();
                         ((Stampa) bean).setDimensione(rs.getString("dimensione"));
+                        ((Stampa) bean).setQuantita(rs.getInt("quantita"));
                     } else {
                     	bean= new Commissione();
                     	((Commissione) bean).setTempo(rs.getString("tempo"));
@@ -143,6 +145,7 @@ public class ProdottoDAOImp implements ProdottoDAO {
                 if (isFisico) {
                     bean = new Stampa();
                     ((Stampa) bean).setDimensione(rs.getString("dimensione"));
+                    ((Stampa) bean).setQuantita(rs.getInt("quantita"));
                 } else {
                     bean = new Commissione();
                     ((Commissione) bean).setTempo(rs.getString("tempo"));

@@ -60,6 +60,7 @@ CREATE TABLE prodotto (
 CREATE TABLE stampa (
     id_prodotto INT NOT NULL,
     dimensione VARCHAR(50) NOT NULL,
+    quantita INT NOT NULL,
     PRIMARY KEY (id_prodotto),
     FOREIGN KEY (id_prodotto) REFERENCES prodotto (id_prodotto) ON DELETE CASCADE ON UPDATE CASCADE
 );
