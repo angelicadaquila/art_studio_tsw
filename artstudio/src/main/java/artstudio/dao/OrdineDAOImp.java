@@ -27,20 +27,17 @@ public class OrdineDAOImp implements OrdineDAO{
 	    @Override
 	    public synchronized void doSave(Ordine ord) throws SQLException {
 	        String insertOrdineSQL = "INSERT INTO " + TABLE_NAME 
-	                + " (id_utente, dataOrdine, stato, totaleProdotti, spedeSpedizione, totaleOrdine) VALUES (?, ?, ?, ?, ?, ?)";
+	                + " (id_utente, totale_prodotti, spede_spedizione, totale_ordine) VALUES (?, ?, ?, ?)";
 
 	        int idGenerato = -1;
 	        
 	        try (Connection connection = ds.getConnection();
 	            PreparedStatement ps = connection.prepareStatement(insertOrdineSQL, Statement.RETURN_GENERATED_KEYS)) {
 	            ps.setInt(1, ord.getIdUtente());
-	            ps.setTimestamp(2, ord.getDataOrdine());
-	            ps.setString(3, ord.getStato());
-	            ps.setDouble(4, ord.getTotaleProdotti());
-	            ps.setDouble(5, ord.getSpeseSpedizione());
-	            ps.setDouble(6, ord.getTotaleOrdine());
+	            ps.setDouble(2, ord.getTotaleProdotti());
+	            ps.setDouble(3, ord.getSpeseSpedizione());
+	            ps.setDouble(4, ord.getTotaleOrdine());
 	            ps.executeUpdate();
-	            
 	            try (ResultSet rs = ps.getGeneratedKeys()) {
 	                if (rs.next()) {
 	                    idGenerato = rs.getInt(1);
