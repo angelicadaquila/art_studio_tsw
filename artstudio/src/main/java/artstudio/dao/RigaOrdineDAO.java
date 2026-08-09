@@ -11,6 +11,8 @@ public interface RigaOrdineDAO {
     public RigaOrdine doRetrieveByKey(int idOrdine, int idProdotto) throws SQLException;
     
     public List<RigaOrdine> doRetrieveByOrdine(int idOrdine) throws SQLException;
+    
+    boolean doUpdateFileFinale(int idOrdine, int idProdotto, String fileFinale) throws SQLException;
 }
 
 

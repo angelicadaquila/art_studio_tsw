@@ -23,8 +23,8 @@ public class RigaOrdineDAOImp implements RigaOrdineDAO {
     @Override
     public synchronized void doSave(RigaOrdine riga) throws SQLException {
         String insertSQL = "INSERT INTO " + TABLE_NAME 
-                + " (id_ordine, id_prodotto, prezzo_og, quantita, descrizione_comm, ref_comm) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
+                + " (id_ordine, id_prodotto, prezzo_og, quantita, descrizione_comm, ref_comm, file_finale) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = ds.getConnection();
             PreparedStatement ps = connection.prepareStatement(insertSQL)) {
@@ -34,6 +34,7 @@ public class RigaOrdineDAOImp implements RigaOrdineDAO {
             ps.setInt(4, riga.getQuantita());
             ps.setString(5, riga.getDescrizioneComm());
             ps.setString(6, riga.getRefComm());
+            ps.setString(7, riga.getFileFinale());
             ps.executeUpdate();
         }
     }
@@ -56,6 +57,7 @@ public class RigaOrdineDAOImp implements RigaOrdineDAO {
                     bean.setQuantita(rs.getInt("quantita"));
                     bean.setDescrizioneComm(rs.getString("descrizione_comm"));
                     bean.setRefComm(rs.getString("ref_comm"));
+                    bean.setFileFinale(rs.getString("file_finale"));
                 }
             }
         }
@@ -78,10 +80,24 @@ public class RigaOrdineDAOImp implements RigaOrdineDAO {
                     bean.setQuantita(rs.getInt("quantita"));
                     bean.setDescrizioneComm(rs.getString("descrizione_comm"));
                     bean.setRefComm(rs.getString("ref_comm"));
+                    bean.setFileFinale(rs.getString("file_finale"));
                     list.add(bean);
                 }
             }
         }
         return list;
+    }
+    
+    @Override
+    public synchronized boolean doUpdateFileFinale(int idOrdine, int idProdotto, String fileFinale) throws SQLException {
+        String sql = "UPDATE " + TABLE_NAME + " SET file_finale = ? WHERE id_ordine = ? AND id_prodotto = ?";
+        try (Connection conn = ds.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, fileFinale);
+            ps.setInt(2, idOrdine);
+            ps.setInt(3, idProdotto);
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated != 0;
+        }
     }
 }
