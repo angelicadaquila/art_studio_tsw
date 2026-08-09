@@ -8,18 +8,20 @@ public class RigaOrdine implements Serializable{
     private Double prezzoOg;
     private int quantita;
     private String descrizioneComm;
-    private String refComm;
+    private String refComm; 
+    private String fileFinale;
 
     public RigaOrdine() {
     }
 
-    public RigaOrdine(int idOrdine, int idProdotto, Double prezzoOg, int quantita, String descrizioneComm, String refComm) {
+    public RigaOrdine(int idOrdine, int idProdotto, Double prezzoOg, int quantita, String descrizioneComm, String refComm, String fileFinale) {
         this.idOrdine = idOrdine;
         this.idProdotto = idProdotto;
         this.prezzoOg = prezzoOg;
         this.quantita = quantita;
         this.descrizioneComm = descrizioneComm;
         this.refComm = refComm;
+        this.fileFinale = fileFinale;
     }
 
     public int getIdOrdine() {
@@ -68,5 +70,13 @@ public class RigaOrdine implements Serializable{
 
     public void setRefComm(String refComm) {
         this.refComm = refComm;
+    }
+    
+    public String getFileFinale() {
+        return fileFinale;
+    }
+
+    public void setFileFinale(String fileFinale) {
+        this.fileFinale = fileFinale;
     }
 }
