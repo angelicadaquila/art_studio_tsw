@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.sql.Statement;
 
@@ -151,9 +151,9 @@ public class ProdottoDAOImp implements ProdottoDAO {
                 "WHERE p.id_prodotto = ?";
         
         try (Connection connection = ds.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
-            preparedStatement.setInt(1, idProdotto);
-            try (ResultSet rs = preparedStatement.executeQuery()) {
+            PreparedStatement ps = connection.prepareStatement(selectSQL)) {
+            ps.setInt(1, idProdotto);
+            try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     boolean isFisico = rs.getBoolean("is_fisico");
 
@@ -182,16 +182,16 @@ public class ProdottoDAOImp implements ProdottoDAO {
     public synchronized boolean doDelete(int idProdotto) throws SQLException {
         String deleteSQL = "DELETE FROM " + TABLE_NAME + " WHERE id_prodotto = ?";
         try (Connection connection = ds.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL)) {
-            preparedStatement.setInt(1, idProdotto);
-            int result = preparedStatement.executeUpdate();
+            PreparedStatement ps = connection.prepareStatement(deleteSQL)) {
+            ps.setInt(1, idProdotto);
+            int result = ps.executeUpdate();
             return result != 0;
         }
     }
 
     @Override
     public synchronized List<Prodotto> doRetrieveAll(String ordine) throws SQLException {
-        List<Prodotto> products = new LinkedList<>();
+        List<Prodotto> products = new ArrayList<>();
         String selectSQL = "SELECT p.*, s.dimensione, c.tempo "
                 + "FROM " + TABLE_NAME + " p "
                 + "LEFT JOIN stampa s ON p.id_prodotto = s.id_prodotto "
@@ -201,8 +201,8 @@ public class ProdottoDAOImp implements ProdottoDAO {
             selectSQL += " ORDER BY " + ordine;
         }
         try (Connection connection = ds.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
-             ResultSet rs = preparedStatement.executeQuery()) {
+             PreparedStatement ps = connection.prepareStatement(selectSQL);
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Prodotto bean;
                 boolean isFisico = rs.getBoolean("is_fisico");
