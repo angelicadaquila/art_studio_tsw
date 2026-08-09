@@ -12,11 +12,13 @@ public class Bozza implements Serializable{
     public Bozza() {
     }
 
-    public Bozza(int idBozza, int idOrdine, int idProdotto, String file) {
+    public Bozza(int idBozza, int idOrdine, int idProdotto, String file, String stato, String commentoCliente) {
         this.idBozza = idBozza;
         this.idOrdine = idOrdine;
         this.idProdotto = idProdotto;
         this.file = file;
+        this.stato=stato;
+        this.commentoCliente=commentoCliente;
     }
 
     public int getIdBozza() {
