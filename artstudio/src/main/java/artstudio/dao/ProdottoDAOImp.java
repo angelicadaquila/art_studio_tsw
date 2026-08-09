@@ -31,16 +31,16 @@ public class ProdottoDAOImp implements ProdottoDAO {
         int idGenerato = -1;
         
         try (Connection connection = ds.getConnection();
-            PreparedStatement psProdotto = connection.prepareStatement(insertProdottoSQL, Statement.RETURN_GENERATED_KEYS)) {
-            psProdotto.setBoolean(1, prod.isFisico());
-            psProdotto.setString(2, prod.getNome());
-            psProdotto.setString(3, prod.getDescrizione());
-            psProdotto.setDouble(4, prod.getPrezzo());
-            psProdotto.setBoolean(5, prod.isDisponibile());
-            psProdotto.setString(6, prod.getImmagine());
-            psProdotto.executeUpdate();
+            PreparedStatement ps = connection.prepareStatement(insertProdottoSQL, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setBoolean(1, prod.isFisico());
+            ps.setString(2, prod.getNome());
+            ps.setString(3, prod.getDescrizione());
+            ps.setDouble(4, prod.getPrezzo());
+            ps.setBoolean(5, prod.isDisponibile());
+            ps.setString(6, prod.getImmagine());
+            ps.executeUpdate();
             
-            try (ResultSet rs = psProdotto.getGeneratedKeys()) {
+            try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     idGenerato = rs.getInt(1);
                     prod.setIdProdotto(idGenerato);
