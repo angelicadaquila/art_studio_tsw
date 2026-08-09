@@ -79,6 +79,7 @@ CREATE TABLE riga_ordine (
     quantita INT NOT NULL DEFAULT 1,
     descrizione_comm TEXT NULL,
     ref_comm VARCHAR(512) NULL,
+    file_finale VARCHAR(512) NULL,
     PRIMARY KEY (id_ordine, id_prodotto),
     FOREIGN KEY (id_ordine) REFERENCES ordine (id_ordine) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (id_prodotto) REFERENCES prodotto (id_prodotto) ON DELETE RESTRICT ON UPDATE CASCADE
@@ -89,6 +90,8 @@ CREATE TABLE bozza (
     id_ordine INT NOT NULL,
     id_prodotto INT NOT NULL,
     file VARCHAR(512) NOT NULL,
+    stato VARCHAR(30) NOT NULL DEFAULT 'IN_ATTESA',
+    commento_cliente TEXT NULL,
     PRIMARY KEY (id_bozza),
     FOREIGN KEY (id_ordine, id_prodotto) REFERENCES riga_ordine (id_ordine, id_prodotto) ON DELETE CASCADE ON UPDATE CASCADE
 );
