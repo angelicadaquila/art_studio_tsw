@@ -29,8 +29,8 @@ public class BozzaDAOImp implements BozzaDAO {
         
         int idGenerato = -1;
 
-        try (Connection conn = ds.getConnection();
-            PreparedStatement ps = conn.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS)) { 
+        try (Connection connection = ds.getConnection();
+            PreparedStatement ps = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS)) { 
             ps.setInt(1, bozza.getIdOrdine());
             ps.setInt(2, bozza.getIdProdotto());
             ps.setString(3, bozza.getFile());
@@ -50,8 +50,8 @@ public class BozzaDAOImp implements BozzaDAO {
         Bozza bean = null;
         String selectSQL = "SELECT * FROM " + TABLE_NAME + " WHERE id_bozza = ?";
 
-        try (Connection conn = ds.getConnection();
-            PreparedStatement ps = conn.prepareStatement(selectSQL)) {
+        try (Connection connection = ds.getConnection();
+            PreparedStatement ps = connection.prepareStatement(selectSQL)) {
             ps.setInt(1, idBozza);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -73,8 +73,8 @@ public class BozzaDAOImp implements BozzaDAO {
         List<Bozza> list = new ArrayList<>();
         String selectSQL = "SELECT * FROM " + TABLE_NAME + " WHERE id_ordine = ? AND id_prodotto = ?";
 
-        try (Connection conn = ds.getConnection();
-            PreparedStatement ps = conn.prepareStatement(selectSQL)) {
+        try (Connection connection = ds.getConnection();
+            PreparedStatement ps = connection.prepareStatement(selectSQL)) {
             ps.setInt(1, idOrdine);
             ps.setInt(2, idProdotto);
             try (ResultSet rs = ps.executeQuery()) {
@@ -98,8 +98,8 @@ public class BozzaDAOImp implements BozzaDAO {
         Bozza bean = null;
         String selectSQL = "SELECT * FROM " + TABLE_NAME + " WHERE id_ordine = ? AND id_prodotto = ? ORDER BY id_bozza DESC LIMIT 1";
 
-        try (Connection conn = ds.getConnection();
-            PreparedStatement ps = conn.prepareStatement(selectSQL)) {
+        try (Connection connection = ds.getConnection();
+            PreparedStatement ps = connection.prepareStatement(selectSQL)) {
             ps.setInt(1, idOrdine);
             ps.setInt(2, idProdotto);
             try (ResultSet rs = ps.executeQuery()) {
@@ -120,8 +120,8 @@ public class BozzaDAOImp implements BozzaDAO {
     @Override
     public synchronized boolean doUpdateStatoECommento(int idBozza, String nuovoStato, String commentoCliente) throws SQLException {
         String sql = "UPDATE " + TABLE_NAME + " SET stato = ?, commento_cliente = ? WHERE id_bozza = ?";
-        try (Connection conn = ds.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection connection = ds.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, nuovoStato);
             ps.setString(2, commentoCliente);
             ps.setInt(3, idBozza);
@@ -134,8 +134,8 @@ public class BozzaDAOImp implements BozzaDAO {
     public synchronized boolean doDelete(int idBozza) throws SQLException {
         String sql = "DELETE FROM " + TABLE_NAME + " WHERE id_bozza = ?";
 
-        try (Connection conn = ds.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection connection = ds.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, idBozza);
             int rowsUpdated = ps.executeUpdate();
             return rowsUpdated != 0;

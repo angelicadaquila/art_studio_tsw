@@ -91,8 +91,8 @@ public class RigaOrdineDAOImp implements RigaOrdineDAO {
     @Override
     public synchronized boolean doUpdateFileFinale(int idOrdine, int idProdotto, String fileFinale) throws SQLException {
         String sql = "UPDATE " + TABLE_NAME + " SET file_finale = ? WHERE id_ordine = ? AND id_prodotto = ?";
-        try (Connection conn = ds.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection connection = ds.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, fileFinale);
             ps.setInt(2, idOrdine);
             ps.setInt(3, idProdotto);

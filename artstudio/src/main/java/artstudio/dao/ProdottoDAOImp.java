@@ -73,8 +73,8 @@ public class ProdottoDAOImp implements ProdottoDAO {
     @Override
     public synchronized boolean doUpdateImage(Prodotto prod) throws SQLException {
         String sql = "UPDATE " + TABLE_NAME + " SET immagine = ? WHERE id_prodotto = ?";
-        try (Connection conn = ds.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection connection = ds.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, prod.getImmagine());
             ps.setInt(2, prod.getIdProdotto());
             int rowsUpdated = ps.executeUpdate();
