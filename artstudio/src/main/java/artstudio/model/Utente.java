@@ -7,17 +7,19 @@ public class Utente implements Serializable{
     private String password;
     private String nome;
     private String cognome;
+    private String ruolo;
 
     
     public Utente(){
     }
 
-    public Utente(int idUtente, String email, String password, String nome, String cognome) {
+    public Utente(int idUtente, String email, String password, String nome, String cognome, String ruolo) {
         this.idUtente = idUtente;
         this.email = email;
         this.password = password;
         this.nome = nome;
         this.cognome = cognome;
+        this.ruolo=ruolo;
     }
 
     public int getIdUtente() {
@@ -58,5 +60,13 @@ public class Utente implements Serializable{
 
     public void setCognome(String cognome) {
         this.cognome = cognome;
+    }
+    
+    public String getRuolo() {
+        return ruolo;
+    }
+
+    public void setRuolo(String ruolo) {
+        this.ruolo = ruolo;
     }
 }
