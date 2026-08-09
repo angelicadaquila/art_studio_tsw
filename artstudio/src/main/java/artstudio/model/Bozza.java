@@ -6,6 +6,8 @@ public class Bozza implements Serializable{
     private int idOrdine;
     private int idProdotto;
     private String file;
+    private String stato;
+    private String commentoCliente;
 
     public Bozza() {
     }
@@ -47,5 +49,21 @@ public class Bozza implements Serializable{
 
     public void setFile(String file) {
         this.file = file;
+    }
+    
+    public String getStato() {
+        return stato;
+    }
+
+    public void setStato(String stato) {
+        this.stato = stato;
+    }
+
+    public String getCommentoCliente() {
+        return commentoCliente;
+    }
+
+    public void setCommentoCliente(String commentoCliente) {
+        this.commentoCliente = commentoCliente;
     }
 }
