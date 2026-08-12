@@ -1,4 +1,4 @@
-package artstudio.dao;
+package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,7 +9,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import artstudio.model.RigaOrdine;
+import model.RigaOrdine;
 
 public class RigaOrdineDAOImp implements RigaOrdineDAO {
 

@@ -1,8 +1,9 @@
-package artstudio.dao;
+package dao;
 
 import java.sql.SQLException;
 import java.util.List;
-import artstudio.model.Indirizzo;
+
+import model.Indirizzo;
 
 public interface IndirizzoDAO {
 

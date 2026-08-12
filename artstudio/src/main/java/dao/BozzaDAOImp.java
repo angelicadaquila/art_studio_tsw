@@ -1,4 +1,4 @@
-package artstudio.dao;
+package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +10,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import artstudio.model.Bozza;
+import model.Bozza;
 
 public class BozzaDAOImp implements BozzaDAO {
 

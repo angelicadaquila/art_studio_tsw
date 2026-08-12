@@ -1,4 +1,4 @@
-package artstudio.model;
+package model;
 
 public class Stampa extends Prodotto {
     private String dimensione;

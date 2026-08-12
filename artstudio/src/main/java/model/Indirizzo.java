@@ -1,4 +1,4 @@
-package artstudio.model;
+package model;
 import java.io.Serializable;
 
 public class Indirizzo implements Serializable{

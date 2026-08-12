@@ -1,4 +1,4 @@
-package artstudio.dao;
+package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,9 +11,9 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import artstudio.model.Commissione;
-import artstudio.model.Ordine;
-import artstudio.model.Stampa;
+import model.Commissione;
+import model.Ordine;
+import model.Stampa;
 
 public class OrdineDAOImp implements OrdineDAO{
 	

@@ -1,4 +1,4 @@
-package artstudio.model;
+package model;
 import java.io.Serializable;
 
 public class Utente implements Serializable{

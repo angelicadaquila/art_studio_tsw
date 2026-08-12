@@ -1,9 +1,10 @@
-package artstudio.dao;
+package dao;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
-import artstudio.model.Ordine;
+
+import model.Ordine;
 
 public interface OrdineDAO {
 

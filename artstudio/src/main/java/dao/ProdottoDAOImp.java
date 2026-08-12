@@ -1,4 +1,4 @@
-package artstudio.dao;
+package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,9 +10,9 @@ import java.sql.Statement;
 
 import javax.sql.DataSource;
 
-import artstudio.model.Commissione;
-import artstudio.model.Prodotto;
-import artstudio.model.Stampa;
+import model.Commissione;
+import model.Prodotto;
+import model.Stampa;
 
 public class ProdottoDAOImp implements ProdottoDAO {
 

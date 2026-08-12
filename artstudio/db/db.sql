@@ -8,19 +8,8 @@ CREATE TABLE utente (
     password VARCHAR(255) NOT NULL,
     nome VARCHAR(100) NOT NULL,
     cognome VARCHAR(100) NOT NULL,
+    ruolo VARCHAR (20) NOT NULL,
     PRIMARY KEY (id_utente)
-);
-
-CREATE TABLE cliente (
-    id_utente INT NOT NULL,
-    PRIMARY KEY (id_utente),
-    FOREIGN KEY (id_utente) REFERENCES utente (id_utente) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE amministratore (
-    id_utente INT NOT NULL,
-    PRIMARY KEY (id_utente),
-    FOREIGN KEY (id_utente) REFERENCES utente (id_utente) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE indirizzo (
@@ -31,7 +20,7 @@ CREATE TABLE indirizzo (
     citta VARCHAR(100) NOT NULL,
     regione VARCHAR(100) NOT NULL,
     PRIMARY KEY (id_indirizzo),
-    FOREIGN KEY (id_utente) REFERENCES cliente (id_utente) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (id_utente) REFERENCES utente (id_utente) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE ordine (
@@ -43,7 +32,7 @@ CREATE TABLE ordine (
     spese_spedizione DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     totale_ordine DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     PRIMARY KEY (id_ordine),
-    FOREIGN KEY (id_utente) REFERENCES cliente (id_utente) ON DELETE RESTRICT ON UPDATE CASCADE
+    FOREIGN KEY (id_utente) REFERENCES utente (id_utente) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 CREATE TABLE prodotto (

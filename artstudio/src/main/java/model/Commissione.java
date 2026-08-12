@@ -1,4 +1,4 @@
-package artstudio.model;
+package model;
 
 public class Commissione extends Prodotto {
     private String tempo;
