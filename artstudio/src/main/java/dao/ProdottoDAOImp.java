@@ -192,7 +192,7 @@ public class ProdottoDAOImp implements ProdottoDAO {
     @Override
     public synchronized List<Prodotto> doRetrieveAll(String ordine) throws SQLException {
         List<Prodotto> products = new ArrayList<>();
-        String selectSQL = "SELECT p.*, s.dimensione, c.tempo "
+        String selectSQL = "SELECT p.*, s.dimensione, s.quantita, c.tempo "
                 + "FROM " + TABLE_NAME + " p "
                 + "LEFT JOIN stampa s ON p.id_prodotto = s.id_prodotto "
                 + "LEFT JOIN commissione c ON p.id_prodotto = c.id_prodotto";
