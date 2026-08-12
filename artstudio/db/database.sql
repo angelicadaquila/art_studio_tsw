@@ -197,6 +197,7 @@ DROP TABLE IF EXISTS `stampa`;
 CREATE TABLE `stampa` (
   `id_prodotto` int NOT NULL,
   `dimensione` varchar(50) NOT NULL,
+  `quantita` int DEFAULT '0',
   PRIMARY KEY (`id_prodotto`),
   CONSTRAINT `stampa_ibfk_1` FOREIGN KEY (`id_prodotto`) REFERENCES `prodotto` (`id_prodotto`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -208,7 +209,7 @@ CREATE TABLE `stampa` (
 
 LOCK TABLES `stampa` WRITE;
 /*!40000 ALTER TABLE `stampa` DISABLE KEYS */;
-INSERT INTO `stampa` VALUES (1,'A5');
+INSERT INTO `stampa` VALUES (1,'A5',0);
 /*!40000 ALTER TABLE `stampa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -250,4 +251,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-08-12 15:25:33
+-- Dump completed on 2026-08-12 18:26:22
