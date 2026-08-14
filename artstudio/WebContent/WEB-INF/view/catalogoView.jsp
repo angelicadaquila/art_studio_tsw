@@ -120,7 +120,7 @@
                     <% } %>
 
                     <br><br>
-                    <a href="${pageContext.request.contextPath}/prodotto?id=<%= p.getIdProdotto() %>">Vedi dettagli</a>
+                    <a href="${pageContext.request.contextPath}/dettaglioProdotto?id=<%= p.getIdProdotto() %>">Vedi dettagli</a>
                 </div>
             <% } %>
         </div>
