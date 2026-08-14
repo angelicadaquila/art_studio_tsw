@@ -67,6 +67,11 @@
         if (selectedTipo == null) {
             selectedTipo = "tutti";
         }
+        
+        String ordinamento = request.getParameter("ordinamento");
+        if (ordinamento == null) {
+            ordinamento = "";
+        }
     %>
 
     <div class="header-actions">
@@ -89,11 +94,11 @@
             <input type="hidden" name="tipo" value="<%= selectedTipo %>">
             <label for="ordinamento">Ordina per:</label>
             <select name="ordinamento" id="ordinamento" onchange="this.form.submit()">
-                <option value="">Predefinito</option>
-                <option value="nome">Nome</option>
-                <option value="prezzo_crescente">Prezzo: crescente</option>
-                <option value="prezzo_decrescente">Prezzo: decrescente</option>
-            </select>
+    			<option value="" <% if ("".equals(ordinamento)) { out.print("selected"); } %>>Predefinito</option>
+    			<option value="nome" <% if ("nome".equals(ordinamento)) { out.print("selected"); } %>>Nome</option>
+    			<option value="prezzo_crescente" <% if ("prezzo_crescente".equals(ordinamento)) { out.print("selected"); } %>>Prezzo: crescente</option>
+    			<option value="prezzo_decrescente" <% if ("prezzo_decrescente".equals(ordinamento)) { out.print("selected"); } %>>Prezzo: decrescente</option>
+			</select>
         </form>
     </div>
     

@@ -192,17 +192,21 @@ public class ProdottoDAOImp implements ProdottoDAO {
     @Override
     public synchronized List<Prodotto> doRetrieveAll(String ordine) throws SQLException {
         List<Prodotto> products = new ArrayList<>();
-        String selectSQL = "SELECT p.*, s.dimensione, s.quantita, c.tempo "
+        String selectSQL = "SELECT p.id_prodotto, p.is_fisico, p.nome, p.descrizione, p.prezzo, p.disponibile, p.immagine, "
+                + "s.dimensione, s.quantita, c.tempo "
                 + "FROM " + TABLE_NAME + " p "
                 + "LEFT JOIN stampa s ON p.id_prodotto = s.id_prodotto "
                 + "LEFT JOIN commissione c ON p.id_prodotto = c.id_prodotto";
 
-        if (ordine != null && !ordine.isEmpty()) {
-            selectSQL += " ORDER BY " + ordine;
+        if (ordine != null && !ordine.trim().isEmpty()) {
+            selectSQL = selectSQL + " ORDER BY " + ordine;
+        } else {
+            selectSQL = selectSQL + " ORDER BY p.id_prodotto ASC";
         }
+        
         try (Connection connection = ds.getConnection();
-             PreparedStatement ps = connection.prepareStatement(selectSQL);
-             ResultSet rs = ps.executeQuery()) {
+            PreparedStatement ps = connection.prepareStatement(selectSQL);
+            ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Prodotto bean;
                 boolean isFisico = rs.getBoolean("is_fisico");

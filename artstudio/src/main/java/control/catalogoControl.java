@@ -42,17 +42,34 @@ public class catalogoControl extends HttpServlet {
     
         String ordinamento = request.getParameter("ordinamento");
         String tipo = request.getParameter("tipo");
-        String action = request.getParameter("action");
-        String id = request.getParameter("id");
+        
+        if (tipo == null || tipo.trim().isEmpty()) {
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/sceltaCatalogoView.jsp");
+            dispatcher.forward(request, response);
+            return;
+        }
+        
+        String sqlOrdering = "p.id_prodotto ASC"; 
+        if (ordinamento != null && !ordinamento.trim().isEmpty()) {
+            switch (ordinamento) {
+                case "prezzo_crescente":
+                    sqlOrdering = "p.prezzo ASC";
+                    break;
+                case "prezzo_decrescente":
+                    sqlOrdering = "p.prezzo DESC";
+                    break;
+                case "nome":
+                    sqlOrdering = "p.nome ASC";
+                    break;
+                default:
+                    sqlOrdering = "p.id_prodotto ASC";
+                    break;
+            }
+        }
 
         try {
-            if (tipo == null || tipo.isEmpty() || (!tipo.equalsIgnoreCase("stampa") && !tipo.equalsIgnoreCase("commissione") && !tipo.equalsIgnoreCase("tutti"))) {
-                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/sceltaCatalogoView.jsp");
-                dispatcher.forward(request, response);
-                return;
-            }
 
-            List<Prodotto> tuttiProdotti = prodottoDao.doRetrieveAll(ordinamento);
+            List<Prodotto> tuttiProdotti = prodottoDao.doRetrieveAll(sqlOrdering);
             List<Prodotto> prodottiMostrati = new ArrayList<>();
             if ("stampa".equalsIgnoreCase(tipo)) {
                 for (int i = 0; i <tuttiProdotti.size(); i++) {
@@ -78,12 +95,10 @@ public class catalogoControl extends HttpServlet {
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/catalogoView.jsp");
             dispatcher.forward(request, response);
 
-        } catch (SQLException e) {
+        }catch (SQLException e) {
             System.err.println("Errore SQL in CatalogoControl: " + e.getMessage());
+            e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile caricare il catalogo dei prodotti.");
-        } catch (NumberFormatException e) {
-            System.err.println("ID prodotto non valido: " + e.getMessage());
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "L'ID fornito non è valido.");
         }
     }
 
