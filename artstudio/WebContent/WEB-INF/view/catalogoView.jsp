@@ -75,7 +75,7 @@
     %>
 
     <div class="header-actions">
-        <a href="${pageContext.request.contextPath}/catalogo" class="btn-back">&laquo; Indietro</a>
+        <a href="<%= request.getContextPath() %>/catalogo" class="btn-back">&laquo; Indietro</a>
         
         <h1>
             Catalogo: 
@@ -90,7 +90,7 @@
             %>
         </h1>
         
-        <form action="${pageContext.request.contextPath}/catalogo" method="get">
+        <form action="<%= request.getContextPath() %>/catalogo" method="get">
             <input type="hidden" name="tipo" value="<%= selectedTipo %>">
             <label for="ordinamento">Ordina per:</label>
             <select name="ordinamento" id="ordinamento" onchange="this.form.submit()">
@@ -110,6 +110,7 @@
                     Prodotto p = prodotti.get(i);
             %>
                 <div class="singolo-prod">
+                	<img src="<%= request.getContextPath() %>/images/<%= p.getImmagine() %>" alt="<%= p.getNome() %>">
                     <h3><%= p.getNome() %></h3>
                     <p><strong>Prezzo:</strong> <%= String.format("%.2f", p.getPrezzo()) %> &euro;</p>
                 
@@ -120,7 +121,7 @@
                     <% } %>
 
                     <br><br>
-                    <a href="${pageContext.request.contextPath}/dettaglioProdotto?id=<%= p.getIdProdotto() %>">Vedi dettagli</a>
+                    <a href="<%= request.getContextPath() %>/dettaglioProdotto?id=<%= p.getIdProdotto() %>">Vedi dettagli</a>
                 </div>
             <% } %>
         </div>
