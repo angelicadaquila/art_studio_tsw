@@ -9,54 +9,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Prodotti</title>
-    <style>
-        .container {
-            max-width: 1000px;
-            margin: 30px auto;
-            font-family: Arial, sans-serif;
-        }
-        .header-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .btn-back {
-            padding: 8px 15px;
-            background-color: #6c757d;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .riga-prod {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-        }
-        .singolo-prod {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .badge {
-            display: inline-block;
-            padding: 4px 8px;
-            font-size: 0.8em;
-            border-radius: 4px;
-            color: white;
-            margin-top: 5px;
-        }
-        .badge-stampa { background-color: #28a745; }
-        .badge-commissione { background-color: #17a2b8; }
-        .nessuno-trovato {
-            text-align: center;
-            font-size: 1.2em;
-            color: #777;
-            margin-top: 40px;
-        }
-    </style>
+   		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/base.css">
+		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/componenti.css">
+		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/catalogo.css">
 </head>
 <body>
 
@@ -74,8 +29,8 @@
         }
     %>
 
-    <div class="header-actions">
-        <a href="<%= request.getContextPath() %>/catalogo" class="btn-back">&laquo; Indietro</a>
+    <div>
+        <a href="<%= request.getContextPath() %>/catalogo" class="btn-indietro">&laquo; Indietro</a>
         
         <h1>
             Catalogo: 
@@ -110,6 +65,7 @@
                     Prodotto p = prodotti.get(i);
             %>
                 <div class="singolo-prod">
+                	<%--immagine temp --%>
                 	<img src="<%= request.getContextPath() %>/images/<%= p.getImmagine() %>" alt="<%= p.getNome() %>">
                     <h3><%= p.getNome() %></h3>
                     <p><strong>Prezzo:</strong> <%= String.format("%.2f", p.getPrezzo()) %> &euro;</p>
