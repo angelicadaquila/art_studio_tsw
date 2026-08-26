@@ -4,33 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Quale prodotto desideri visualizzare</title>
-    <style>
-        .catalogo-selezione {
-            max-width: 600px;
-            margin: 50px auto;
-            text-align: center;
-            font-family: Arial, sans-serif;
-        }
-        .opzione {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 30px;
-            gap: 15px;
-        }
-        .btn-opzione {
-            display: inline-block;
-            padding: 15px 25px;
-            background-color: #eb9036;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-        }
-        .btn-opzione:hover {
-            background-color: #d97716;
-        }
-    </style>
+    	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/base.css">
+		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/componenti.css">
+		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/catalogo.css">
 </head>
 <body>
 
