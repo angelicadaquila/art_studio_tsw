@@ -20,6 +20,8 @@ public interface ProdottoDAO {
 	public Prodotto doRetrieveByKey(int idProdotto) throws SQLException;
 	
 	public List<Prodotto> doRetrieveAll(String ordine) throws SQLException;
+	
+	public List<Prodotto> doRetrieveAllAdmin(String ordine) throws SQLException;
 
 }
 
