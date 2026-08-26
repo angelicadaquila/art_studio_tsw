@@ -85,7 +85,8 @@ public class ProdottoDAOImp implements ProdottoDAO {
     @Override
     public synchronized boolean doUpdate(Prodotto prod) throws SQLException {
         if (prod == null) return false;
-        String updateProdottoSQL = "UPDATE " + TABLE_NAME + " SET is_fisico = ?, nome = ?, descrizione = ?, prezzo = ?, disponibile = ?, immagine = ? WHERE id_prodotto = ?";
+        String updateProdottoSQL = "UPDATE " + TABLE_NAME + " SET is_fisico = ?, nome = ?, descrizione = ?, prezzo = ?, disponibile = ?, immagine = ? " +"WHERE id_prodotto = ?";
+
         try (Connection connection = ds.getConnection();
             PreparedStatement ps = connection.prepareStatement(updateProdottoSQL)) {
             ps.setBoolean(1, prod.isFisico());
@@ -100,24 +101,25 @@ public class ProdottoDAOImp implements ProdottoDAO {
 
         if (prod instanceof Stampa) {
             Stampa stampa = (Stampa) prod;
-            String updateStampaSQL = "UPDATE stampa SET dimensione = ?, quantita = ? WHERE id_prodotto = ?";
+            String updateStampaSQL = "INSERT INTO stampa (id_prodotto, dimensione, quantita) VALUES (?, ?, ?) " +"ON DUPLICATE KEY UPDATE dimensione = VALUES(dimensione), quantita = VALUES(quantita)";
+            
             try (Connection connection = ds.getConnection();
                 PreparedStatement ps = connection.prepareStatement(updateStampaSQL)) {
-                ps.setString(1, stampa.getDimensione());
-                ps.setInt(2, stampa.getQuantita());
-                ps.setInt(3, stampa.getIdProdotto());
-                int rowsUpdated = ps.executeUpdate();
-                return rowsUpdated != 0;
+                ps.setInt(1, stampa.getIdProdotto());
+                ps.setString(2, stampa.getDimensione());
+                ps.setInt(3, stampa.getQuantita());
+                ps.executeUpdate();
             }
+
         } else if (prod instanceof Commissione) {
             Commissione commissione = (Commissione) prod;
-            String updateCommissioneSQL = "UPDATE commissione SET tempo = ? WHERE id_prodotto = ?";
+            String updateCommSQL = "INSERT INTO commissione (id_prodotto, tempo) VALUES (?, ?) " +"ON DUPLICATE KEY UPDATE tempo = VALUES(tempo)";
+            
             try (Connection connection = ds.getConnection();
-                PreparedStatement ps = connection.prepareStatement(updateCommissioneSQL)) {
-                ps.setString(1, commissione.getTempo());
-                ps.setInt(2, commissione.getIdProdotto());
-                int rowsUpdated = ps.executeUpdate();
-                return rowsUpdated != 0;
+                PreparedStatement ps = connection.prepareStatement(updateCommSQL)) {
+                ps.setInt(1, commissione.getIdProdotto());
+                ps.setString(2, commissione.getTempo());
+                ps.executeUpdate();
             }
         }
 
@@ -180,9 +182,9 @@ public class ProdottoDAOImp implements ProdottoDAO {
 
     @Override
     public synchronized boolean doDelete(int idProdotto) throws SQLException {
-        String deleteSQL = "DELETE FROM " + TABLE_NAME + " WHERE id_prodotto = ?";
+        String deleteSQL = "UPDATE " + TABLE_NAME + " SET disponibile = false WHERE id_prodotto = ?";
         try (Connection connection = ds.getConnection();
-            PreparedStatement ps = connection.prepareStatement(deleteSQL)) {
+             PreparedStatement ps = connection.prepareStatement(deleteSQL)) {
             ps.setInt(1, idProdotto);
             int result = ps.executeUpdate();
             return result != 0;
@@ -191,6 +193,49 @@ public class ProdottoDAOImp implements ProdottoDAO {
 
     @Override
     public synchronized List<Prodotto> doRetrieveAll(String ordine) throws SQLException {
+    	List<Prodotto> products = new ArrayList<>();
+        String selectSQL = "SELECT p.id_prodotto, p.is_fisico, p.nome, p.descrizione, p.prezzo, p.disponibile, p.immagine, "
+                + "s.dimensione, s.quantita, c.tempo "
+                + "FROM " + TABLE_NAME + " p "
+                + "LEFT JOIN stampa s ON p.id_prodotto = s.id_prodotto "
+                + "LEFT JOIN commissione c ON p.id_prodotto = c.id_prodotto "
+                + "WHERE p.disponibile = true"; 
+
+        if (ordine != null && !ordine.trim().isEmpty()) {
+            selectSQL = selectSQL + " ORDER BY " + ordine;
+        } else {
+            selectSQL = selectSQL + " ORDER BY p.id_prodotto ASC";
+        }
+        
+        try (Connection connection = ds.getConnection();
+            PreparedStatement ps = connection.prepareStatement(selectSQL);
+            ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Prodotto bean;
+                boolean isFisico = rs.getBoolean("is_fisico");
+                if (isFisico) {
+                    bean = new Stampa();
+                    ((Stampa) bean).setDimensione(rs.getString("dimensione"));
+                    ((Stampa) bean).setQuantita(rs.getInt("quantita"));
+                } else {
+                    bean = new Commissione();
+                    ((Commissione) bean).setTempo(rs.getString("tempo"));
+                }
+                bean.setIdProdotto(rs.getInt("id_prodotto"));
+                bean.setFisico(isFisico);
+                bean.setNome(rs.getString("nome"));
+                bean.setDescrizione(rs.getString("descrizione"));
+                bean.setPrezzo(rs.getDouble("prezzo"));
+                bean.setDisponibile(rs.getBoolean("disponibile"));
+                bean.setImmagine(rs.getString("immagine"));
+                products.add(bean);
+            }
+        }
+        return products;
+    }
+    
+    @Override
+    public synchronized List<Prodotto> doRetrieveAllAdmin(String ordine) throws SQLException {
         List<Prodotto> products = new ArrayList<>();
         String selectSQL = "SELECT p.id_prodotto, p.is_fisico, p.nome, p.descrizione, p.prezzo, p.disponibile, p.immagine, "
                 + "s.dimensione, s.quantita, c.tempo "
@@ -203,10 +248,10 @@ public class ProdottoDAOImp implements ProdottoDAO {
         } else {
             selectSQL = selectSQL + " ORDER BY p.id_prodotto ASC";
         }
-        
+
         try (Connection connection = ds.getConnection();
-            PreparedStatement ps = connection.prepareStatement(selectSQL);
-            ResultSet rs = ps.executeQuery()) {
+             PreparedStatement ps = connection.prepareStatement(selectSQL);
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Prodotto bean;
                 boolean isFisico = rs.getBoolean("is_fisico");
