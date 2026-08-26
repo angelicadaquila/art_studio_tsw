@@ -1,0 +1,36 @@
+.btn-indietro {
+    padding: 8px 15px;
+    background-color: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.btn-indietro:hover {
+    background-color: #5a6268;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    font-size: 0.8em;
+    border-radius: 4px;
+    color: white;
+    margin-top: 5px;
+}
+
+.badge-stampa { 
+    background-color: #28a745; 
+}
+
+.badge-commissione { 
+    background-color: #17a2b8; 
+}
+
+.nessuno-trovato {
+    text-align: center;
+    font-size: 1.2em;
+    color: #777;
+    margin-top: 40px;
+}
