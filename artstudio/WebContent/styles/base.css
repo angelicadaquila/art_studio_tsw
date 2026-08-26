@@ -1,0 +1,21 @@
+body {
+  padding: 0px;
+  margin: 0px;
+  font-family: Verdana, Geneva, sans-serif;
+  line-height: 1.2em;
+  background: url(../images/grid.png) no-repeat;
+  font-size: 1em;
+}
+
+header, nav, footer, h1, h2, h3 {
+  font-family: Verdana, Geneva, sans-serif;
+}
+
+h1 {
+  line-height: 100%;
+  font-size: 1.6em;
+}
+
+h2 {
+  font-size: 1.2em;
+}
