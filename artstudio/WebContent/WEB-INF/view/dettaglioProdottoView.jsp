@@ -11,7 +11,7 @@
 </head>
 <body>
 
-	<a href="catalogo?tipo=tutti" class="btn-indietro">&lt; Torna al Catalogo</a>
+	<a href="catalogo?tipo=tutti" class="btn-indietro"> Torna al Catalogo</a>
 	<%
 		String message = (String) request.getAttribute("message");
 		if (message != null) {
@@ -67,12 +67,12 @@
 				<% } %>
 			</td>
 			<td>
-    			<img src="<%= request.getContextPath() %>/images/<%= prodotto.getImmagine() %>" 
-         			alt="<%= prodotto.getNome() %>" 
-         			width="80" 
-         			height="80" 
-         			style="object-fit: cover;"
-         			onerror="this.src='<%= request.getContextPath() %>/images/placeholder.png';">
+    			<img src="<%= request.getContextPath() %>/image?action=show&code=<%= prodotto.getIdProdotto() %>" 
+     				alt="<%= prodotto.getNome() %>" 
+    				width="80" 
+     				height="80" 
+     				style="object-fit: cover;"
+     				onerror="this.src='<%= request.getContextPath() %>/images/placeholder.png';">
 			</td>
 		</tr>
 	</table>
