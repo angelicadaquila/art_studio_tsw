@@ -30,8 +30,8 @@
 
 	<h2>Dettaglio Prodotto</h2>
 	<%
-		Prodotto prodotto = (Prodotto) request.getAttribute("prodotto");
-		if (prodotto != null) {
+		Prodotto p = (Prodotto) request.getAttribute("p");
+		if (p != null) {
 	%>
 	<table border="1">
 		<tr>
@@ -44,32 +44,32 @@
 			<th>Immagine</th>
 		</tr>
 		<tr>
-			<td><%= prodotto.getIdProdotto() %></td>
-			<td><%= prodotto.getNome() %></td>
-			<td><%= prodotto.getDescrizione() %></td>
-			<td><%= String.format("%.2f", prodotto.getPrezzo()) %> &euro;</td>
+			<td><%= p.getIdProdotto() %></td>
+			<td><%= p.getNome() %></td>
+			<td><%= p.getDescrizione() %></td>
+			<td><%= String.format("%.2f", p.getPrezzo()) %> &euro;</td>
 			<td>
-				<% if (prodotto instanceof Stampa) { %>
+				<% if (p instanceof Stampa) { %>
 					<span class="badge badge-stampa">Stampa</span>
-				<% } else if (prodotto instanceof Commissione) { %>
+				<% } else if (p instanceof Commissione) { %>
 					<span class="badge badge-commissione">Commissione</span>
 				<% } %>
 			</td>
 			<td>
-				<% if (prodotto instanceof Stampa) { 
-					   Stampa s = (Stampa) prodotto;
+				<% if (p instanceof Stampa) { 
+					   Stampa s = (Stampa) p;
 				%>
 					Dimensione: <%= s.getDimensione() %>
-				<% } else if (prodotto instanceof Commissione) { 
-					   Commissione c = (Commissione) prodotto;
+				<% } else if (p instanceof Commissione) { 
+					   Commissione c = (Commissione) p;
 				%>
 					Tempo: <%= c.getTempo() %> giorni
 				<% } %>
 			</td>
 			<td>
-    			<% if (prodotto.getImmagine() != null && !prodotto.getImmagine().isEmpty()) { %>
-    					<img src="<%= request.getContextPath() %>/image?action=show&code=<%= prodotto.getIdProdotto() %>" 
-    					alt="<%= prodotto.getNome() %>" 
+    			<% if (p.getImmagine() != null && !p.getImmagine().isEmpty()) { %>
+    					<img src="<%= request.getContextPath() %>/image?action=show&code=<%= p.getIdProdotto() %>" 
+    					alt="<%= p.getNome() %>" 
 						width="80" 
          				height="80" 
          				style="object-fit: cover;"
@@ -89,11 +89,11 @@
 	<h2>Aggiungi al Carrello</h2>
 	<form action="dettaglioProdotto" method="post">
 		<input type="hidden" name="action" value="aggiungiC">
-		<input type="hidden" name="id" value="<%= prodotto.getIdProdotto() %>">
+		<input type="hidden" name="id" value="<%= p.getIdProdotto() %>">
 		
 		<div class="form-gruppo">
 			<label for="quantita">Quantit&agrave;:</label>
-			<% if (prodotto instanceof Stampa) { %>
+			<% if (p instanceof Stampa) { %>
 				<input type="number" id="quantita" name="quantita" value="1" min="1" required>
 			<% } else { %>
 				<input type="number" id="quantita" name="quantita" value="1" min="1" max="1" readonly>
