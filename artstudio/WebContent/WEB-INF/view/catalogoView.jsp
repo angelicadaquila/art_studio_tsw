@@ -30,7 +30,7 @@
     %>
 
     <div>
-        <a href="<%= request.getContextPath() %>/catalogo" class="btn-indietro">&laquo; Indietro</a>
+        <a href="<%= request.getContextPath() %>/catalogo" class="btn-indietro"> Indietro</a>
         
         <h1>
             Catalogo: 
@@ -65,8 +65,14 @@
                     Prodotto p = prodotti.get(i);
             %>
                 <div class="singolo-prod">
-                	<%--immagine temp --%>
-                	<img src="<%= request.getContextPath() %>/images/<%= p.getImmagine() %>" alt="<%= p.getNome() %>">
+                	<% if (p.getImmagine() != null && !p.getImmagine().trim().isEmpty()) { %>
+    						<img src="<%= request.getContextPath() %>/image?action=show&code=<%= p.getIdProdotto() %>" alt="<%= p.getNome() %>">
+					<% } else { %>
+
+   						 <div style="height: 150px; background-color: #eee; display: flex; align-items: center; justify-content: center; border-radius: 4px; margin-bottom: 10px;">
+        					<span style="color: #888; font-size: 0.9em;">Nessuna immagine</span>
+    					</div>
+					<% } %>
                     <h3><%= p.getNome() %></h3>
                     <p><strong>Prezzo:</strong> <%= String.format("%.2f", p.getPrezzo()) %> &euro;</p>
                 
