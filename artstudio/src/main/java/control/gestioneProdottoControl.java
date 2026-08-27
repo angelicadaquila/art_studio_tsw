@@ -55,12 +55,15 @@ public class gestioneProdottoControl extends HttpServlet {
                 prodottoDao.doDelete(id);
                 response.sendRedirect(request.getContextPath() + "/admin/prodotti");
                 return;
-            } 
-            else if ("edit".equalsIgnoreCase(action)) {
+            }else if ("edit".equalsIgnoreCase(action)) {
                 int id = Integer.parseInt(request.getParameter("idProdotto"));
                 Prodotto prod = prodottoDao.doRetrieveByKey(id);
                 request.setAttribute("prodotto", prod);
                 
+                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/admin/formProdotto.jsp");
+                dispatcher.forward(request, response);
+                return;
+            }else if ("addForm".equalsIgnoreCase(action)) {
                 RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/admin/formProdotto.jsp");
                 dispatcher.forward(request, response);
                 return;
