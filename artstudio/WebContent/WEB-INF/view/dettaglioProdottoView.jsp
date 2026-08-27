@@ -30,7 +30,7 @@
 
 	<h2>Dettaglio Prodotto</h2>
 	<%
-		Prodotto p = (Prodotto) request.getAttribute("p");
+		Prodotto p = (Prodotto) request.getAttribute("prodotto");
 		if (p != null) {
 	%>
 	<table border="1">
@@ -67,8 +67,8 @@
 				<% } %>
 			</td>
 			<td>
-    			<% if (p.getImmagine() != null && !p.getImmagine().isEmpty()) { %>
-    					<img src="<%= request.getContextPath() %>/image?action=show&code=<%= p.getIdProdotto() %>" 
+    			<% if (p.getImmagine() != null && !p.getImmagine().trim().isEmpty()) { %>
+    					<img src="<%= request.getContextPath() %>/immagine?action=show&id=<%= p.getIdProdotto() %>" 
     					alt="<%= p.getNome() %>" 
 						width="80" 
          				height="80" 
