@@ -67,13 +67,22 @@
 				<% } %>
 			</td>
 			<td>
-    			<img src="<%= request.getContextPath() %>/image?action=show&code=<%= prodotto.getIdProdotto() %>" 
-     				alt="<%= prodotto.getNome() %>" 
-    				width="80" 
-     				height="80" 
-     				style="object-fit: cover;"
-     				onerror="this.src='<%= request.getContextPath() %>/images/placeholder.png';">
+    			<% if (prodotto.getImmagine() != null && !prodotto.getImmagine().isEmpty()) { %>
+    					<img src="<%= request.getContextPath() %>/image?action=show&code=<%= prodotto.getIdProdotto() %>" 
+    					alt="<%= prodotto.getNome() %>" 
+						width="80" 
+         				height="80" 
+         				style="object-fit: cover;"
+         				onerror="this.src='<%= request.getContextPath() %>/images/placeholder.png';">
+				<% } else { %>
+    					<img src="<%= request.getContextPath() %>/images/placeholder.png" 
+         				alt="Nessuna immagine disponibile" 
+        				width="80" 
+         				height="80" 
+         				style="object-fit: cover;">
+				<% } %>
 			</td>
+			
 		</tr>
 	</table>
 
