@@ -66,13 +66,19 @@
             %>
                 <div class="singolo-prod">
                 	<% if (p.getImmagine() != null && !p.getImmagine().trim().isEmpty()) { %>
-    						<img src="<%= request.getContextPath() %>/image?action=show&code=<%= p.getIdProdotto() %>" alt="<%= p.getNome() %>">
-					<% } else { %>
-
-   						 <div style="height: 150px; background-color: #eee; display: flex; align-items: center; justify-content: center; border-radius: 4px; margin-bottom: 10px;">
-        					<span style="color: #888; font-size: 0.9em;">Nessuna immagine</span>
-    					</div>
-					<% } %>
+    					<img src="<%= request.getContextPath() %>/immagine?action=show&id=<%= p.getIdProdotto() %>" 
+    					alt="<%= p.getNome() %>" 
+						width="80" 
+         				height="80" 
+         				style="object-fit: cover;"
+         				onerror="this.src='<%= request.getContextPath() %>/images/placeholder.png';">
+				<% } else { %>
+    					<img src="<%= request.getContextPath() %>/images/placeholder.png" 
+         				alt="Nessuna immagine disponibile" 
+        				width="80" 
+         				height="80" 
+         				style="object-fit: cover;">
+				<% } %>
                     <h3><%= p.getNome() %></h3>
                     <p><strong>Prezzo:</strong> <%= String.format("%.2f", p.getPrezzo()) %> &euro;</p>
                 
