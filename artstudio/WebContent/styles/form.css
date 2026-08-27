@@ -1,0 +1,67 @@
+.form-gruppo {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-gruppo label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-gruppo input[type="text"],
+.form-gruppo input[type="number"],
+.form-gruppo select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.campi {
+    background-color: #f4f4f4;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    border-left: 4px solid #eb9036;
+}
+
+.campi h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.form-azioni {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-invio {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-invio:hover {
+    background-color: #218838;
+}
+
+.btn-cancella {
+    padding: 10px 20px;
+    background-color: #dc3545;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.btn-cancella:hover {
+    background-color: #c82333;
+}
