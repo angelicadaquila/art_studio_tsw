@@ -11,6 +11,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import javax.sql.DataSource;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import dao.IndirizzoDAO;
 import dao.IndirizzoDAOImp;
@@ -44,7 +47,7 @@ public class registrazioneControl extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
         String nome = request.getParameter("nome");
         String cognome = request.getParameter("cognome");
         String email = request.getParameter("email");
@@ -55,6 +58,20 @@ public class registrazioneControl extends HttpServlet {
         String civico = request.getParameter("civico");
         String citta = request.getParameter("citta");
         String regione = request.getParameter("regione");
+
+        if (nome == null || nome.trim().isEmpty() ||
+            cognome == null || cognome.trim().isEmpty() ||
+            email == null || email.trim().isEmpty() ||
+            password == null || password.trim().isEmpty() ||
+            via == null || via.trim().isEmpty() ||
+            civico == null || civico.trim().isEmpty() ||
+            citta == null || citta.trim().isEmpty() ||
+            regione == null || regione.trim().isEmpty()) {
+            request.setAttribute("errore", "Tutti i campi sono obbligatori.");
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/registrazioneView.jsp");
+            dispatcher.forward(request, response);
+            return;
+        }
 
         if (!password.equals(confermaPassword)) {
             request.setAttribute("errore", "Le password inserite non corrispondono.");
@@ -76,9 +93,10 @@ public class registrazioneControl extends HttpServlet {
             nuovoUtente.setCognome(cognome.trim());
             nuovoUtente.setEmail(email.trim().toLowerCase());
             nuovoUtente.setRuolo("utente");
-            
-            utenteDao.doSave(nuovoUtente);
 
+            String passwordHash = hashPasswordSHA256(password);
+            nuovoUtente.setPassword(passwordHash);
+            
             if (nuovoUtente.getIdUtente() > 0) {
                 Indirizzo nuovoIndirizzo = new Indirizzo();
                 nuovoIndirizzo.setIdUtente(nuovoUtente.getIdUtente());
@@ -86,7 +104,6 @@ public class registrazioneControl extends HttpServlet {
                 nuovoIndirizzo.setCivico(civico.trim());
                 nuovoIndirizzo.setCitta(citta.trim());
                 nuovoIndirizzo.setRegione(regione.trim());
-
                 indirizzoDao.doSave(nuovoIndirizzo);
 
                 HttpSession session = request.getSession(true);
@@ -105,5 +122,25 @@ public class registrazioneControl extends HttpServlet {
 
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/registrazioneView.jsp");
         dispatcher.forward(request, response);
+    }
+    
+    
+    private String hashPasswordSHA256(String passwordInChiaro) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(passwordInChiaro.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder();
+            for (int i = 0; i < hash.length; i++) {
+                byte b = hash[i];
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Algoritmo di hashing non trovato", e);
+        }
     }
 }
