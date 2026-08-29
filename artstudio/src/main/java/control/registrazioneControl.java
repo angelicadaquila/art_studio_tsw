@@ -97,6 +97,7 @@ public class registrazioneControl extends HttpServlet {
             String passwordHash = hashPasswordSHA256(password);
             nuovoUtente.setPassword(passwordHash);
             
+            utenteDao.doSave(nuovoUtente);
             if (nuovoUtente.getIdUtente() > 0) {
                 Indirizzo nuovoIndirizzo = new Indirizzo();
                 nuovoIndirizzo.setIdUtente(nuovoUtente.getIdUtente());
