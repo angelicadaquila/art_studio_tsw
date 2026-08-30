@@ -16,6 +16,7 @@
 <body>
 
 <div class="container">
+<jsp:include page="/WEB-INF/view/barraSuperioreView.jsp" />
     <% 
         List<Prodotto> prodotti = (List<Prodotto>) request.getAttribute("prodotti");
         String selectedTipo = (String) request.getAttribute("selectedtipo");
