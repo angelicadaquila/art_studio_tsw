@@ -1,6 +1,8 @@
 package control;
 
 import java.io.IOException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.Part;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -22,6 +24,11 @@ import model.Stampa;
 import model.Utente;
 
 @WebServlet("/admin/prodotti")
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024 * 2, 
+    maxFileSize = 1024 * 1024 * 10,      
+    maxRequestSize = 1024 * 1024 * 50    
+)
 public class gestioneProdottoControl extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -38,7 +45,7 @@ public class gestioneProdottoControl extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
         Utente utente = (session != null) ? (Utente) session.getAttribute("utente") : null;
@@ -50,12 +57,14 @@ public class gestioneProdottoControl extends HttpServlet {
         String action = request.getParameter("action");
 
         try {
-            if ("delete".equalsIgnoreCase(action)) {
+            if ("elimina".equalsIgnoreCase(action)) {
                 int id = Integer.parseInt(request.getParameter("idProdotto"));
                 prodottoDao.doDelete(id);
                 response.sendRedirect(request.getContextPath() + "/admin/prodotti");
                 return;
-            }else if ("edit".equalsIgnoreCase(action)) {
+            } 
+            
+            else if ("modifica".equalsIgnoreCase(action)) {
                 int id = Integer.parseInt(request.getParameter("idProdotto"));
                 Prodotto prod = prodottoDao.doRetrieveByKey(id);
                 request.setAttribute("prodotto", prod);
@@ -63,7 +72,9 @@ public class gestioneProdottoControl extends HttpServlet {
                 RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/admin/formProdotto.jsp");
                 dispatcher.forward(request, response);
                 return;
-            }else if ("addForm".equalsIgnoreCase(action)) {
+            } 
+            
+            else if ("addForm".equalsIgnoreCase(action)) {
                 RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/admin/formProdotto.jsp");
                 dispatcher.forward(request, response);
                 return;
@@ -72,23 +83,26 @@ public class gestioneProdottoControl extends HttpServlet {
             List<Prodotto> prodotti = prodottoDao.doRetrieveAllAdmin(null);
             request.setAttribute("prodotti", prodotti);
             
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/admin/gestioneProdotti.jsp");
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/admin/gestioneCatalogoView.jsp");
             dispatcher.forward(request, response);
 
         } catch (SQLException e) {
             System.err.println("Errore SQL in GestioneProdottoControl: " + e.getMessage());
             e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile completare l'operazione sui prodotti.");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile completare l'operazione.");
         } catch (NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato parametro numerico non valido.");
         }
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
-
-        HttpSession session = request.getSession(false);
-        Utente utente = (session != null) ? (Utente) session.getAttribute("utente") : null;
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession sessione = request.getSession(false);
+        Utente utente = null;
+        if (sessione != null) {
+            utente = (Utente) sessione.getAttribute("utente");
+        }
+        
         if (utente == null || utente.getRuolo() == null || !"admin".equalsIgnoreCase(utente.getRuolo())) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Accesso riservato all'amministratore.");
             return;
@@ -96,50 +110,92 @@ public class gestioneProdottoControl extends HttpServlet {
 
         String action = request.getParameter("action");
 
-        if ("save".equalsIgnoreCase(action)) {
+        if ("salva".equalsIgnoreCase(action)) {
             try {
                 String idStr = request.getParameter("idProdotto");
-                boolean isFisico = Boolean.parseBoolean(request.getParameter("isFisico"));
+                String tipoProdotto = request.getParameter("tipoProdotto");
                 String nome = request.getParameter("nome");
                 String descrizione = request.getParameter("descrizione");
-                double prezzo = Double.parseDouble(request.getParameter("prezzo"));
-                boolean disponibile = Boolean.parseBoolean(request.getParameter("disponibile"));
-                String immagine = request.getParameter("immagine");
+                String prezzoStr = request.getParameter("prezzo");
+                double prezzo = 0.0;
+                if (prezzoStr != null && !prezzoStr.trim().isEmpty()) {
+                    prezzo = Double.parseDouble(prezzoStr);
+                }
+                
+                boolean disponibile = false;
+                if (request.getParameter("disponibile") != null) {
+                    disponibile = true;
+                }
+                
+                Part filePart = request.getPart("immagine");
+                String nomeFileImmagine = "";
 
-                Prodotto prod;
-                if (isFisico) {
+                if (filePart != null && filePart.getSize() > 0) {
+                    nomeFileImmagine = filePart.getSubmittedFileName();
+                    
+                    String uploadPath = getServletContext().getRealPath("") + "images";
+                    java.io.File uploadDir = new java.io.File(uploadPath);
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdir();
+                    }
+                    filePart.write(uploadPath + java.io.File.separator + nomeFileImmagine);
+                } else {
+                    String immagineVecchia = request.getParameter("immagineVecchia");
+                    if (immagineVecchia != null) {
+                        nomeFileImmagine = immagineVecchia;
+                    }
+                }
+                
+                Prodotto prodotto;
+
+                if ("stampa".equalsIgnoreCase(tipoProdotto)) {
                     Stampa stampa = new Stampa();
                     stampa.setDimensione(request.getParameter("dimensione"));
-                    stampa.setQuantita(Integer.parseInt(request.getParameter("quantita")));
-                    prod = stampa;
+                    
+                    String quantitaStr = request.getParameter("quantita");
+                    int quantita = 0;
+                    if (quantitaStr != null && !quantitaStr.trim().isEmpty()) {
+                        quantita = Integer.parseInt(quantitaStr);
+                    }
+                    stampa.setQuantita(quantita);
+                    stampa.setFisico(true);
+                    
+                    prodotto = stampa;
                 } else {
                     Commissione commissione = new Commissione();
-                    commissione.setTempo(request.getParameter("tempo"));
-                    prod = commissione;
+                    
+                    String tempoStr = request.getParameter("tempo");
+                    if (tempoStr == null) {
+                        tempoStr = "";
+                    }
+                    commissione.setTempo(tempoStr); 
+                    commissione.setFisico(false);
+                    
+                    prodotto = commissione;
                 }
 
-                prod.setFisico(isFisico);
-                prod.setNome(nome);
-                prod.setDescrizione(descrizione);
-                prod.setPrezzo(prezzo);
-                prod.setDisponibile(disponibile);
-                prod.setImmagine(immagine);
+                prodotto.setNome(nome);
+                prodotto.setDescrizione(descrizione);
+                prodotto.setPrezzo(prezzo);
+                prodotto.setDisponibile(disponibile);
+                prodotto.setImmagine(nomeFileImmagine);
 
                 if (idStr == null || idStr.trim().isEmpty()) {
-                    prodottoDao.doSave(prod);
+                    prodottoDao.doSave(prodotto);
                 } else {
-                    prod.setIdProdotto(Integer.parseInt(idStr));
-                    prodottoDao.doUpdate(prod);
+                    prodotto.setIdProdotto(Integer.parseInt(idStr));
+                    prodottoDao.doUpdate(prodotto);
                 }
 
                 response.sendRedirect(request.getContextPath() + "/admin/prodotti");
 
             } catch (SQLException e) {
-                System.err.println("Errore salvataggio/modifica prodotto: " + e.getMessage());
+                System.err.println("Errore SQL nel salvataggio prodotto: " + e.getMessage());
                 e.printStackTrace();
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore nel salvataggio del prodotto.");
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore nel salvataggio del prodotto sul Database.");
             } catch (NumberFormatException e) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Dati numerici inseriti non validi.");
+                System.err.println("Errore nei dati numerici: " + e.getMessage());
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "I valori numerici inseriti non sono validi.");
             }
         } else {
             response.sendRedirect(request.getContextPath() + "/admin/prodotti");
