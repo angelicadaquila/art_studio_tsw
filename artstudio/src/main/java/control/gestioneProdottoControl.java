@@ -1,6 +1,7 @@
 package control;
 
 import java.io.IOException;
+import java.io.File;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.Part;
 import java.sql.SQLException;
@@ -48,7 +49,10 @@ public class gestioneProdottoControl extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-        Utente utente = (session != null) ? (Utente) session.getAttribute("utente") : null;
+        Utente utente = null;
+        if (session != null) {
+            utente = (Utente) session.getAttribute("utente");
+        }
         if (utente == null || utente.getRuolo() == null || !"admin".equalsIgnoreCase(utente.getRuolo())) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Accesso riservato all'amministratore");
             return;
@@ -102,7 +106,6 @@ public class gestioneProdottoControl extends HttpServlet {
         if (sessione != null) {
             utente = (Utente) sessione.getAttribute("utente");
         }
-        
         if (utente == null || utente.getRuolo() == null || !"admin".equalsIgnoreCase(utente.getRuolo())) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Accesso riservato all'amministratore.");
             return;
@@ -131,14 +134,20 @@ public class gestioneProdottoControl extends HttpServlet {
                 String nomeFileImmagine = "";
 
                 if (filePart != null && filePart.getSize() > 0) {
-                    nomeFileImmagine = filePart.getSubmittedFileName();
-                    
-                    String uploadPath = getServletContext().getRealPath("") + "images";
+                    String originalName = filePart.getSubmittedFileName();
+                    String extension = "";
+                    if (originalName != null && originalName.contains(".")) {
+                        extension = originalName.substring(originalName.lastIndexOf("."));
+                    }
+                    nomeFileImmagine = java.util.UUID.randomUUID().toString() + extension;
+                    String uploadPath = getServletContext().getRealPath(File.separator + "uploads");
                     java.io.File uploadDir = new java.io.File(uploadPath);
                     if (!uploadDir.exists()) {
-                        uploadDir.mkdir();
+                        uploadDir.mkdirs(); 
                     }
-                    filePart.write(uploadPath + java.io.File.separator + nomeFileImmagine);
+                    
+                    String fullPathOnDisk = uploadPath + java.io.File.separator + nomeFileImmagine;
+                    filePart.write(fullPathOnDisk);
                 } else {
                     String immagineVecchia = request.getParameter("immagineVecchia");
                     if (immagineVecchia != null) {
