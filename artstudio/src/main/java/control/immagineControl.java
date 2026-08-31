@@ -1,20 +1,23 @@
 package control;
+
 import java.io.*;
 import java.sql.SQLException;
 import java.util.UUID;
+
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.*;
 import jakarta.servlet.http.*;
 import javax.sql.DataSource;
+
 import dao.ProdottoDAO;
 import dao.ProdottoDAOImp;
 import model.Prodotto;
 
 @WebServlet("/immagine")
 @MultipartConfig(
-    maxFileSize = 5 * 1024 * 1024,      
-    maxRequestSize = 10 * 1024 * 1024,  
-    fileSizeThreshold = 2 * 1024 * 1024 
+    maxFileSize = 200 * 1024 * 1024,      
+    maxRequestSize = 50 * 1024 * 1024, 
+    fileSizeThreshold = 5 * 1024 * 1024  
 )
 public class immagineControl extends HttpServlet {
 
@@ -30,10 +33,9 @@ public class immagineControl extends HttpServlet {
 
         DataSource ds = (DataSource) getServletContext().getAttribute("DataSource");
         if (ds == null) {
-            throw new ServletException("DataSource non disponibile");
+            throw new ServletException("DataSource non disponibile nel contesto applicativo.");
         }
         prodottoDao = new ProdottoDAOImp(ds);
-
         String uploadPath = getServletContext().getRealPath(File.separator + UPLOAD_DIR);
         File uploadDir = new File(uploadPath);
         if (!uploadDir.exists()) {
@@ -46,31 +48,39 @@ public class immagineControl extends HttpServlet {
 
         String action = request.getParameter("action");
         if (action != null && action.equalsIgnoreCase("show")) {
-            String idStr = request.getParameter("id");
-            if (idStr != null && !idStr.trim().isEmpty()) {
-                try {
-                    int id = Integer.parseInt(idStr);
-                    Prodotto prod = prodottoDao.doRetrieveByKey(id);
-                    if (prod != null && prod.getImmagine() != null && !prod.getImmagine().isEmpty()) {
-                        String path = prod.getImmagine();
-                        String mimeType = getServletContext().getMimeType(path);
+            int productCode = Integer.parseInt(request.getParameter("id"));
+            try {
+                Prodotto prod = prodottoDao.doRetrieveByKey(productCode);
+                if (prod != null && prod.getImmagine() != null && !prod.getImmagine().isEmpty()) {
+                    String path = prod.getImmagine();
+                    
+                    File file = new File(path);
+                    if (!file.isAbsolute() || !file.exists()) {
+                        String realPath = getServletContext().getRealPath(File.separator + UPLOAD_DIR + File.separator + file.getName());
+                        file = new File(realPath);
+                    } else {
+                        file = new File(path);
+                    }
+
+                    if (file.exists()) {
+                        String mimeType = getServletContext().getMimeType(file.getName());
                         if (mimeType == null) {
                             mimeType = "image/jpeg";
                         }
                         response.setContentType(mimeType);
 
-                        try (InputStream is = new FileInputStream(path)) {
+                        try (InputStream is = new FileInputStream(file)) {
                             OutputStream os = response.getOutputStream();
                             is.transferTo(os);
                         } catch (IOException ioe) {
                             System.err.println("Error:" + ioe.getMessage());
                         }
+                    } else {
+                        System.err.println("File immagine non trovato: " + file.getAbsolutePath());
                     }
-                } catch (SQLException e) {
-                    System.err.println("Error:" + e.getMessage());
-                } catch (NumberFormatException e) {
-                    System.err.println("Error ID non valido: " + e.getMessage());
                 }
+            } catch (SQLException e) {
+                System.err.println("Error:" + e.getMessage());
             }
         }
     }
@@ -79,36 +89,29 @@ public class immagineControl extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        if (action != null && "upload".equalsIgnoreCase(action)) {
-            String idStr = request.getParameter("idProdotto");
-            if (idStr != null && !idStr.trim().isEmpty()) {
-                try {
-                    int id = Integer.parseInt(idStr);
-                    Part part = request.getPart("immagine");
+        if ("upload".equalsIgnoreCase(action)) {
+            int productCode = Integer.parseInt(request.getParameter("idProdotto"));
+            Part part = request.getPart("immagine");
 
-                    if (part != null) {
-                        String originalFileName = part.getSubmittedFileName();
-                        if (originalFileName != null && !originalFileName.isEmpty() && part.getSize() > 0) {
-                            String uniqueFileName = buildUniqueFileName(part);
-                            String uploadPath = getServletContext().getRealPath(File.separator + UPLOAD_DIR + File.separator + uniqueFileName);
+            if (part != null) {
+                String originalFileName = part.getSubmittedFileName();
+                if (originalFileName != null && !originalFileName.isEmpty() && part.getSize() > 0) {
 
-                            Prodotto prod = prodottoDao.doRetrieveByKey(id);
-                            if (prod != null) {
-                                prod.setImmagine(uploadPath); 
-                                try {
-                                    part.write(uploadPath);           
-                                    prodottoDao.doUpdateImage(prod);  
-                                    System.out.println(uploadPath);
-                                } catch (SQLException e) {
-                                    System.err.println("Error:" + e.getMessage());
-                                }
-                            }
+                    String uniqueFileName = buildUniqueFileName(part);
+                    String uploadPath = getServletContext().getRealPath(File.separator + UPLOAD_DIR + File.separator + uniqueFileName);
+
+                    try {
+                        part.write(uploadPath);
+
+                        Prodotto prod = prodottoDao.doRetrieveByKey(productCode);
+                        if (prod != null) {
+                            prod.setImmagine(uploadPath);
+                            prodottoDao.doUpdateImage(prod);
+                            System.out.println(uploadPath);
                         }
+                    } catch (SQLException e) {
+                        System.err.println("Error:" + e.getMessage());
                     }
-                } catch (SQLException e) {
-                    System.err.println("Error:" + e.getMessage());
-                } catch (NumberFormatException e) {
-                    System.err.println("Error ID non valido: " + e.getMessage());
                 }
             }
         }
