@@ -10,6 +10,7 @@
 	<title>Dettaglio Prodotto</title>
 </head>
 <body>
+<jsp:include page="/WEB-INF/view/barraSuperioreView.jsp" />
 
 	<a href="catalogo?tipo=tutti" class="btn-indietro"> Torna al Catalogo</a>
 	<%
@@ -92,7 +93,7 @@
 		<input type="hidden" name="id" value="<%= p.getIdProdotto() %>">
 		
 		<div class="form-gruppo">
-			<label for="quantita">Quantit&agrave;:</label>
+			<label for="quantita">Quantita:</label>
 			<% if (p instanceof Stampa) { %>
 				<input type="number" id="quantita" name="quantita" value="1" min="1" required>
 			<% } else { %>
