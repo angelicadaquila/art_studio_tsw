@@ -26,9 +26,9 @@ import model.Utente;
 
 @WebServlet("/admin/prodotti")
 @MultipartConfig(
-    fileSizeThreshold = 1024 * 1024 * 2, 
-    maxFileSize = 1024 * 1024 * 10,      
-    maxRequestSize = 1024 * 1024 * 50    
+    fileSizeThreshold = 1024 * 1024 * 5, 
+    maxFileSize = 1024 * 1024 * 50,      
+    maxRequestSize = 1024 * 1024 * 200   
 )
 public class gestioneProdottoControl extends HttpServlet {
 
