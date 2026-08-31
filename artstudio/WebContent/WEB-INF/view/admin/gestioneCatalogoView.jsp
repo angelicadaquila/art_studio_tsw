@@ -85,8 +85,8 @@
                 </p>
 
                 <div style="margin-top: 15px; justify-content: center; gap: 10px;">
-                    <a href="<%= request.getContextPath() %>/admin/prodotti?action=edit&idProdotto=<%= p.getIdProdotto() %>" class="btn-opzione" style="padding: 5px 10px; font-size: 0.9em;">Modifica</a>
-                    <a href="<%= request.getContextPath() %>/admin/prodotti?action=delete&idProdotto=<%= p.getIdProdotto() %>" class="btn-indietro" style="background-color: #dc3545; padding: 5px 10px; font-size: 0.9em;" onclick="return confirm('Sei sicuro di voler eliminare questo prodotto?');">Elimina</a>
+                    <a href="<%= request.getContextPath() %>/admin/prodotti?action=modifica&idProdotto=<%= p.getIdProdotto() %>" class="btn-opzione" style="padding: 5px 10px; font-size: 0.9em;">Modifica</a>
+                    <a href="<%= request.getContextPath() %>/admin/prodotti?action=elimina&idProdotto=<%= p.getIdProdotto() %>" class="btn-indietro" style="background-color: #dc3545; padding: 5px 10px; font-size: 0.9em;" onclick="return confirm('Sei sicuro di voler eliminare questo prodotto?');">Elimina</a>
                 </div>
             </div>
         <%
