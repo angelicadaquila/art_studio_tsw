@@ -43,3 +43,25 @@
     color: #777;
     margin-top: 40px;
 }
+
+.msg-errore {
+    color: #dc3656;
+    font-size: 0.85em;
+    margin-top: 4px;
+    display: block;
+}
+
+.contenitore-login-top {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.testo-benvenuto {
+    font-size: 0.95rem;
+    margin-right: 5px;
+}
