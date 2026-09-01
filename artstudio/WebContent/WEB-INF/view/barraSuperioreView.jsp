@@ -12,9 +12,17 @@
         <span class="testo-benvenuto">
             Ciao, <strong><%= utenteNavigazione.getNome() %></strong>
         </span>
+
+        <a href="<%= request.getContextPath() %>/utente/profilo" class="btn-opzione">Profilo</a>
+
         <% if ("admin".equalsIgnoreCase(utenteNavigazione.getRuolo())) { %>
             <a href="<%= request.getContextPath() %>/admin/prodotti" class="btn-opzione">Gestione</a>
         <% } %>
-        <a href="<%= request.getContextPath() %>/logout" class="btn-indietro" style="background-color: #dc3545;">Esci</a>
+
+        <!-- TASTO LOGOUT BEN VISIBILE -->
+        <a href="<%= request.getContextPath() %>/logout" 
+           style="background-color: #dc3545; color: #ffffff !important; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-weight: bold; display: inline-block;">
+           Esci
+        </a>
     <% } %>
 </div>
