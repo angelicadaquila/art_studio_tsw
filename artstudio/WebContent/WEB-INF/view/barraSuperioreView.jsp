@@ -19,9 +19,8 @@
             <a href="<%= request.getContextPath() %>/admin/prodotti" class="btn-opzione">Gestione</a>
         <% } %>
 
-        <!-- TASTO LOGOUT BEN VISIBILE -->
         <a href="<%= request.getContextPath() %>/logout" 
-           style="background-color: #dc3545; color: #ffffff !important; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-weight: bold; display: inline-block;">
+           style="background-color: #dc3545; color: #ffffff; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-weight: bold; display: inline-block;">
            Esci
         </a>
     <% } %>
