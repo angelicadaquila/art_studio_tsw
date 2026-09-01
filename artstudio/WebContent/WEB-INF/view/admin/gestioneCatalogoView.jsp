@@ -14,7 +14,7 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/catalogo.css">
 </head>
 <body>
-
+<jsp:include page="/WEB-INF/view/barraSuperioreView.jsp" />
 <div style="padding: 20px; max-width: 1200px; margin: 0 auto;">
 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
