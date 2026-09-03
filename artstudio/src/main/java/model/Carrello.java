@@ -31,7 +31,18 @@ public class Carrello implements Serializable {
                 elementi.add(new ElementoCarrello(prod, quantita));
             }
         } else {
-            elementi.add(new ElementoCarrello(prod, 1));
+            boolean giaPresente = false;
+            for (int i = 0; i < elementi.size(); i++) {
+                ElementoCarrello item = elementi.get(i);
+                if (item.getProdotto().getIdProdotto() == prod.getIdProdotto()) {
+                    giaPresente = true;
+                    break;
+                }
+            }
+            
+            if (!giaPresente) {
+                elementi.add(new ElementoCarrello(prod, 1));
+            }
         }
     }
 
@@ -75,5 +86,27 @@ public class Carrello implements Serializable {
             totale += elementi.get(i).getTotale();
         }
         return totale;
+    }
+    
+    public void aggiungiProd(Prodotto prod, int quantita, String descrizioneComm, String refComm) {
+        boolean giaPresente = false;
+        for (int i = 0; i < elementi.size(); i++) {
+            ElementoCarrello item = elementi.get(i);
+            if (item.getProdotto().getIdProdotto() == prod.getIdProdotto()) {
+                giaPresente = true;
+                item.setDescrizioneComm(descrizioneComm);
+                if (refComm != null && !refComm.isEmpty()) {
+                    item.setRefComm(refComm);
+                }
+                break;
+            }
+        }
+
+        if (!giaPresente) {
+            ElementoCarrello nuovoElemento = new ElementoCarrello(prod, 1);
+            nuovoElemento.setDescrizioneComm(descrizioneComm);
+            nuovoElemento.setRefComm(refComm);
+            elementi.add(nuovoElemento);
+        }
     }
 }
