@@ -73,15 +73,15 @@ public class loginControl extends HttpServlet {
 
         try {
             Utente utente = utenteDao.doRetrieveByEmail(email.trim().toLowerCase());
-            String passwordHash = hashPasswordSHA256(password);
-
+            String passwordHash = hashPasswordSHA512(password);
+            
             if (utente != null && utente.getPassword() != null && utente.getPassword().equals(passwordHash)) {
                 HttpSession session = request.getSession(true);
                 session.setAttribute("utente", utente);
                 if ("admin".equalsIgnoreCase(utente.getRuolo())) {
                     response.sendRedirect(request.getContextPath() + "/admin/prodotti");
                 } else {
-                    response.sendRedirect(request.getContextPath() + "/catalogo?tipo=tutti");
+                    response.sendRedirect(request.getContextPath() + "/utente/profilo");
                 }
                 return;
 
@@ -99,9 +99,9 @@ public class loginControl extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
-    private String hashPasswordSHA256(String passwordInChiaro) {
+    private String hashPasswordSHA512(String passwordInChiaro) {
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            MessageDigest digest = MessageDigest.getInstance("SHA-512");
             byte[] hash = digest.digest(passwordInChiaro.getBytes(StandardCharsets.UTF_8));
             StringBuilder hexString = new StringBuilder();
             for (int i = 0; i < hash.length; i++) {
