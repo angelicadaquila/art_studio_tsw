@@ -88,18 +88,28 @@
 	</table>
 
 	<h2>Aggiungi al Carrello</h2>
-	<form action="dettaglioProdotto" method="post">
-		<input type="hidden" name="action" value="aggiungiC">
-		<input type="hidden" name="id" value="<%= p.getIdProdotto() %>">
+	<form action="<%= request.getContextPath() %>/carrello" method="post" enctype="multipart/form-data">
+		<input type="hidden" name="azione" value="aggiungi">
+		<input type="hidden" name="idProdotto" value="<%= p.getIdProdotto() %>">
 		
-		<div class="form-gruppo">
-			<label for="quantita">Quantita:</label>
-			<% if (p instanceof Stampa) { %>
+		<% if (p instanceof Stampa) { %>
+			<div class="form-gruppo">
+				<label for="quantita">Quantità:</label>
 				<input type="number" id="quantita" name="quantita" value="1" min="1" required>
-			<% } else { %>
-				<input type="number" id="quantita" name="quantita" value="1" min="1" max="1" readonly>
-			<% } %>
-		</div>
+			</div>
+		<% } else if (p instanceof Commissione) { %>
+			<input type="hidden" name="quantita" value="1">
+
+			<div class="form-gruppo">
+				<label for="descrizioneComm">Descrizione della Commissione:</label>
+				<textarea id="descrizioneComm" name="descrizioneComm" rows="4" required placeholder="Descrivi qui come vuoi la tua opera personalizzata..."></textarea>
+			</div>
+
+			<div class="form-gruppo">
+				<label for="immagineRef">Immagine di riferimento (opzionale):</label>
+				<input type="file" id="immagineRef" name="immagineRef" accept="image/*">
+			</div>
+		<% } %>
 		
 		<div class="form-azioni">
 			<input type="submit" class="btn-invio" value="Aggiungi al Carrello">
