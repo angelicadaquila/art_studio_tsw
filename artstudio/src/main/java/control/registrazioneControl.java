@@ -92,9 +92,9 @@ public class registrazioneControl extends HttpServlet {
             nuovoUtente.setNome(nome.trim());
             nuovoUtente.setCognome(cognome.trim());
             nuovoUtente.setEmail(email.trim().toLowerCase());
-            nuovoUtente.setRuolo("utente");
+            nuovoUtente.setRuolo("cliente");
 
-            String passwordHash = hashPasswordSHA256(password);
+            String passwordHash = hashPasswordSHA512(password);
             nuovoUtente.setPassword(passwordHash);
             
             utenteDao.doSave(nuovoUtente);
@@ -126,13 +126,12 @@ public class registrazioneControl extends HttpServlet {
     }
     
     
-    private String hashPasswordSHA256(String passwordInChiaro) {
+    private String hashPasswordSHA512(String passwordInChiaro) {
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            MessageDigest digest = MessageDigest.getInstance("SHA-512");
             byte[] hash = digest.digest(passwordInChiaro.getBytes(StandardCharsets.UTF_8));
             StringBuilder hexString = new StringBuilder();
-            for (int i = 0; i < hash.length; i++) {
-                byte b = hash[i];
+            for (byte b : hash) {
                 String hex = Integer.toHexString(0xff & b);
                 if (hex.length() == 1) {
                     hexString.append('0');
@@ -141,7 +140,7 @@ public class registrazioneControl extends HttpServlet {
             }
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Algoritmo di hashing non trovato", e);
+            throw new RuntimeException("Algoritmo di hashing SHA-512 non trovato", e);
         }
     }
 }
