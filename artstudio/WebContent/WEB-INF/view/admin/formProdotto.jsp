@@ -86,7 +86,7 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/componenti.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/catalogo.css">
     
-    <script type="text/javascript" src="${pageContext.request.contextPath}/styles/formProdotto.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/formProdotto.js"></script>
 </head>
 <body>
 
