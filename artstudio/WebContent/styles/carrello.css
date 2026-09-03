@@ -1,0 +1,62 @@
+.container {
+    width: 80%;
+    margin: 20px auto;
+    font-family: sans-serif;
+}
+
+.tabella-carrello {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.tabella-carrello th, 
+.tabella-carrello td {
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.tabella-carrello th {
+    background-color: #f2f2f2;
+}
+
+.note-commissione {
+    font-size: 0.9em;
+    color: #444;
+}
+
+.allegato-commissione img {
+    margin-top: 5px;
+    border: 1px solid #999;
+}
+
+.form-quantita {
+    display: inline-block;
+}
+
+.form-quantita input[type="number"] {
+    width: 50px;
+}
+
+.btn-elimina {
+    color: red;
+}
+
+.riepilogo-carrello {
+    text-align: right;
+    margin-top: 20px;
+}
+
+.azioni-carrello {
+    margin-top: 15px;
+}
+
+.azioni-carrello a {
+    margin-left: 10px;
+}
+
+.carrello-vuoto {
+    text-align: center;
+    margin-top: 40px;
+}
