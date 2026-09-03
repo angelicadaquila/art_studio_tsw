@@ -8,6 +8,8 @@ public class ElementoCarrello implements Serializable {
 
     private Prodotto prod;
     private int quantita;
+    private String descrizioneComm;
+    private String refComm; 
 
     public ElementoCarrello() {}
 
@@ -30,6 +32,22 @@ public class ElementoCarrello implements Serializable {
 
     public void setQuantita(int quantita) {
         this.quantita = quantita;
+    }
+    
+    public void setDescrizioneComm(String descrizioneComm) {
+        this.descrizioneComm = descrizioneComm;
+    }
+    
+    public String getDescrizioneComm() {
+        return descrizioneComm;
+    }
+    
+    public void setRefComm(String refComm) {
+        this.refComm = refComm;
+    }
+    
+    public String getRefComm() {
+        return refComm;
     }
 
     public double getTotale() {
