@@ -1,14 +1,15 @@
 package dao;
 
 import java.sql.SQLException;
+import model.Carrello;
 import java.sql.Timestamp;
 import java.util.List;
 
 import model.Ordine;
 
 public interface OrdineDAO {
-
-    public void doSave(Ordine ord) throws SQLException;
+    
+    public void doSaveConCarrello(Ordine ord, Carrello carrello, int idIndirizzo, String metodoPagamento) throws SQLException;
 
     public Ordine doRetrieveByKey(int idOrdine) throws SQLException;
 
