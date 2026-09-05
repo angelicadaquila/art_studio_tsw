@@ -12,11 +12,23 @@
     <meta charset="UTF-8">
     <title>ArtStudio - Carrello</title>
     <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/styles/carrello.css">
+    <link href="<%=request.getContextPath()%>/styles/catalogo.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-
+<div class="container">
+<jsp:include page="/WEB-INF/view/barraSuperioreView.jsp" />
     <main class="container">
         <h1>Il tuo Carrello</h1>
+        <%
+    String errore = request.getParameter("errore");
+    if ("giacenza".equals(errore)) {
+%>
+    <div class="messaggio-errore" style="background-color: #f8d7da; color: #721c24; padding: 12px; border: 1px solid #f5c6cb; border-radius: 5px; margin-bottom: 20px; text-align: center;">
+        <strong>Attenzione!</strong> La quantità richiesta supera la disponibilità attuale in magazzino.
+    </div>
+<%
+    }
+%>
 
         <%
    			Carrello carrello = (Carrello) session.getAttribute("carrello");
@@ -144,6 +156,6 @@
             }
         %>
     </main>
-
+</div>
 </body>
 </html>
