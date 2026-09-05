@@ -21,7 +21,9 @@ import dao.ProdottoDAO;
 import dao.ProdottoDAOImp;
 import model.Carrello;
 import model.Commissione;
+import model.ElementoCarrello;
 import model.Prodotto;
+import model.Stampa;
 
 @WebServlet("/carrello")
 @MultipartConfig(
@@ -96,6 +98,24 @@ public class carrelloControl extends HttpServlet {
                                 }
 
                                 carrello.aggiungiProd(prod, 1, descrizioneComm, nomeFileReference);
+                            } else if (prod instanceof Stampa) {
+                                Stampa stampa = (Stampa) prod;
+                                int disponibilitaMagazzino = stampa.getQuantita();
+                                int quantitaGiaInCarrello = 0;
+                                if (carrello.getElementi() != null) {
+                                    for (ElementoCarrello item : carrello.getElementi()) {
+                                        if (item.getProdotto().getIdProdotto() == idProdotto) {
+                                            quantitaGiaInCarrello = item.getQuantita();
+                                            break;
+                                        }
+                                    }
+                                }
+                                if ((quantitaGiaInCarrello + quantita) <= disponibilitaMagazzino) {
+                                    carrello.aggiungiProd(prod, quantita);
+                                } else {
+                                    response.sendRedirect(request.getContextPath() + "/carrello?errore=giacenza");
+                                    return;
+                                }
                             } else {
                                 carrello.aggiungiProd(prod, quantita);
                             }
@@ -108,7 +128,19 @@ public class carrelloControl extends HttpServlet {
                     if (idStr != null && !idStr.trim().isEmpty() && qtaStr != null && !qtaStr.trim().isEmpty()) {
                         int idProdotto = Integer.parseInt(idStr);
                         int nuovaQta = Integer.parseInt(qtaStr);
-                        carrello.aggiornaQuantita(idProdotto, nuovaQta);
+
+                        Prodotto prod = prodottoDao.doRetrieveByKey(idProdotto);
+                        if (prod instanceof Stampa) {
+                            Stampa stampa = (Stampa) prod;
+                            if (nuovaQta <= stampa.getQuantita()) {
+                                carrello.aggiornaQuantita(idProdotto, nuovaQta);
+                            } else {
+                                response.sendRedirect(request.getContextPath() + "/carrello?errore=giacenza");
+                                return;
+                            }
+                        } else {
+                            carrello.aggiornaQuantita(idProdotto, nuovaQta);
+                        }
                     }
                 } else if ("elimina".equalsIgnoreCase(azione)) {
                     String idStr = request.getParameter("idProdotto");
