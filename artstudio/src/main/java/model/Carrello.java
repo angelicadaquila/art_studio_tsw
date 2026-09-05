@@ -17,7 +17,6 @@ public class Carrello implements Serializable {
     public void aggiungiProd(Prodotto prod, int quantita) {
         if (prod instanceof Stampa) {
             boolean giaPresente = false;
-
             for (int i = 0; i < elementi.size(); i++) {
                 ElementoCarrello item = elementi.get(i);
                 if (item.getProdotto() instanceof Stampa && item.getProdotto().getIdProdotto() == prod.getIdProdotto()) {
@@ -26,23 +25,11 @@ public class Carrello implements Serializable {
                     break;
                 }
             }
-
             if (!giaPresente) {
                 elementi.add(new ElementoCarrello(prod, quantita));
             }
         } else {
-            boolean giaPresente = false;
-            for (int i = 0; i < elementi.size(); i++) {
-                ElementoCarrello item = elementi.get(i);
-                if (item.getProdotto().getIdProdotto() == prod.getIdProdotto()) {
-                    giaPresente = true;
-                    break;
-                }
-            }
-            
-            if (!giaPresente) {
-                elementi.add(new ElementoCarrello(prod, 1));
-            }
+            elementi.add(new ElementoCarrello(prod, 1));
         }
     }
 
@@ -51,7 +38,6 @@ public class Carrello implements Serializable {
             eliminaProd(idProdotto);
             return;
         }
-
         for (int i = 0; i < elementi.size(); i++) {
             ElementoCarrello item = elementi.get(i);
             if (item.getProdotto().getIdProdotto() == idProdotto) {
@@ -89,20 +75,23 @@ public class Carrello implements Serializable {
     }
     
     public void aggiungiProd(Prodotto prod, int quantita, String descrizioneComm, String refComm) {
-        boolean giaPresente = false;
-        for (int i = 0; i < elementi.size(); i++) {
-            ElementoCarrello item = elementi.get(i);
-            if (item.getProdotto().getIdProdotto() == prod.getIdProdotto()) {
-                giaPresente = true;
-                item.setDescrizioneComm(descrizioneComm);
-                if (refComm != null && !refComm.isEmpty()) {
-                    item.setRefComm(refComm);
+        if (prod instanceof model.Stampa) {
+            boolean giaPresente = false;
+            for (int i = 0; i < elementi.size(); i++) {
+                ElementoCarrello item = elementi.get(i);
+                if (item.getProdotto().getIdProdotto() == prod.getIdProdotto()) {
+                    item.setQuantita(item.getQuantita() + quantita);
+                    giaPresente = true;
+                    break;
                 }
-                break;
             }
-        }
 
-        if (!giaPresente) {
+            if (!giaPresente) {
+                ElementoCarrello nuovoElemento = new ElementoCarrello(prod, quantita);
+                elementi.add(nuovoElemento);
+            }
+
+        } else {
             ElementoCarrello nuovoElemento = new ElementoCarrello(prod, 1);
             nuovoElemento.setDescrizioneComm(descrizioneComm);
             nuovoElemento.setRefComm(refComm);
