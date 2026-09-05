@@ -13,7 +13,9 @@ import javax.sql.DataSource;
 
 import model.Commissione;
 import model.Ordine;
-import model.Stampa;
+import model.Carrello;
+import model.ElementoCarrello;
+import model.Prodotto;
 
 public class OrdineDAOImp implements OrdineDAO{
 	
@@ -23,29 +25,74 @@ public class OrdineDAOImp implements OrdineDAO{
 	    public OrdineDAOImp(DataSource ds) {
 	        this.ds = ds;
 	    }
+	   
+	    public synchronized void doSaveConCarrello(Ordine ord, Carrello carrello, int idIndirizzo, String metodoPagamento) throws SQLException {
+	        String insertOrdineSQL = "INSERT INTO " + TABLE_NAME  + " (id_utente, totale_prodotti, spese_spedizione, totale_ordine, id_indirizzo, metodo_pagamento, stato) VALUES (?, ?, ?, ?, ?, ?, ?)";
+	        String insertRigaSQL = "INSERT INTO riga_ordine (id_ordine, id_prodotto, prezzo_acquisto, quantita, descrizione_comm, ref_comm) VALUES (?, ?, ?, ?, ?, ?)";
 
-	    @Override
-	    public synchronized void doSave(Ordine ord) throws SQLException {
-	        String insertOrdineSQL = "INSERT INTO " + TABLE_NAME 
-	                + " (id_utente, totale_prodotti, spede_spedizione, totale_ordine) VALUES (?, ?, ?, ?)";
+	        Connection connection = null;
+	        PreparedStatement psOrdine = null;
+	        PreparedStatement psRiga = null;
 
-	        int idGenerato = -1;
-	        
-	        try (Connection connection = ds.getConnection();
-	            PreparedStatement ps = connection.prepareStatement(insertOrdineSQL, Statement.RETURN_GENERATED_KEYS)) {
-	            ps.setInt(1, ord.getIdUtente());
-	            ps.setDouble(2, ord.getTotaleProdotti());
-	            ps.setDouble(3, ord.getSpeseSpedizione());
-	            ps.setDouble(4, ord.getTotaleOrdine());
-	            ps.executeUpdate();
-	            try (ResultSet rs = ps.getGeneratedKeys()) {
+	        try {
+	            connection = ds.getConnection();
+	            connection.setAutoCommit(false);
+	            psOrdine = connection.prepareStatement(insertOrdineSQL, Statement.RETURN_GENERATED_KEYS);
+	            psOrdine.setInt(1, ord.getIdUtente());
+	            psOrdine.setDouble(2, ord.getTotaleProdotti());
+	            psOrdine.setDouble(3, ord.getSpeseSpedizione());
+	            psOrdine.setDouble(4, ord.getTotaleOrdine());
+	            psOrdine.setInt(5, idIndirizzo);
+	            psOrdine.setString(6, metodoPagamento);
+	            psOrdine.setString(7, "In lavorazione");
+	            psOrdine.executeUpdate();
+
+	            int idOrdineGenerato = -1;
+	            try (ResultSet rs = psOrdine.getGeneratedKeys()) {
 	                if (rs.next()) {
-	                    idGenerato = rs.getInt(1);
-	                    ord.setIdOrdine(idGenerato);
+	                    idOrdineGenerato = rs.getInt(1);
+	                    ord.setIdOrdine(idOrdineGenerato);
 	                }
 	            }
+	            psRiga = connection.prepareStatement(insertRigaSQL);
+	            List<ElementoCarrello> elementi = carrello.getElementi();
+
+	            for (int i = 0; i < elementi.size(); i++) {
+	                ElementoCarrello item = elementi.get(i);
+	                Prodotto prod = item.getProdotto();
+
+	                psRiga.setInt(1, idOrdineGenerato);
+	                psRiga.setInt(2, prod.getIdProdotto());
+	                psRiga.setDouble(3, prod.getPrezzo());
+	                psRiga.setInt(4, item.getQuantita());
+	                
+	                if (prod instanceof Commissione) {
+	                    psRiga.setString(5, item.getDescrizioneComm());
+	                    psRiga.setString(6, item.getRefComm());
+	                } else {
+	                    psRiga.setString(5, null);
+	                    psRiga.setString(6, null);
+	                }
+
+	                psRiga.addBatch();
+	            }
+
+	            psRiga.executeBatch(); 
+	            connection.commit();
+
+	        } catch (SQLException e) {
+	            if (connection != null) {
+	                connection.rollback();
+	            }
+	            throw e;
+	        } finally {
+	            if (psRiga != null) psRiga.close();
+	            if (psOrdine != null) psOrdine.close();
+	            if (connection != null) {
+	                connection.setAutoCommit(true);
+	                connection.close();
+	            }
 	        }
-	        
 	    }
 	    
 	    @Override
