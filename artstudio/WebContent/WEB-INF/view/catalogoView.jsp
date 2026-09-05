@@ -31,8 +31,6 @@
     %>
 
     <div>
-        <a href="<%= request.getContextPath() %>/catalogo" class="btn-indietro"> Indietro</a>
-        
         <h1>
             Catalogo: 
             <% 
