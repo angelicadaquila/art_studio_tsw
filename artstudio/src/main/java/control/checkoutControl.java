@@ -2,7 +2,6 @@ package control;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletConfig;
@@ -60,8 +59,8 @@ public class checkoutControl extends HttpServlet {
         }
 
         try {
-            List<Indirizzo> listaIndirizzi = indirizzoDao.doRetrieveByUtente(utente.getIdUtente());
-            request.setAttribute("listaIndirizzi", listaIndirizzi);
+            Indirizzo indirizzo = indirizzoDao.doRetrieveByUtente(utente.getIdUtente());
+            request.setAttribute("indirizzo", indirizzo);
 
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/checkoutView.jsp");
             dispatcher.forward(request, response);
@@ -101,8 +100,8 @@ public class checkoutControl extends HttpServlet {
 
         if (idIndirizzoStr == null || idIndirizzoStr.trim().isEmpty()) {
             try {
-                List<Indirizzo> listaIndirizzi = indirizzoDao.doRetrieveByUtente(utente.getIdUtente());
-                request.setAttribute("listaIndirizzi", listaIndirizzi);
+                Indirizzo indirizzo = indirizzoDao.doRetrieveByUtente(utente.getIdUtente());
+                request.setAttribute("indirizzo", indirizzo);
                 request.setAttribute("errore", "Seleziona un indirizzo di spedizione prima di proseguire.");
                 
                 RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/checkoutView.jsp");
@@ -139,8 +138,8 @@ public class checkoutControl extends HttpServlet {
             e.printStackTrace();
 
             try {
-                List<Indirizzo> listaIndirizzi = indirizzoDao.doRetrieveByUtente(utente.getIdUtente());
-                request.setAttribute("listaIndirizzi", listaIndirizzi);
+                Indirizzo indirizzo = indirizzoDao.doRetrieveByUtente(utente.getIdUtente());
+                request.setAttribute("indirizzo", indirizzo);
                 request.setAttribute("errore", "Si è verificato un errore durante l'elaborazione dell'ordine. Riprova.");
                 
                 RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/checkoutView.jsp");
