@@ -45,8 +45,8 @@ public class profiloControl extends HttpServlet {
         }
         if (utente != null) {
             try {
-                List<Indirizzo> listaIndirizzi = indirizzoDao.doRetrieveByUtente(utente.getIdUtente());
-                request.setAttribute("listaIndirizzi", listaIndirizzi);
+                Indirizzo indirizzo = indirizzoDao.doRetrieveByUtente(utente.getIdUtente());
+                request.setAttribute("indirizzo", indirizzo);
             } catch (SQLException e) {
                 System.err.println("Errore nel recupero indirizzi: " + e.getMessage());
                 e.printStackTrace();
