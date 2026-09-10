@@ -9,12 +9,12 @@
 	<link href="<%=request.getContextPath()%>/styles/base.css" rel="stylesheet" type="text/css">
 	<link href="<%=request.getContextPath()%>/styles/componenti.css" rel="stylesheet" type="text/css">
 	<link href="<%=request.getContextPath()%>/styles/form.css" rel="stylesheet" type="text/css">
+	<link href="<%=request.getContextPath()%>/styles/catalogo.css" rel="stylesheet" type="text/css">
 	<title>Profilo Utente</title>
 </head>
 <body>
-
-	<a href="<%=request.getContextPath()%>/catalogo?tipo=tutti" class="btn-indietro">Torna al Catalogo</a>
-
+<div class="container">
+<jsp:include page="/WEB-INF/view/barraSuperioreView.jsp" />
 	<h2>Il Mio Profilo</h2>
 
 	<%
@@ -30,27 +30,24 @@
 
 		<hr style="margin: 20px 0;">
 
-		<h3>I Miei Indirizzi di Spedizione</h3>
-		
-		<div style="margin-bottom: 15px;">
-			<a href="<%=request.getContextPath()%>/utente/nuovoIndirizzo" class="btn-opzione" style="text-decoration: none; padding: 6px 12px; background-color: #28a745; color: white; border-radius: 4px;">+ Aggiungi Nuovo Indirizzo</a>
-		</div>
+		<h3>Indirizzo Predefinito di Spedizione</h3>
 
-		<% if (listaIndirizzi != null && !listaIndirizzi.isEmpty()) { 
-    		for (int i = 0; i < listaIndirizzi.size(); i++) {
-        		Indirizzo ind = listaIndirizzi.get(i);
+		<%
+    		Indirizzo ind = (Indirizzo) request.getAttribute("indirizzo");
 		%>
-    		<div class="form-gruppo" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
-        	<p><strong>Via/Piazza:</strong> <%= ind.getVia() %>, <%= ind.getCivico() %></p>
-       	 	<p><strong>Città:</strong> <%= ind.getCitta() %></p>
-        	<p><strong>Regione:</strong> <%= ind.getRegione() %></p>
+
+		<% if (ind != null) { %>
+    		<div class="form-gruppo" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+        		<p><strong>Via/Piazza:</strong> <%= ind.getVia() %>, <%= ind.getCivico() %></p>
+        		<p><strong>Città:</strong> <%= ind.getCitta() %></p>
+        		<p><strong>Regione:</strong> <%= ind.getRegione() %></p>
+        		<div style="margin-top: 10px;">
+            		<a href="<%=request.getContextPath()%>/utente/modificaIndirizzo" class="btn-opzione" style="text-decoration: none; padding: 6px 12px; background-color: #0d6efd; color: white; border-radius: 4px;">Modifica Indirizzo</a>
+        		</div>
     		</div>
-		<% 
-   			}
-		} else { 
-		%>
-    <p style="color: gray;">Nessun indirizzo salvato.</p>
-<% } %>
+		<% } else { %>
+    		<p style="color: gray;">Nessun indirizzo salvato.</p>
+		<% } %>
 
 	<% } else { %>
 		<p id="errore" style="color: red; font-weight: bold;">Nessun utente trovato in sessione.</p>
@@ -59,6 +56,6 @@
 	<div class="form-azioni" style="margin-top: 20px;">
 		<a href="<%=request.getContextPath()%>/logout" class="btn-indietro" style="background-color: #dc3545; text-decoration: none; display: inline-block;">Logout</a>
 	</div>
-
+</div>
 </body>
 </html>
