@@ -26,61 +26,61 @@
 	<h2>Registrazione Utente</h2>
 
 	<form id="formRegistrazione" action="<%=request.getContextPath()%>/registrazione" method="post">
-		
+	
+	
 		<h3>Dati Personali</h3>
 		
 		<div class="form-gruppo">
 			<label for="nome">Nome:</label>
-			<input type="text" id="nome" name="nome" required>
+			<input type="text" id="nome" name="nome">
 		</div>
 
 		<div class="form-gruppo">
 			<label for="cognome">Cognome:</label>
-			<input type="text" id="cognome" name="cognome" required>
+			<input type="text" id="cognome" name="cognome">
 		</div>
 
 		<div class="form-gruppo">
 			<label for="email">Email:</label>
-			<input type="email" id="email" name="email" required>
+			<input type="email" id="email" name="email">
 		</div>
 
 		<div class="form-gruppo">
 			<label for="password">Password:</label>
-			<input type="password" id="password" name="password" required>
+			<input type="password" id="password" name="password">
 		</div>
 
 		<div class="form-gruppo">
 			<label for="confermaPassword">Conferma Password:</label>
-			<input type="password" id="confermaPassword" name="confermaPassword" required>
+			<input type="password" id="confermaPassword" name="confermaPassword">
 		</div>
 
 		<h3>Indirizzo di Spedizione</h3>
 
 		<div class="form-gruppo">
 			<label for="via">Via / Piazza:</label>
-			<input type="text" id="via" name="via" required>
+			<input type="text" id="via" name="via">
 		</div>
 
 		<div class="form-gruppo">
 			<label for="civico">Numero Civico:</label>
-			<input type="text" id="civico" name="civico" required>
+			<input type="text" id="civico" name="civico">
 		</div>
 
 		<div class="form-gruppo">
 			<label for="citta">Citt&agrave;:</label>
-			<input type="text" id="citta" name="citta" required>
+			<input type="text" id="citta" name="citta">
 		</div>
 
 		<div class="form-gruppo">
 			<label for="regione">Regione:</label>
-			<input type="text" id="regione" name="regione" required>
+			<input type="text" id="regione" name="regione">
 		</div>
 
 		<div class="form-azioni">
 			<input type="submit" class="btn-invio" value="Registrati">
 		</div>
 	</form>
-
-	<script src="<%=request.getContextPath()%>/scripts/validazioneRegistrazione.js"></script>
+<script src="<%=request.getContextPath()%>/scripts/validazioneRegistrazione.js" defer></script>
 </body>
 </html>

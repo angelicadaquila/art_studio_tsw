@@ -79,7 +79,7 @@ public class registrazioneControl extends HttpServlet {
             dispatcher.forward(request, response);
             return;
         }
-
+        
         try {
             if (utenteDao.doRetrieveByEmail(email.trim().toLowerCase()) != null) {
                 request.setAttribute("errore", "Email già in uso.");
