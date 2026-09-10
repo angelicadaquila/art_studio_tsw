@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/componenti.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/form.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/catalogo.css">
+    <script src="${pageContext.request.contextPath}/scripts/checkout.js"></script>
 </head>
 <body>
 
@@ -35,18 +36,18 @@
     <form action="${pageContext.request.contextPath}/utente/checkout" method="POST">
         <fieldset style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
             <legend><strong>1. Indirizzo di Spedizione</strong></legend>
+            
             <% if (ind != null) { %>
                 <div style="margin-bottom: 15px;">
-                    <input type="radio" id="tipo_profilo" name="tipoIndirizzo" value="PROFILO" checked onclick="toggleIndirizzo(false)">
+                    <input type="radio" id="tipo_profilo" name="idIndirizzo" value="<%= ind.getIdIndirizzo() %>" checked onclick="toggleIndirizzo(false)">
                     <label for="tipo_profilo">
                         <strong>Usa il mio indirizzo predefinito:</strong> <%= ind.getVia() %>, <%= ind.getCivico() %> - <%= ind.getCitta() %> (<%= ind.getRegione() %>)
                     </label>
-                    <input type="hidden" name="idIndirizzoProfilo" value="<%= ind.getIdIndirizzo() %>">
                 </div>
             <% } %>
 
             <div style="margin-bottom: 10px;">
-                <input type="radio" id="tipo_nuovo" name="tipoIndirizzo" value="NUOVO" <% if (ind == null) { %>checked<% } %> onclick="toggleIndirizzo(true)">
+                <input type="radio" id="tipo_nuovo" name="idIndirizzo" value="0" <% if (ind == null) { %>checked<% } %> onclick="toggleIndirizzo(true)">
                 <label for="tipo_nuovo"><strong>Spedisci a un altro indirizzo (solo per questo ordine)</strong></label>
             </div>
 
@@ -71,23 +72,29 @@
         </fieldset>
 
         <fieldset style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-            <legend><strong>2. Metodo di Pagamento</strong></legend>
-            
-            <div style="margin-bottom: 10px;">
-                <input type="radio" id="carta" name="metodoPagamento" value="Carta di Credito" checked>
-                <label for="carta">Carta di Credito / Debito</label>
-            </div>
+    	<legend><strong>2. Dati di Pagamento (Carta di Credito / Debito)</strong></legend>
+    
+    		<div class="form-gruppo" style="margin-bottom: 12px;">
+        		<label for="intestatario">Intestatario Carta:</label>
+        		<input type="text" id="intestatario" name="intestatario" placeholder="Es. Mario Rossi" style="width: 100%; padding: 8px;" >
+    		</div>
 
-            <div style="margin-bottom: 10px;">
-                <input type="radio" id="paypal" name="metodoPagamento" value="PayPal">
-                <label for="paypal">PayPal</label>
-            </div>
+    		<div class="form-gruppo" style="margin-bottom: 12px;">
+        		<label for="numeroCarta">Numero Carta:</label>
+        		<input type="text" id="numeroCarta" name="numeroCarta" placeholder="1234 5678 9012 3456" maxlength="19" style="width: 100%; padding: 8px;">
+    		</div>
 
-            <div>
-                <input type="radio" id="bonifico" name="metodoPagamento" value="Bonifico">
-                <label for="bonifico">Bonifico Bancario</label>
-            </div>
-        </fieldset>
+    		<div style="display: flex; gap: 15px;">
+        		<div class="form-gruppo" style="flex: 1;">
+            		<label for="scadenza">Data di Scadenza (MM/AA):</label>
+            		<input type="text" id="scadenza" name="scadenza" placeholder="MM/AA" maxlength="5" style="width: 100%; padding: 8px;" >
+        		</div>
+        		<div class="form-gruppo" style="flex: 1;">
+            		<label for="cvv">CVV / CVC:</label>
+            		<input type="password" id="cvv" name="cvv" placeholder="123" maxlength="4" style="width: 100%; padding: 8px;" >
+        		</div>
+    		</div>
+		</fieldset>
 
         <div style="text-align: right; margin-top: 20px;">
            <h3>Totale da Pagare: 
@@ -108,17 +115,5 @@
         </div>
     </form>
 </div>
-
-<script>
-function toggleIndirizzo(mostra) {
-    var box = document.getElementById("boxNuovoIndirizzo");
-    if (mostra) {
-        box.style.display = "block";
-    } else {
-        box.style.display = "none";
-    }
-}
-</script>
-
 </body>
 </html>
