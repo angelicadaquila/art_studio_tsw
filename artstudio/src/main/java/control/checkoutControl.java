@@ -52,7 +52,11 @@ public class checkoutControl extends HttpServlet {
             return;
         }
 
-        Carrello carrello = (Carrello) session.getAttribute("carrello");
+        Carrello carrello = null;
+        if (session != null) {
+            carrello = (Carrello) session.getAttribute("carrello");
+        }
+
         if (carrello == null || carrello.getElementi().isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/carrello");
             return;
@@ -96,29 +100,13 @@ public class checkoutControl extends HttpServlet {
         }
 
         String idIndirizzoStr = request.getParameter("idIndirizzo");
-        String metodoPagamento = request.getParameter("metodoPagamento");
 
         if (idIndirizzoStr == null || idIndirizzoStr.trim().isEmpty()) {
-            try {
-                Indirizzo indirizzo = indirizzoDao.doRetrieveByUtente(utente.getIdUtente());
-                request.setAttribute("indirizzo", indirizzo);
-                request.setAttribute("errore", "Seleziona un indirizzo di spedizione prima di proseguire.");
-                
-                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/checkoutView.jsp");
-                dispatcher.forward(request, response);
-                return;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                response.sendRedirect(request.getContextPath() + "/carrello");
-                return;
-            }
+            response.sendRedirect(request.getContextPath() + "/utente/checkout?errore=1");
+            return;
         }
 
         int idIndirizzo = Integer.parseInt(idIndirizzoStr);
-
-        if (metodoPagamento == null || metodoPagamento.trim().isEmpty()) {
-            metodoPagamento = "Carta di Credito";
-        }
 
         Ordine nuovoOrdine = new Ordine();
         nuovoOrdine.setIdUtente(utente.getIdUtente());
@@ -127,27 +115,24 @@ public class checkoutControl extends HttpServlet {
         nuovoOrdine.setTotaleOrdine(carrello.getTotale());
 
         try {
-            ordineDao.doSaveConCarrello(nuovoOrdine, carrello, idIndirizzo, metodoPagamento);
+            if (idIndirizzo > 0) {
+                ordineDao.doSaveConCarrello(nuovoOrdine, carrello, idIndirizzo);
+            } else {
+                String via = request.getParameter("via");
+                String civico = request.getParameter("civico");
+                String citta = request.getParameter("citta");
+                String regione = request.getParameter("regione");
+
+                ordineDao.doSaveConCarrello(nuovoOrdine, carrello, via, civico, citta, regione);
+            }
 
             carrello.svuota(); 
-
             response.sendRedirect(request.getContextPath() + "/utente/mieiOrdini?esito=ok");
 
         } catch (SQLException e) {
             System.err.println("Errore durante il salvataggio dell'ordine: " + e.getMessage());
             e.printStackTrace();
-
-            try {
-                Indirizzo indirizzo = indirizzoDao.doRetrieveByUtente(utente.getIdUtente());
-                request.setAttribute("indirizzo", indirizzo);
-                request.setAttribute("errore", "Si è verificato un errore durante l'elaborazione dell'ordine. Riprova.");
-                
-                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/checkoutView.jsp");
-                dispatcher.forward(request, response);
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-                response.sendRedirect(request.getContextPath() + "/carrello");
-            }
+            response.sendRedirect(request.getContextPath() + "/carrello?errore=salvataggio");
         }
     }
 }
