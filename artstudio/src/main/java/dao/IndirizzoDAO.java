@@ -11,7 +11,7 @@ public interface IndirizzoDAO {
 
     Indirizzo doRetrieveByKey(int idIndirizzo) throws SQLException;
 
-    List<Indirizzo> doRetrieveByUtente(int idUtente) throws SQLException;
+    Indirizzo doRetrieveByUtente(int idUtente) throws SQLException;
 
     boolean doUpdate(Indirizzo indirizzo) throws SQLException;
 
