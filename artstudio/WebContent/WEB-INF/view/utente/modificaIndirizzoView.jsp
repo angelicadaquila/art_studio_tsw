@@ -47,6 +47,7 @@
 			<input type="submit" class="btn-invio" value="Salva Indirizzo">
 		</div>
 	</form>
+	
 <script src="<%=request.getContextPath()%>/scripts/validazioneIndirizzo.js" defer></script>
 </body>
 </html>
