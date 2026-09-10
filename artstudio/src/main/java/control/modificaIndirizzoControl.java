@@ -52,7 +52,7 @@ public class modificaIndirizzoControl extends HttpServlet {
                 request.setAttribute("indirizzo", indirizzo);
             }
             
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/utente/nuovoIndirizzoView.jsp");
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/utente/modificaIndirizzoView.jsp");
             dispatcher.forward(request, response);
 
         } catch (SQLException e) {
@@ -64,35 +64,36 @@ public class modificaIndirizzoControl extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        Utente utente = null;
-        if (session != null) {
-            utente = (Utente) session.getAttribute("utente");
-        }
+        Utente utente = (session != null) ? (Utente) session.getAttribute("utente") : null;
 
         if (utente == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
-        String idIndirizzoStr = request.getParameter("idIndirizzo");
         String via = request.getParameter("via");
         String civico = request.getParameter("civico");
         String citta = request.getParameter("citta");
         String regione = request.getParameter("regione");
 
         try {
-            Indirizzo ind = new Indirizzo();
-            ind.setIdUtente(utente.getIdUtente());
-            ind.setVia(via.trim());
-            ind.setCivico(civico.trim());
-            ind.setCitta(citta.trim());
-            ind.setRegione(regione.trim());
+            Indirizzo indirizzoEsistente = indirizzoDao.doRetrieveByUtente(utente.getIdUtente());
 
-            if (idIndirizzoStr != null && !idIndirizzoStr.trim().isEmpty()) {
-                ind.setIdIndirizzo(Integer.parseInt(idIndirizzoStr));
-                indirizzoDao.doUpdate(ind);
+            if (indirizzoEsistente != null) {
+                indirizzoEsistente.setVia(via.trim());
+                indirizzoEsistente.setCivico(civico.trim());
+                indirizzoEsistente.setCitta(citta.trim());
+                indirizzoEsistente.setRegione(regione.trim());
+
+                indirizzoDao.doUpdate(indirizzoEsistente);
             } else {
-                indirizzoDao.doSave(ind);
+                Indirizzo nuovoIndirizzo = new Indirizzo();
+                nuovoIndirizzo.setIdUtente(utente.getIdUtente());
+                nuovoIndirizzo.setVia(via.trim());
+                nuovoIndirizzo.setCivico(civico.trim());
+                nuovoIndirizzo.setCitta(citta.trim());
+                nuovoIndirizzo.setRegione(regione.trim());
+                indirizzoDao.doSave(nuovoIndirizzo);
             }
 
             response.sendRedirect(request.getContextPath() + "/utente/profilo");
