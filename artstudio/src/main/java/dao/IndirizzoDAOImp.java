@@ -68,27 +68,26 @@ public class IndirizzoDAOImp implements IndirizzoDAO {
     }
 
     @Override
-    public synchronized List<Indirizzo> doRetrieveByUtente(int idUtente) throws SQLException {
-        List<Indirizzo> list = new ArrayList<>();
+    public synchronized Indirizzo doRetrieveByUtente(int idUtente) throws SQLException {
+        Indirizzo bean = null;
         String selectSQL = "SELECT * FROM " + TABLE_NAME + " WHERE id_utente = ?";
 
         try (Connection connection = ds.getConnection();
-            PreparedStatement ps = connection.prepareStatement(selectSQL)) {
+             PreparedStatement ps = connection.prepareStatement(selectSQL)) {
             ps.setInt(1, idUtente);
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Indirizzo bean = new Indirizzo();
+                if (rs.next()) {
+                    bean = new Indirizzo();
                     bean.setIdIndirizzo(rs.getInt("id_indirizzo"));
                     bean.setIdUtente(rs.getInt("id_utente"));
                     bean.setVia(rs.getString("via"));
                     bean.setCivico(rs.getString("civico"));
                     bean.setCitta(rs.getString("citta"));
                     bean.setRegione(rs.getString("regione"));
-                    list.add(bean);
                 }
             }
         }
-        return list;
+        return bean;
     }
 
     @Override
