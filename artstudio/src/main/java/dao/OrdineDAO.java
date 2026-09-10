@@ -9,8 +9,10 @@ import model.Ordine;
 
 public interface OrdineDAO {
     
-    public void doSaveConCarrello(Ordine ord, Carrello carrello, int idIndirizzo, String metodoPagamento) throws SQLException;
+    public void doSaveConCarrello(Ordine ord, Carrello carrello, int idIndirizzo) throws SQLException;
 
+    public void doSaveConCarrello(Ordine ord, Carrello carrello, String via, String civico, String citta, String regione) throws SQLException;
+    
     public Ordine doRetrieveByKey(int idOrdine) throws SQLException;
 
     public List<Ordine> doRetrieveAll() throws SQLException;
@@ -24,4 +26,6 @@ public interface OrdineDAO {
     public boolean doUpdateStato(int idOrdine, String nuovoStato) throws SQLException;
 
     public boolean doDelete(int idOrdine) throws SQLException;
+    
+    public boolean doUpdateImmagineConsegna(int idOrdine, String immagineConsegna) throws SQLException;
 }
