@@ -2,7 +2,6 @@
 <%@ page import="model.Carrello" %>
 <%@ page import="model.ElementoCarrello" %>
 <%@ page import="model.Indirizzo" %>
-<%@ page import="java.util.List" %>
 
 <!DOCTYPE html>
 <html lang="it">
@@ -23,7 +22,7 @@
 
     <%
         Carrello carrello = (Carrello) session.getAttribute("carrello");
-        List<Indirizzo> listaIndirizzi = (List<Indirizzo>) request.getAttribute("listaIndirizzi");
+        Indirizzo ind = (Indirizzo) request.getAttribute("indirizzo");
         String errore = (String) request.getAttribute("errore");
     %>
 
@@ -36,27 +35,38 @@
     <form action="${pageContext.request.contextPath}/utente/checkout" method="POST">
         <fieldset style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
             <legend><strong>1. Indirizzo di Spedizione</strong></legend>
-
-            <% if (listaIndirizzi != null && !listaIndirizzi.isEmpty()) { %>
-                <p>Seleziona un indirizzo salvato:</p>
-                <% for (int i = 0; i < listaIndirizzi.size(); i++) { 
-                    Indirizzo ind = listaIndirizzi.get(i);
-                %>
-                    <div style="margin-bottom: 10px;">
-                        <input type="radio" id="ind_<%= ind.getIdIndirizzo() %>" name="idIndirizzo" value="<%= ind.getIdIndirizzo() %>" <%= (i == 0) ? "checked" : "" %>>
-                        <label for="ind_<%= ind.getIdIndirizzo() %>">
-                            <%= ind.getVia() %>, <%= ind.getCivico() %> - <%= ind.getCitta() %> (<%= ind.getRegione() %>)
-                        </label>
-                    </div>
-                <% } %>
-            <% } else { %>
-                <p style="color: #dc3545;">Non hai ancora salvato alcun indirizzo di spedizione.</p>
+            <% if (ind != null) { %>
+                <div style="margin-bottom: 15px;">
+                    <input type="radio" id="tipo_profilo" name="tipoIndirizzo" value="PROFILO" checked onclick="toggleIndirizzo(false)">
+                    <label for="tipo_profilo">
+                        <strong>Usa il mio indirizzo predefinito:</strong> <%= ind.getVia() %>, <%= ind.getCivico() %> - <%= ind.getCitta() %> (<%= ind.getRegione() %>)
+                    </label>
+                    <input type="hidden" name="idIndirizzoProfilo" value="<%= ind.getIdIndirizzo() %>">
+                </div>
             <% } %>
 
-            <div style="margin-top: 15px;">
-                <a href="${pageContext.request.contextPath}/utente/nuovoIndirizzo" class="btn-opzione" style="text-decoration: none; padding: 6px 12px; background-color: #28a745; color: white; border-radius: 4px;">
-                    + Aggiungi Nuovo Indirizzo
-                </a>
+            <div style="margin-bottom: 10px;">
+                <input type="radio" id="tipo_nuovo" name="tipoIndirizzo" value="NUOVO" <% if (ind == null) { %>checked<% } %> onclick="toggleIndirizzo(true)">
+                <label for="tipo_nuovo"><strong>Spedisci a un altro indirizzo (solo per questo ordine)</strong></label>
+            </div>
+
+            <div id="boxNuovoIndirizzo" style="margin-top: 15px; padding-left: 20px; display: <% if (ind == null) { %>block<% } else { %>none<% } %>;">
+                <div class="form-gruppo" style="margin-bottom: 10px;">
+                    <label for="via">Via/Piazza:</label>
+                    <input type="text" id="via" name="via" placeholder="Es. Via Roma">
+                </div>
+                <div class="form-gruppo" style="margin-bottom: 10px;">
+                    <label for="civico">Civico:</label>
+                    <input type="text" id="civico" name="civico" placeholder="Es. 10">
+                </div>
+                <div class="form-gruppo" style="margin-bottom: 10px;">
+                    <label for="citta">Città:</label>
+                    <input type="text" id="citta" name="citta" placeholder="Es. Milano">
+                </div>
+                <div class="form-gruppo" style="margin-bottom: 10px;">
+                    <label for="regione">Regione:</label>
+                    <input type="text" id="regione" name="regione" placeholder="Es. Lombardia">
+                </div>
             </div>
         </fieldset>
 
@@ -80,8 +90,14 @@
         </fieldset>
 
         <div style="text-align: right; margin-top: 20px;">
-            <h3>Totale da Pagare: <%= String.format("%.2f", (carrello != null) ? carrello.getTotale() : 0.0) %> €</h3>
-            
+           <h3>Totale da Pagare: 
+			<% 
+    			double totale = 0.0;
+   				if (carrello != null) {
+        			totale = carrello.getTotale();
+    			}
+			%>
+			<%= String.format("%.2f", totale) %> €</h3>
             <a href="${pageContext.request.contextPath}/carrello" class="btn-indietro" style="text-decoration: none; padding: 10px 15px; display: inline-block; margin-right: 10px;">
                 Torna al Carrello
             </a>
@@ -90,9 +106,19 @@
                 Conferma e Paga
             </button>
         </div>
-
     </form>
 </div>
+
+<script>
+function toggleIndirizzo(mostra) {
+    var box = document.getElementById("boxNuovoIndirizzo");
+    if (mostra) {
+        box.style.display = "block";
+    } else {
+        box.style.display = "none";
+    }
+}
+</script>
 
 </body>
 </html>
