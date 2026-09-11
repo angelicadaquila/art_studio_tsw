@@ -29,6 +29,7 @@
             <thead>
                 <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
                     <th style="padding: 10px; text-align: left;">ID Ordine</th>
+                    <th style="padding: 10px; text-align: left;">Indirizzo Spedizione</th>
                     <th style="padding: 10px; text-align: left;">Totale</th>
                     <th style="padding: 10px; text-align: left;">Stato</th>
                     <th style="padding: 10px; text-align: left;">Foto Consegna</th>
@@ -36,23 +37,33 @@
             </thead>
             <tbody>
                 <% for (int i = 0; i < listaOrdini.size(); i++) { 
-					Ordine ord = listaOrdini.get(i);
-				%>
-    				<tr style="border-bottom: 1px solid #dee2e6;">
-        			<td style="padding: 10px;">#<%= ord.getIdOrdine() %></td>
-        			<td style="padding: 10px;">€ <%= String.format("%.2f", ord.getTotaleOrdine()) %></td>
-        			<td style="padding: 10px;">
-            			<span style="font-weight: bold;"><%= ord.getStato() %></span>
-        			</td>
-        			<td style="padding: 10px;">
-            			<% if (ord.getImmagineConsegna() != null && !ord.getImmagineConsegna().isEmpty()) { %>
-                			<a href="<%=request.getContextPath()%>/admin_images/<%= ord.getImmagineConsegna() %>" target="_blank" style="color: #0d6efd;">Visualizza Foto</a>
-            			<% } else { %>
-                			<span style="color: gray;">Non ancora disponibile</span>
-            			<% } %>
-        			</td>
-    			</tr>
-			<% } %>
+                    Ordine ord = listaOrdini.get(i);
+                %>
+                    <tr style="border-bottom: 1px solid #dee2e6;">
+                        <td style="padding: 10px;">#<%= ord.getIdOrdine() %></td>
+                        <td style="padding: 10px;">
+                            <% if (ord.getIndirizzo() != null && ord.getIndirizzo().getVia() != null && !ord.getIndirizzo().getVia().trim().isEmpty()) { %>
+                                <%= ord.getIndirizzo().getVia() %>, <%= ord.getIndirizzo().getCivico() %> - 
+                                <%= ord.getIndirizzo().getCitta() %> (<%= ord.getIndirizzo().getRegione() %>)
+                            <% } else { %>
+                                <span style="color: gray;">Non disponibile</span>
+                            <% } %>
+                        </td>
+
+                        <td style="padding: 10px;">€ <%= String.format("%.2f", ord.getTotaleOrdine()) %></td>
+                        <td style="padding: 10px;">
+                            <span style="font-weight: bold;"><%= ord.getStato() %></span>
+                        </td>
+                        
+                        <td style="padding: 10px;">
+                            <% if (ord.getImmagineConsegna() != null && !ord.getImmagineConsegna().trim().isEmpty()) { %>
+                                <a href="<%=request.getContextPath()%>/admin_images/<%= ord.getImmagineConsegna() %>" target="_blank" style="color: #0d6efd; font-weight: bold;">Visualizza Foto</a>
+                            <% } else { %>
+                                <span style="color: gray;">Non ancora disponibile</span>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% } %>
             </tbody>
         </table>
     <% } else { %>
