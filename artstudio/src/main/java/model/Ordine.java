@@ -12,6 +12,7 @@ public class Ordine implements Serializable{
     private Double speseSpedizione;
     private Double totaleOrdine;
     private String immagineConsegna;
+    private Indirizzo indirizzo;
 
     public Ordine() {
     }
@@ -88,5 +89,13 @@ public class Ordine implements Serializable{
     
     public void setImmagineConsegna(String immagineConsegna) {
         this.immagineConsegna = immagineConsegna;
+    }
+    
+    public Indirizzo getIndirizzo() { 
+        return indirizzo; 
+    }
+    
+    public void setIndirizzo(Indirizzo indirizzo) { 
+        this.indirizzo = indirizzo; 
     }
 }
