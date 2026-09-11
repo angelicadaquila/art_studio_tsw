@@ -19,9 +19,9 @@ public interface OrdineDAO {
 
     public List<Ordine> doRetrieveByUtente(int idUtente) throws SQLException;
     
-    public List<Ordine> doRetrieveByIntervalDate(Timestamp dataInizio, Timestamp dataFine) throws SQLException;
+    public List<Ordine> doRetrieveByIntervalloData(Timestamp dataInizio, Timestamp dataFine) throws SQLException;
     
-    public List<Ordine> doRetrieveByUtenteAndIntervalDate(int idUtente, Timestamp dataInizio, Timestamp dataFine) throws SQLException;
+    public List<Ordine> doRetrieveByUtenteAndIntervalloData(int idUtente, Timestamp dataInizio, Timestamp dataFine) throws SQLException;
     
     public boolean doUpdateStato(int idOrdine, String nuovoStato) throws SQLException;
 
