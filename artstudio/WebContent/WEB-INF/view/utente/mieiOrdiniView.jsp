@@ -7,6 +7,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link href="<%=request.getContextPath()%>/styles/base.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath()%>/styles/componenti.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/styles/catalogo.css" rel="stylesheet" type="text/css">
     <title>I Miei Ordini</title>
 </head>
 <body>
@@ -70,9 +71,6 @@
         <p style="margin-top: 20px; color: gray;">Non hai ancora effettuato alcun ordine.</p>
     <% } %>
 
-    <div style="margin-top: 25px;">
-        <a href="<%=request.getContextPath()%>/utente/profilo" class="btn-indietro">Torna al Profilo</a>
-    </div>
 </div>
 </body>
 </html>
