@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import javax.sql.DataSource;
+import java.util.List;
 
 import dao.IndirizzoDAO;
 import dao.IndirizzoDAOImp;
@@ -21,6 +22,9 @@ import model.Carrello;
 import model.Indirizzo;
 import model.Ordine;
 import model.Utente;
+import model.ElementoCarrello;
+import model.Commissione;
+import model.Prodotto;
 
 @WebServlet("/utente/checkout")
 public class checkoutControl extends HttpServlet {
@@ -107,12 +111,27 @@ public class checkoutControl extends HttpServlet {
         }
 
         int idIndirizzo = Integer.parseInt(idIndirizzoStr);
+        
+        double totaleProdotti = carrello.getTotale();
+        double speseSpedizione = 0.00;
+
+        List<ElementoCarrello> elementi = carrello.getElementi();
+        for (int i = 0; i < elementi.size(); i++) {
+            ElementoCarrello item = elementi.get(i);
+            Prodotto prod = item.getProdotto();
+
+            if (prod != null && !(prod instanceof Commissione)) {
+                speseSpedizione = 3.00;
+                break;
+            }
+        }
+        double totaleOrdine = totaleProdotti + speseSpedizione;
 
         Ordine nuovoOrdine = new Ordine();
         nuovoOrdine.setIdUtente(utente.getIdUtente());
-        nuovoOrdine.setTotaleProdotti(carrello.getTotale());
-        nuovoOrdine.setSpeseSpedizione(0.00);
-        nuovoOrdine.setTotaleOrdine(carrello.getTotale());
+        nuovoOrdine.setTotaleProdotti(totaleProdotti);
+        nuovoOrdine.setSpeseSpedizione(speseSpedizione);
+        nuovoOrdine.setTotaleOrdine(totaleOrdine);
 
         try {
             if (idIndirizzo > 0) {

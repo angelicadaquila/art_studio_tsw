@@ -20,7 +20,7 @@ import model.Ordine;
 import model.Utente;
 
 @WebServlet("/utente/mieiOrdini")
-public class mieiOrdiniControl extends HttpServlet {
+public class clienteOrdiniControl extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private OrdineDAO ordineDao;
 
