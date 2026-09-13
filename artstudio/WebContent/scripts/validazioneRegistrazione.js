@@ -15,17 +15,19 @@ document.addEventListener("DOMContentLoaded", function() {
     const regexNomeCognome = /^[A-Za-zÀ-ÿ\s']{2,50}$/;
     const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const regexPassword = /^(?=\S+$)(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    const regexIndirizzoTesto = /^[A-Za-zÀ-ÿ\s'.,\-]{2,50}$/;
+    const regexCivico = /^\d+[A-Za-z\s/]*$/;
 
     function mostraErroreCampo(elementoInput, messaggio) {
         let elementoPadre = elementoInput.parentElement;
         let etichettaErrore = elementoPadre.querySelector(".msg-errore");
 
         if (messaggio) {
-			if (!etichettaErrore) {
-			    etichettaErrore = document.createElement("small");
-			    etichettaErrore.className = "msg-errore";
-			    elementoPadre.appendChild(etichettaErrore);
-			}
+            if (!etichettaErrore) {
+                etichettaErrore = document.createElement("small");
+                etichettaErrore.className = "msg-errore";
+                elementoPadre.appendChild(etichettaErrore);
+            }
             etichettaErrore.textContent = messaggio;
             elementoInput.style.borderColor = "#dc3545";
         } else {
@@ -114,13 +116,55 @@ document.addEventListener("DOMContentLoaded", function() {
         return true;
     }
 
-    function validaCampoObbligatorio(elementoInput, nomeCampo) {
-        const valore = elementoInput.value.trim();
+    function validaVia() {
+        const valore = campoVia.value.trim();
         if (!valore) {
-            mostraErroreCampo(elementoInput, nomeCampo + " è obbligatorio/a.");
+            mostraErroreCampo(campoVia, "La via è obbligatoria.");
+            return false;
+        } else if (!regexIndirizzoTesto.test(valore)) {
+            mostraErroreCampo(campoVia, "Inserisci una via valida (es. Via Roma, Corso Cavour).");
             return false;
         }
-        mostraErroreCampo(elementoInput, null);
+        mostraErroreCampo(campoVia, null);
+        return true;
+    }
+
+    function validaCivico() {
+        const valore = campoCivico.value.trim();
+        if (!valore) {
+            mostraErroreCampo(campoCivico, "Il numero civico è obbligatorio.");
+            return false;
+        } else if (!regexCivico.test(valore)) {
+            mostraErroreCampo(campoCivico, "Inserisci un civico valido (es. 10, 4/B).");
+            return false;
+        }
+        mostraErroreCampo(campoCivico, null);
+        return true;
+    }
+
+    function validaCitta() {
+        const valore = campoCitta.value.trim();
+        if (!valore) {
+            mostraErroreCampo(campoCitta, "La città è obbligatoria.");
+            return false;
+        } else if (!regexIndirizzoTesto.test(valore)) {
+            mostraErroreCampo(campoCitta, "Inserisci un nome di città valido.");
+            return false;
+        }
+        mostraErroreCampo(campoCitta, null);
+        return true;
+    }
+
+    function validaRegione() {
+        const valore = campoRegione.value.trim();
+        if (!valore) {
+            mostraErroreCampo(campoRegione, "La regione è obbligatoria.");
+            return false;
+        } else if (!regexIndirizzoTesto.test(valore)) {
+            mostraErroreCampo(campoRegione, "Inserisci un nome di regione valido.");
+            return false;
+        }
+        mostraErroreCampo(campoRegione, null);
         return true;
     }
 
@@ -130,10 +174,10 @@ document.addEventListener("DOMContentLoaded", function() {
         [campoEmail, validaEmail],
         [campoPassword, validaPassword],
         [campoConfermaPassword, validaConfermaPassword],
-        [campoVia, () => validaCampoObbligatorio(campoVia, "La via")],
-        [campoCivico, () => validaCampoObbligatorio(campoCivico, "Il numero civico")],
-        [campoCitta, () => validaCampoObbligatorio(campoCitta, "La città")],
-        [campoRegione, () => validaCampoObbligatorio(campoRegione, "La regione")]
+        [campoVia, validaVia],
+        [campoCivico, validaCivico],
+        [campoCitta, validaCitta],
+        [campoRegione, validaRegione]
     ];
 
     controlliCampi.forEach(([elemento, funzioneValidazione]) => {
@@ -149,10 +193,10 @@ document.addEventListener("DOMContentLoaded", function() {
         const esitoEmail = validaEmail();
         const esitoPassword = validaPassword();
         const esitoConfermaPassword = validaConfermaPassword();
-        const esitoVia = validaCampoObbligatorio(campoVia, "La via");
-        const esitoCivico = validaCampoObbligatorio(campoCivico, "Il numero civico");
-        const esitoCitta = validaCampoObbligatorio(campoCitta, "La città");
-        const esitoRegione = validaCampoObbligatorio(campoRegione, "La regione");
+        const esitoVia = validaVia();
+        const esitoCivico = validaCivico();
+        const esitoCitta = validaCitta();
+        const esitoRegione = validaRegione();
 
         if (!(esitoNome && esitoCognome && esitoEmail && esitoPassword && esitoConfermaPassword && esitoVia && esitoCivico && esitoCitta && esitoRegione)) {
             evento.preventDefault();
