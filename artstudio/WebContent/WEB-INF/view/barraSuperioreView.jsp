@@ -8,7 +8,7 @@
 <nav style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; width: 100%; box-sizing: border-box; background-color: #f8f9fa; border-bottom: 1px solid #ddd;">
     <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
         <a href="<%= request.getContextPath() %>/catalogo?tipo=tutti" class="btn-opzione">
-            ← Catalogo
+            Catalogo
         </a>
         <a href="<%= request.getContextPath() %>/carrello" class="btn-opzione">
             Carrello
@@ -31,8 +31,13 @@
 
             <a href="<%= request.getContextPath() %>/utente/profilo" class="btn-opzione">Profilo</a>
 
+            <a href="<%= request.getContextPath() %>/utente/mieiOrdini" class="btn-opzione">I Miei Ordini</a>
+
             <% if ("admin".equalsIgnoreCase(utenteNavigazione.getRuolo())) { %>
-                <a href="<%= request.getContextPath() %>/admin/prodotti" class="btn-opzione">Gestione</a>
+                <a href="<%= request.getContextPath() %>/admin/prodotti" class="btn-opzione">Gestione Catalogo</a>
+            <% } %>
+            <% if ("admin".equalsIgnoreCase(utenteNavigazione.getRuolo())) { %>
+                <a href="<%= request.getContextPath() %>/admin/ordini" class="btn-opzione">Gestione Ordini</a>
             <% } %>
 
             <a href="<%= request.getContextPath() %>/logout" 
