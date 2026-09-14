@@ -17,6 +17,8 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import javax.sql.DataSource;
 
+import org.json.JSONObject;
+
 import dao.ProdottoDAO;
 import dao.ProdottoDAOImp;
 import model.Carrello;
@@ -57,6 +59,12 @@ public class carrelloControl extends HttpServlet {
         }
 
         String azione = request.getParameter("azione");
+        if (azione == null || azione.trim().isEmpty()) {
+            azione = request.getParameter("action");
+        }
+
+        String isAjaxParam = request.getParameter("ajax");
+        boolean isAjax = "true".equalsIgnoreCase(isAjaxParam);
 
         if (azione != null && !azione.trim().isEmpty()) {
             try {
@@ -103,7 +111,8 @@ public class carrelloControl extends HttpServlet {
                                 int disponibilitaMagazzino = stampa.getQuantita();
                                 int quantitaGiaInCarrello = 0;
                                 if (carrello.getElementi() != null) {
-                                    for (ElementoCarrello item : carrello.getElementi()) {
+                                    for (int i = 0; i < carrello.getElementi().size(); i++) {
+                                        ElementoCarrello item = carrello.getElementi().get(i);
                                         if (item.getProdotto().getIdProdotto() == idProdotto) {
                                             quantitaGiaInCarrello = item.getQuantita();
                                             break;
@@ -113,6 +122,10 @@ public class carrelloControl extends HttpServlet {
                                 if ((quantitaGiaInCarrello + quantita) <= disponibilitaMagazzino) {
                                     carrello.aggiungiProd(prod, quantita);
                                 } else {
+                                    if (isAjax) {
+                                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                                        return;
+                                    }
                                     response.sendRedirect(request.getContextPath() + "/carrello?errore=giacenza");
                                     return;
                                 }
@@ -121,28 +134,55 @@ public class carrelloControl extends HttpServlet {
                             }
                         }
                     }
-                } else if ("aggiorna".equalsIgnoreCase(azione)) {
+                } else if ("aggiorna".equalsIgnoreCase(azione) || "incrementa".equalsIgnoreCase(azione) || "decrementa".equalsIgnoreCase(azione)) {
                     String idStr = request.getParameter("idProdotto");
                     String qtaStr = request.getParameter("quantita");
 
-                    if (idStr != null && !idStr.trim().isEmpty() && qtaStr != null && !qtaStr.trim().isEmpty()) {
+                    if (idStr != null && !idStr.trim().isEmpty()) {
                         int idProdotto = Integer.parseInt(idStr);
-                        int nuovaQta = Integer.parseInt(qtaStr);
-
-                        Prodotto prod = prodottoDao.doRetrieveByKey(idProdotto);
-                        if (prod instanceof Stampa) {
-                            Stampa stampa = (Stampa) prod;
-                            if (nuovaQta <= stampa.getQuantita()) {
-                                carrello.aggiornaQuantita(idProdotto, nuovaQta);
-                            } else {
-                                response.sendRedirect(request.getContextPath() + "/carrello?errore=giacenza");
-                                return;
+                        
+                        ElementoCarrello elemEsistente = null;
+                        if (carrello.getElementi() != null) {
+                            for (int i = 0; i < carrello.getElementi().size(); i++) {
+                                ElementoCarrello item = carrello.getElementi().get(i);
+                                if (item.getProdotto().getIdProdotto() == idProdotto) {
+                                    elemEsistente = item;
+                                    break;
+                                }
                             }
+                        }
+
+                        int nuovaQta = 1;
+                        if ("incrementa".equalsIgnoreCase(azione) && elemEsistente != null) {
+                            nuovaQta = elemEsistente.getQuantita() + 1;
+                        } else if ("decrementa".equalsIgnoreCase(azione) && elemEsistente != null) {
+                            nuovaQta = elemEsistente.getQuantita() - 1;
+                        } else if (qtaStr != null && !qtaStr.trim().isEmpty()) {
+                            nuovaQta = Integer.parseInt(qtaStr);
+                        }
+
+                        if (nuovaQta <= 0) {
+                            carrello.eliminaProd(idProdotto);
                         } else {
-                            carrello.aggiornaQuantita(idProdotto, nuovaQta);
+                            Prodotto prod = prodottoDao.doRetrieveByKey(idProdotto);
+                            if (prod instanceof Stampa) {
+                                Stampa stampa = (Stampa) prod;
+                                if (nuovaQta <= stampa.getQuantita()) {
+                                    carrello.aggiornaQuantita(idProdotto, nuovaQta);
+                                } else {
+                                    if (isAjax) {
+                                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                                        return;
+                                    }
+                                    response.sendRedirect(request.getContextPath() + "/carrello?errore=giacenza");
+                                    return;
+                                }
+                            } else {
+                                carrello.aggiornaQuantita(idProdotto, nuovaQta);
+                            }
                         }
                     }
-                } else if ("elimina".equalsIgnoreCase(azione)) {
+                } else if ("elimina".equalsIgnoreCase(azione) || "rimuovi".equalsIgnoreCase(azione)) {
                     String idStr = request.getParameter("idProdotto");
                     if (idStr != null && !idStr.trim().isEmpty()) {
                         int idProdotto = Integer.parseInt(idStr);
@@ -151,19 +191,93 @@ public class carrelloControl extends HttpServlet {
                 } else if ("svuota".equalsIgnoreCase(azione)) {
                     carrello.svuota();
                 }
+
+                if (isAjax) {
+                    double speseSpedizione = calcolaSpedizione(carrello);
+                    double totaleOrdine = carrello.getTotale() + speseSpedizione;
+
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    
+                    JSONObject json = new JSONObject();
+
+                    if (carrello.getElementi() == null || carrello.getElementi().isEmpty()) {
+                        json.put("carrelloVuoto", true);
+                    } else {
+                        json.put("carrelloVuoto", false);
+
+                        String idStr = request.getParameter("idProdotto");
+                        if (idStr != null && !idStr.trim().isEmpty()) {
+                            int idProdotto = Integer.parseInt(idStr);
+                            ElementoCarrello elem = null;
+
+                            for (int i = 0; i < carrello.getElementi().size(); i++) {
+                                ElementoCarrello item = carrello.getElementi().get(i);
+                                if (item.getProdotto().getIdProdotto() == idProdotto) {
+                                    elem = item;
+                                    break;
+                                }
+                            }
+
+                            if (elem == null) {
+                                json.put("rimosso", true);
+                            } else {
+                                json.put("rimosso", false);
+                                json.put("nuovaQuantita", elem.getQuantita());
+                                json.put("nuovoSubtotale", elem.getTotale());
+                            }
+                        }
+
+                        json.put("totaleProdotti", carrello.getTotale());
+                        json.put("speseSpedizione", speseSpedizione);
+                        json.put("totaleOrdine", totaleOrdine);
+                    }
+
+                    response.getWriter().write(json.toString());
+                    return;
+                }
+
             } catch (SQLException e) {
                 System.err.println("Errore SQL in carrelloControl: " + e.getMessage());
                 e.printStackTrace();
+                if (isAjax) {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    return;
+                }
             } catch (NumberFormatException e) {
                 System.err.println("Formato numero non valido nei parametri del carrello: " + e.getMessage());
+                if (isAjax) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    return;
+                }
             }
-            
+
             response.sendRedirect(request.getContextPath() + "/carrello");
             return;
         }
 
+        double speseSpedizione = calcolaSpedizione(carrello);
+        double totaleComplessivo = carrello.getTotale() + speseSpedizione;
+
+        request.setAttribute("speseSpedizione", speseSpedizione);
+        request.setAttribute("totaleComplessivo", totaleComplessivo);
+
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/carrelloView.jsp");
         dispatcher.forward(request, response);
+    }
+
+    private double calcolaSpedizione(Carrello carrello) {
+        if (carrello == null || carrello.getElementi() == null) {
+            return 0.0;
+        }
+        for (int i = 0; i < carrello.getElementi().size(); i++) {
+            ElementoCarrello item = carrello.getElementi().get(i);
+            Prodotto prod = item.getProdotto();
+            if (prod != null && !(prod instanceof Commissione)) {
+                return 3.00;
+            }
+        }
+        return 0.0;
     }
 
     @Override
