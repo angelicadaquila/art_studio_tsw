@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import jakarta.servlet.RequestDispatcher;
@@ -30,6 +31,11 @@ import dao.RigaOrdineDAOImp;
 import dao.ProdottoDAO;
 import dao.ProdottoDAOImp;
 import model.Prodotto;
+import dao.UtenteDAO;
+import dao.UtenteDAOImp;
+import dao.IndirizzoDAO;
+import dao.IndirizzoDAOImp;
+import model.Indirizzo;
 
 @WebServlet("/admin/ordini")
 @MultipartConfig(
@@ -41,6 +47,8 @@ public class gestioneOrdiniControl extends HttpServlet {
 	private OrdineDAO ordineDao;
 	private RigaOrdineDAO rigaOrdineDao;
 	private ProdottoDAO prodottoDao;
+	private UtenteDAO utenteDao;
+    private IndirizzoDAO indirizzoDao;
 
 	@Override
 	public void init(ServletConfig servletConfig) throws ServletException {
@@ -52,6 +60,8 @@ public class gestioneOrdiniControl extends HttpServlet {
 	    ordineDao = new OrdineDAOImp(ds);
 	    rigaOrdineDao = new RigaOrdineDAOImp(ds);
 	    prodottoDao = new ProdottoDAOImp(ds);
+	    utenteDao = new UtenteDAOImp(ds);
+	    indirizzoDao = new IndirizzoDAOImp(ds);
 	}
 
 	@Override
@@ -118,7 +128,32 @@ public class gestioneOrdiniControl extends HttpServlet {
 
 	    try {
 	        List<Ordine> listaOrdini = ordineDao.doRetrieveAll();
+	        List<Utente> listaUtenti = new ArrayList<>();
+	        List<Indirizzo> listaIndirizzi = new ArrayList<>();
+
+	        if (listaOrdini != null) {
+	            for (int i = 0; i < listaOrdini.size(); i++) {
+	                Ordine ord = listaOrdini.get(i);
+	                
+	                if (ord.getIdUtente() > 0) {
+	                    Utente u = utenteDao.doRetrieveByKey(ord.getIdUtente());
+	                    listaUtenti.add(u);
+	                } else {
+	                    listaUtenti.add(null);
+	                }
+	                
+	                if (ord.getIdIndirizzo() > 0) {
+	                    Indirizzo ind = indirizzoDao.doRetrieveByKey(ord.getIdIndirizzo());
+	                    listaIndirizzi.add(ind);
+	                } else {
+	                    listaIndirizzi.add(null);
+	                }
+	            }
+	        }
+
 	        request.setAttribute("listaOrdini", listaOrdini);
+	        request.setAttribute("listaUtenti", listaUtenti);
+	        request.setAttribute("listaIndirizzi", listaIndirizzi);
 
 	        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/admin/gestioneOrdiniView.jsp");
 	        dispatcher.forward(request, response);
