@@ -75,27 +75,35 @@ public class Carrello implements Serializable {
     }
     
     public void aggiungiProd(Prodotto prod, int quantita, String descrizioneComm, String refComm) {
-        if (prod instanceof model.Stampa) {
-            boolean giaPresente = false;
-            for (int i = 0; i < elementi.size(); i++) {
-                ElementoCarrello item = elementi.get(i);
-                if (item.getProdotto().getIdProdotto() == prod.getIdProdotto()) {
-                    item.setQuantita(item.getQuantita() + quantita);
-                    giaPresente = true;
-                    break;
-                }
-            }
+        if (elementi == null) {
+            elementi = new ArrayList<>();
+        }
 
-            if (!giaPresente) {
-                ElementoCarrello nuovoElemento = new ElementoCarrello(prod, quantita);
-                elementi.add(nuovoElemento);
-            }
+        if (prod instanceof Commissione) {
+            ElementoCarrello nuovo = new ElementoCarrello();
+            nuovo.setProdotto(prod);
+            nuovo.setQuantita(1);
+            nuovo.setDescrizioneComm(descrizioneComm);
+            nuovo.setRefComm(refComm);
+            elementi.add(nuovo);
+            return;
+        }
 
-        } else {
-            ElementoCarrello nuovoElemento = new ElementoCarrello(prod, 1);
-            nuovoElemento.setDescrizioneComm(descrizioneComm);
-            nuovoElemento.setRefComm(refComm);
-            elementi.add(nuovoElemento);
+        boolean trovato = false;
+        for (int i = 0; i < elementi.size(); i++) {
+            ElementoCarrello item = elementi.get(i);
+            if (item.getProdotto().getIdProdotto() == prod.getIdProdotto()) {
+                item.setQuantita(item.getQuantita() + quantita);
+                trovato = true;
+                break;
+            }
+        }
+
+        if (!trovato) {
+            ElementoCarrello nuovo = new ElementoCarrello();
+            nuovo.setProdotto(prod);
+            nuovo.setQuantita(quantita);
+            elementi.add(nuovo);
         }
     }
 }
