@@ -31,53 +31,44 @@
         if (listaOrdini != null && !listaOrdini.isEmpty()) {
     %>
         <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-            <thead>
-                <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-                    <th style="padding: 10px; text-align: left;">ID Ordine</th>
-                    <th style="padding: 10px; text-align: left;">Indirizzo Spedizione</th>
-                    <th style="padding: 10px; text-align: left;">Totale</th>
-                    <th style="padding: 10px; text-align: left;">Stato</th>
-                    <th style="padding: 10px; text-align: left;">Foto Consegna</th>
-                    <th style="padding: 10px; text-align: center;">Azione</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% for (int i = 0; i < listaOrdini.size(); i++) { 
-                    Ordine ord = listaOrdini.get(i);
-                %>
-                    <tr style="border-bottom: 1px solid #dee2e6;">
-                        <td style="padding: 10px;">#<%= ord.getIdOrdine() %></td>
-                        <td style="padding: 10px;">
-                            <% if (ord.getIndirizzo() != null && ord.getIndirizzo().getVia() != null && !ord.getIndirizzo().getVia().trim().isEmpty()) { %>
-                                <%= ord.getIndirizzo().getVia() %>, <%= ord.getIndirizzo().getCivico() %> - 
-                                <%= ord.getIndirizzo().getCitta() %> (<%= ord.getIndirizzo().getRegione() %>)
-                            <% } else { %>
-                                <span style="color: gray;">Non disponibile</span>
-                            <% } %>
-                        </td>
+    <thead>
+        <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+            <th style="padding: 10px; text-align: left;">ID Ordine</th>
+            <th style="padding: 10px; text-align: left;">Indirizzo Spedizione</th>
+            <th style="padding: 10px; text-align: left;">Totale</th>
+            <th style="padding: 10px; text-align: left;">Stato</th>
+            <th style="padding: 10px; text-align: center;">Azione</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% for (int i = 0; i < listaOrdini.size(); i++) { 
+            Ordine ord = listaOrdini.get(i);
+        %>
+            <tr style="border-bottom: 1px solid #dee2e6;">
+                <td style="padding: 10px;">#<%= ord.getIdOrdine() %></td>
+                <td style="padding: 10px;">
+                    <% if (ord.getViaSpedizione() != null && !ord.getViaSpedizione().trim().isEmpty()) { %>
+                        <%= ord.getViaSpedizione() %>, <%= ord.getCivicoSpedizione() %><br>
+                        <small style="color: #555;"><%= ord.getCittaSpedizione() %> (<%= ord.getRegioneSpedizione() %>)</small>
+                    <% } else { %>
+                        <span style="color: gray;">Non disponibile</span>
+                    <% } %>
+                </td>
 
-                        <td style="padding: 10px;">€ <%= String.format("%.2f", ord.getTotaleOrdine()) %></td>
-                        <td style="padding: 10px;">
-                            <span style="font-weight: bold;"><%= ord.getStato() %></span>
-                        </td>
-                        
-                        <td style="padding: 10px;">
-                            <% if (ord.getImmagineConsegna() != null && !ord.getImmagineConsegna().trim().isEmpty()) { %>
-                                <a href="<%=request.getContextPath()%>/admin_images/<%= ord.getImmagineConsegna() %>" target="_blank" style="color: #0d6efd; font-weight: bold;">Visualizza Foto</a>
-                            <% } else { %>
-                                <span style="color: gray;">Non ancora disponibile</span>
-                            <% } %>
-                        </td>
-                        
-                        <td style="padding: 10px; text-align: center;">
-                            <button type="button" class="btn-opzione" onclick="caricaDettaglioOrdine(<%= ord.getIdOrdine() %>, '<%= request.getContextPath() %>', '/utente/mieiOrdini')">
-                                Dettagli
-                            </button>
-                        </td>
-                    </tr>
-                <% } %>
-            </tbody>
-        </table>
+                <td style="padding: 10px;">€ <%= String.format("%.2f", ord.getTotaleOrdine()) %></td>
+                <td style="padding: 10px;">
+                    <span style="font-weight: bold;"><%= ord.getStato() %></span>
+                </td>
+                
+                <td style="padding: 10px; text-align: center;">
+                    <button type="button" class="btn-opzione" onclick="caricaDettaglioOrdine(<%= ord.getIdOrdine() %>, '<%= request.getContextPath() %>', '/utente/mieiOrdini')">
+                        Dettagli
+                    </button>
+                </td>
+            </tr>
+        <% } %>
+    </tbody>
+</table>
     <% } else { %>
         <p style="margin-top: 20px; color: gray;">Non hai ancora effettuato alcun ordine.</p>
     <% } %>
