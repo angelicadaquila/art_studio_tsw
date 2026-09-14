@@ -13,7 +13,7 @@ public interface RigaOrdineDAO {
     
     public List<RigaOrdine> doRetrieveByOrdine(int idOrdine) throws SQLException;
     
-    boolean doUpdateFileFinale(int idOrdine, int idProdotto, String fileFinale) throws SQLException;
+    boolean doUpdateFileFinale(int idRiga, String fileFinale) throws SQLException;
 }
 
 

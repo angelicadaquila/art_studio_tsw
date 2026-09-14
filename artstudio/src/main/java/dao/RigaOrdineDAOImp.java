@@ -69,11 +69,12 @@ public class RigaOrdineDAOImp implements RigaOrdineDAO {
         List<RigaOrdine> list = new LinkedList<>();
         String selectSQL = "SELECT * FROM " + TABLE_NAME + " WHERE id_ordine = ?";
         try (Connection connection = ds.getConnection();
-            PreparedStatement ps = connection.prepareStatement(selectSQL)) {
+             PreparedStatement ps = connection.prepareStatement(selectSQL)) {
             ps.setInt(1, idOrdine);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     RigaOrdine bean = new RigaOrdine();
+                    bean.setIdRiga(rs.getInt("id_riga"));
                     bean.setIdOrdine(rs.getInt("id_ordine"));
                     bean.setIdProdotto(rs.getInt("id_prodotto"));
                     bean.setPrezzoOg(rs.getDouble("prezzo_og"));
@@ -89,13 +90,12 @@ public class RigaOrdineDAOImp implements RigaOrdineDAO {
     }
     
     @Override
-    public synchronized boolean doUpdateFileFinale(int idOrdine, int idProdotto, String fileFinale) throws SQLException {
-        String sql = "UPDATE " + TABLE_NAME + " SET file_finale = ? WHERE id_ordine = ? AND id_prodotto = ?";
+    public synchronized boolean doUpdateFileFinale(int idRiga, String fileFinale) throws SQLException {
+        String sql = "UPDATE " + TABLE_NAME + " SET file_finale = ? WHERE id_riga = ?";
         try (Connection connection = ds.getConnection();
-            PreparedStatement ps = connection.prepareStatement(sql)) {
+             PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, fileFinale);
-            ps.setInt(2, idOrdine);
-            ps.setInt(3, idProdotto);
+            ps.setInt(2, idRiga);
             int rowsUpdated = ps.executeUpdate();
             return rowsUpdated != 0;
         }
