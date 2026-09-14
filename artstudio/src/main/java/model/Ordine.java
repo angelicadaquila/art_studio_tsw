@@ -12,12 +12,15 @@ public class Ordine implements Serializable{
     private Double speseSpedizione;
     private Double totaleOrdine;
     private String immagineConsegna;
-    private Indirizzo indirizzo;
+    private String viaSpedizione;
+    private String civicoSpedizione;
+    private String cittaSpedizione;
+    private String regioneSpedizione;
 
     public Ordine() {
     }
 
-    public Ordine(int idOrdine, int idUtente, Timestamp dataOrdine, String stato, Double totaleProdotti, Double speseSpedizione, Double totaleOrdine) {
+    public Ordine(int idOrdine, int idUtente, Timestamp dataOrdine, String stato, Double totaleProdotti, Double speseSpedizione, Double totaleOrdine, String viaSpedizione, String civicoSpedizione, String cittaSpedizione, String regioneSpedizione) {
         this.idOrdine = idOrdine;
         this.idUtente = idUtente;
         this.dataOrdine = dataOrdine;
@@ -25,6 +28,10 @@ public class Ordine implements Serializable{
         this.totaleProdotti = totaleProdotti;
         this.speseSpedizione = speseSpedizione;
         this.totaleOrdine = totaleOrdine;
+        this.viaSpedizione = viaSpedizione;
+        this.civicoSpedizione = civicoSpedizione;
+        this.cittaSpedizione = cittaSpedizione;
+        this.regioneSpedizione = regioneSpedizione;
     }
 
     public int getIdOrdine() {
@@ -90,12 +97,37 @@ public class Ordine implements Serializable{
     public void setImmagineConsegna(String immagineConsegna) {
         this.immagineConsegna = immagineConsegna;
     }
-    
-    public Indirizzo getIndirizzo() { 
-        return indirizzo; 
-    }
-    
-    public void setIndirizzo(Indirizzo indirizzo) { 
-        this.indirizzo = indirizzo; 
-    }
+
+	public String getViaSpedizione() {
+		return viaSpedizione;
+	}
+
+	public void setViaSpedizione(String viaSpedizione) {
+		this.viaSpedizione = viaSpedizione;
+	}
+
+	public String getCivicoSpedizione() {
+		return civicoSpedizione;
+	}
+
+	public void setCivicoSpedizione(String civicoSpedizione) {
+		this.civicoSpedizione = civicoSpedizione;
+	}
+
+	public String getCittaSpedizione() {
+		return cittaSpedizione;
+	}
+
+	public void setCittaSpedizione(String cittaSpedizione) {
+		this.cittaSpedizione = cittaSpedizione;
+	}
+
+	public String getRegioneSpedizione() {
+		return regioneSpedizione;
+	}
+
+	public void setRegioneSpedizione(String regioneSpedizione) {
+		this.regioneSpedizione = regioneSpedizione;
+	}
+ 
 }
