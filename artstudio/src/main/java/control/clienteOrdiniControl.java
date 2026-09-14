@@ -78,24 +78,34 @@ public class clienteOrdiniControl extends HttpServlet {
                     
                     Prodotto p = prodottoDao.doRetrieveByKey(r.getIdProdotto());
                     
-                    String nomeProdotto;
-                    nomeProdotto = p.getNome();
+                    String nomeProdotto = "";
+                    if (p != null) {
+                        nomeProdotto = p.getNome();
+                    }
+
+                    jsonItem.put("idRiga", r.getIdRiga());
                     jsonItem.put("idProdotto", r.getIdProdotto());
                     jsonItem.put("nomeProdotto", nomeProdotto);
                     jsonItem.put("quantita", r.getQuantita());
                     jsonItem.put("prezzo", r.getPrezzoOg());
                     
+                    String note = "";
                     if (r.getDescrizioneComm() != null) {
-                        jsonItem.put("note", r.getDescrizioneComm());
-                    } else {
-                        jsonItem.put("note", "");
+                        note = r.getDescrizioneComm();
                     }
+                    jsonItem.put("note", note);
                     
+                    String ref = "";
                     if (r.getRefComm() != null) {
-                        jsonItem.put("ref", r.getRefComm());
-                    } else {
-                        jsonItem.put("ref", "");
+                        ref = r.getRefComm();
                     }
+                    jsonItem.put("ref", ref);
+
+                    String fileFinale = "";
+                    if (r.getFileFinale() != null) {
+                        fileFinale = r.getFileFinale();
+                    }
+                    jsonItem.put("fileFinale", fileFinale);
 
                     jsonArray.put(jsonItem);
                 }
