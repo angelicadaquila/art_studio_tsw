@@ -16,7 +16,6 @@ import model.Ordine;
 import model.Carrello;
 import model.ElementoCarrello;
 import model.Prodotto;
-import model.Indirizzo;
 
 public class OrdineDAOImp implements OrdineDAO {
 
@@ -29,7 +28,23 @@ public class OrdineDAOImp implements OrdineDAO {
 
     @Override
     public synchronized void doSaveConCarrello(Ordine ord, Carrello carrello, int idIndirizzo) throws SQLException {
-        String insertOrdineSQL = "INSERT INTO " + TABLE_NAME + " (id_utente, totale_prodotti, spese_spedizione, totale_ordine, id_indirizzo, stato) VALUES (?, ?, ?, ?, ?, ?)";
+        String via = null, civico = null, citta = null, regione = null;
+        String selectIndirizzoSQL = "SELECT via, civico, citta, regione FROM indirizzo WHERE id_indirizzo = ?";
+        
+        try (Connection connection = ds.getConnection();
+             PreparedStatement psInd = connection.prepareStatement(selectIndirizzoSQL)) {
+            psInd.setInt(1, idIndirizzo);
+            try (ResultSet rsInd = psInd.executeQuery()) {
+                if (rsInd.next()) {
+                    via = rsInd.getString("via");
+                    civico = rsInd.getString("civico");
+                    citta = rsInd.getString("citta");
+                    regione = rsInd.getString("regione");
+                }
+            }
+        }
+
+        String insertOrdineSQL = "INSERT INTO " + TABLE_NAME + " (id_utente, totale_prodotti, spese_spedizione, totale_ordine, via_spedizione, civico_spedizione, citta_spedizione, regione_spedizione, stato) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         String insertRigaSQL = "INSERT INTO riga_ordine (id_ordine, id_prodotto, prezzo_og, quantita, descrizione_comm, ref_comm) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = ds.getConnection();
@@ -39,8 +54,11 @@ public class OrdineDAOImp implements OrdineDAO {
             psOrdine.setDouble(2, ord.getTotaleProdotti());
             psOrdine.setDouble(3, ord.getSpeseSpedizione());
             psOrdine.setDouble(4, ord.getTotaleOrdine());
-            psOrdine.setInt(5, idIndirizzo);
-            psOrdine.setString(6, "In lavorazione");
+            psOrdine.setString(5, via);
+            psOrdine.setString(6, civico);
+            psOrdine.setString(7, citta);
+            psOrdine.setString(8, regione);
+            psOrdine.setString(9, "In lavorazione");
             psOrdine.executeUpdate();
 
             int idOrdineGenerato = -1;
@@ -128,7 +146,7 @@ public class OrdineDAOImp implements OrdineDAO {
     @Override
     public synchronized Ordine doRetrieveByKey(int idOrdine) throws SQLException {
         Ordine bean = null;
-        String selectSQL = "SELECT o.*, i.via, i.civico, i.citta, i.regione " + "FROM " + TABLE_NAME + " o " + "LEFT JOIN indirizzo i ON o.id_indirizzo = i.id_indirizzo " + "WHERE o.id_ordine = ?";
+        String selectSQL = "SELECT * FROM " + TABLE_NAME + " WHERE id_ordine = ?";
 
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(selectSQL)) {
@@ -145,24 +163,10 @@ public class OrdineDAOImp implements OrdineDAO {
                     bean.setSpeseSpedizione(rs.getDouble("spese_spedizione"));
                     bean.setTotaleOrdine(rs.getDouble("totale_ordine"));
                     bean.setImmagineConsegna(rs.getString("immagine_consegna"));
-
-                    Indirizzo ind = new Indirizzo();
-                    String viaSped = rs.getString("via_spedizione");
-
-                    if (viaSped != null && !viaSped.trim().isEmpty()) {
-                        ind.setVia(viaSped);
-                        ind.setCivico(rs.getString("civico_spedizione"));
-                        ind.setCitta(rs.getString("citta_spedizione"));
-                        ind.setRegione(rs.getString("regione_spedizione"));
-                    } else if (rs.getString("via") != null) {
-                        ind.setIdIndirizzo(rs.getInt("id_indirizzo"));
-                        ind.setVia(rs.getString("via"));
-                        ind.setCivico(rs.getString("civico"));
-                        ind.setCitta(rs.getString("citta"));
-                        ind.setRegione(rs.getString("regione"));
-                    }
-
-                    bean.setIndirizzo(ind);
+                    bean.setViaSpedizione(rs.getString("via_spedizione"));
+                    bean.setCivicoSpedizione(rs.getString("civico_spedizione"));
+                    bean.setCittaSpedizione(rs.getString("citta_spedizione"));
+                    bean.setRegioneSpedizione(rs.getString("regione_spedizione"));
                 }
             }
         }
@@ -172,11 +176,11 @@ public class OrdineDAOImp implements OrdineDAO {
     @Override
     public synchronized List<Ordine> doRetrieveAll() throws SQLException {
         List<Ordine> list = new ArrayList<>();
-        String selectSQL = "SELECT o.*, i.via, i.civico, i.citta, i.regione " + "FROM " + TABLE_NAME + " o " + "LEFT JOIN indirizzo i ON o.id_indirizzo = i.id_indirizzo " + "ORDER BY o.data_ordine DESC";
+        String selectSQL = "SELECT * FROM " + TABLE_NAME + " ORDER BY data_ordine DESC";
 
         try (Connection connection = ds.getConnection();
-        PreparedStatement ps = connection.prepareStatement(selectSQL);
-        ResultSet rs = ps.executeQuery()) {
+             PreparedStatement ps = connection.prepareStatement(selectSQL);
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Ordine bean = new Ordine();
@@ -188,24 +192,10 @@ public class OrdineDAOImp implements OrdineDAO {
                 bean.setSpeseSpedizione(rs.getDouble("spese_spedizione"));
                 bean.setTotaleOrdine(rs.getDouble("totale_ordine"));
                 bean.setImmagineConsegna(rs.getString("immagine_consegna"));
-
-                Indirizzo ind = new Indirizzo();
-                String viaSped = rs.getString("via_spedizione");
-
-                if (viaSped != null && !viaSped.trim().isEmpty()) {
-                    ind.setVia(viaSped);
-                    ind.setCivico(rs.getString("civico_spedizione"));
-                    ind.setCitta(rs.getString("citta_spedizione"));
-                    ind.setRegione(rs.getString("regione_spedizione"));
-                } else if (rs.getString("via") != null) {
-                    ind.setIdIndirizzo(rs.getInt("id_indirizzo"));
-                    ind.setVia(rs.getString("via"));
-                    ind.setCivico(rs.getString("civico"));
-                    ind.setCitta(rs.getString("citta"));
-                    ind.setRegione(rs.getString("regione"));
-                }
-
-                bean.setIndirizzo(ind);
+                bean.setViaSpedizione(rs.getString("via_spedizione"));
+                bean.setCivicoSpedizione(rs.getString("civico_spedizione"));
+                bean.setCittaSpedizione(rs.getString("citta_spedizione"));
+                bean.setRegioneSpedizione(rs.getString("regione_spedizione"));
                 list.add(bean);
             }
         }
@@ -215,10 +205,10 @@ public class OrdineDAOImp implements OrdineDAO {
     @Override
     public synchronized List<Ordine> doRetrieveByUtente(int idUtente) throws SQLException {
         List<Ordine> list = new ArrayList<>();
-        String selectSQL = "SELECT o.*, i.via, i.civico, i.citta, i.regione " + "FROM " + TABLE_NAME + " o " + "LEFT JOIN indirizzo i ON o.id_indirizzo = i.id_indirizzo " + "WHERE o.id_utente = ? ORDER BY o.data_ordine DESC";
+        String selectSQL = "SELECT * FROM " + TABLE_NAME + " WHERE id_utente = ? ORDER BY data_ordine DESC";
 
         try (Connection connection = ds.getConnection();
-        PreparedStatement ps = connection.prepareStatement(selectSQL)) {
+             PreparedStatement ps = connection.prepareStatement(selectSQL)) {
 
             ps.setInt(1, idUtente);
             try (ResultSet rs = ps.executeQuery()) {
@@ -232,24 +222,10 @@ public class OrdineDAOImp implements OrdineDAO {
                     bean.setSpeseSpedizione(rs.getDouble("spese_spedizione"));
                     bean.setTotaleOrdine(rs.getDouble("totale_ordine"));
                     bean.setImmagineConsegna(rs.getString("immagine_consegna"));
-
-                    Indirizzo ind = new Indirizzo();
-                    String viaSped = rs.getString("via_spedizione");
-
-                    if (viaSped != null && !viaSped.trim().isEmpty()) {
-                        ind.setVia(viaSped);
-                        ind.setCivico(rs.getString("civico_spedizione"));
-                        ind.setCitta(rs.getString("citta_spedizione"));
-                        ind.setRegione(rs.getString("regione_spedizione"));
-                    } else if (rs.getString("via") != null) {
-                        ind.setIdIndirizzo(rs.getInt("id_indirizzo"));
-                        ind.setVia(rs.getString("via"));
-                        ind.setCivico(rs.getString("civico"));
-                        ind.setCitta(rs.getString("citta"));
-                        ind.setRegione(rs.getString("regione"));
-                    }
-
-                    bean.setIndirizzo(ind);
+                    bean.setViaSpedizione(rs.getString("via_spedizione"));
+                    bean.setCivicoSpedizione(rs.getString("civico_spedizione"));
+                    bean.setCittaSpedizione(rs.getString("citta_spedizione"));
+                    bean.setRegioneSpedizione(rs.getString("regione_spedizione"));
                     list.add(bean);
                 }
             }
@@ -260,10 +236,10 @@ public class OrdineDAOImp implements OrdineDAO {
     @Override
     public synchronized List<Ordine> doRetrieveByIntervalloData(Timestamp dataInizio, Timestamp dataFine) throws SQLException {
         List<Ordine> list = new ArrayList<>();
-        String selectSQL = "SELECT o.*, i.via, i.civico, i.citta, i.regione " + "FROM " + TABLE_NAME + " o " + "LEFT JOIN indirizzo i ON o.id_indirizzo = i.id_indirizzo " + "WHERE o.data_ordine >= ? AND o.data_ordine <= ? ORDER BY o.data_ordine DESC";
+        String selectSQL = "SELECT * FROM " + TABLE_NAME + " WHERE data_ordine >= ? AND data_ordine <= ? ORDER BY data_ordine DESC";
 
         try (Connection connection = ds.getConnection();
-        PreparedStatement ps = connection.prepareStatement(selectSQL)) {
+             PreparedStatement ps = connection.prepareStatement(selectSQL)) {
 
             ps.setTimestamp(1, dataInizio);
             ps.setTimestamp(2, dataFine);
@@ -279,24 +255,10 @@ public class OrdineDAOImp implements OrdineDAO {
                     bean.setSpeseSpedizione(rs.getDouble("spese_spedizione"));
                     bean.setTotaleOrdine(rs.getDouble("totale_ordine"));
                     bean.setImmagineConsegna(rs.getString("immagine_consegna"));
-
-                    Indirizzo ind = new Indirizzo();
-                    String viaSped = rs.getString("via_spedizione");
-
-                    if (viaSped != null && !viaSped.trim().isEmpty()) {
-                        ind.setVia(viaSped);
-                        ind.setCivico(rs.getString("civico_spedizione"));
-                        ind.setCitta(rs.getString("citta_spedizione"));
-                        ind.setRegione(rs.getString("regione_spedizione"));
-                    } else if (rs.getString("via") != null) {
-                        ind.setIdIndirizzo(rs.getInt("id_indirizzo"));
-                        ind.setVia(rs.getString("via"));
-                        ind.setCivico(rs.getString("civico"));
-                        ind.setCitta(rs.getString("citta"));
-                        ind.setRegione(rs.getString("regione"));
-                    }
-
-                    bean.setIndirizzo(ind);
+                    bean.setViaSpedizione(rs.getString("via_spedizione"));
+                    bean.setCivicoSpedizione(rs.getString("civico_spedizione"));
+                    bean.setCittaSpedizione(rs.getString("citta_spedizione"));
+                    bean.setRegioneSpedizione(rs.getString("regione_spedizione"));
                     list.add(bean);
                 }
             }
@@ -307,10 +269,10 @@ public class OrdineDAOImp implements OrdineDAO {
     @Override
     public synchronized List<Ordine> doRetrieveByUtenteAndIntervalloData(int idUtente, Timestamp dataInizio, Timestamp dataFine) throws SQLException {
         List<Ordine> list = new ArrayList<>();
-        String selectSQL = "SELECT o.*, i.via, i.civico, i.citta, i.regione " + "FROM " + TABLE_NAME + " o " + "LEFT JOIN indirizzo i ON o.id_indirizzo = i.id_indirizzo " + "WHERE o.id_utente = ? AND o.data_ordine >= ? AND o.data_ordine <= ? ORDER BY o.data_ordine DESC";
+        String selectSQL = "SELECT * FROM " + TABLE_NAME + " WHERE id_utente = ? AND data_ordine >= ? AND data_ordine <= ? ORDER BY data_ordine DESC";
 
         try (Connection connection = ds.getConnection();
-            PreparedStatement ps = connection.prepareStatement(selectSQL)) {
+             PreparedStatement ps = connection.prepareStatement(selectSQL)) {
 
             ps.setInt(1, idUtente);
             ps.setTimestamp(2, dataInizio);
@@ -327,24 +289,10 @@ public class OrdineDAOImp implements OrdineDAO {
                     bean.setSpeseSpedizione(rs.getDouble("spese_spedizione"));
                     bean.setTotaleOrdine(rs.getDouble("totale_ordine"));
                     bean.setImmagineConsegna(rs.getString("immagine_consegna"));
-
-                    Indirizzo ind = new Indirizzo();
-                    String viaSped = rs.getString("via_spedizione");
-
-                    if (viaSped != null && !viaSped.trim().isEmpty()) {
-                        ind.setVia(viaSped);
-                        ind.setCivico(rs.getString("civico_spedizione"));
-                        ind.setCitta(rs.getString("citta_spedizione"));
-                        ind.setRegione(rs.getString("regione_spedizione"));
-                    } else if (rs.getString("via") != null) {
-                        ind.setIdIndirizzo(rs.getInt("id_indirizzo"));
-                        ind.setVia(rs.getString("via"));
-                        ind.setCivico(rs.getString("civico"));
-                        ind.setCitta(rs.getString("citta"));
-                        ind.setRegione(rs.getString("regione"));
-                    }
-
-                    bean.setIndirizzo(ind);
+                    bean.setViaSpedizione(rs.getString("via_spedizione"));
+                    bean.setCivicoSpedizione(rs.getString("civico_spedizione"));
+                    bean.setCittaSpedizione(rs.getString("citta_spedizione"));
+                    bean.setRegioneSpedizione(rs.getString("regione_spedizione"));
                     list.add(bean);
                 }
             }
@@ -356,7 +304,7 @@ public class OrdineDAOImp implements OrdineDAO {
     public synchronized boolean doUpdateStato(int idOrdine, String nuovoStato) throws SQLException {
         String updateSQL = "UPDATE " + TABLE_NAME + " SET stato = ? WHERE id_ordine = ?";
         try (Connection connection = ds.getConnection();
-            PreparedStatement ps = connection.prepareStatement(updateSQL)) {
+             PreparedStatement ps = connection.prepareStatement(updateSQL)) {
             ps.setString(1, nuovoStato);
             ps.setInt(2, idOrdine);
             int result = ps.executeUpdate();
