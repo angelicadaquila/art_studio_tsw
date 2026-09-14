@@ -3,8 +3,9 @@ package control;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.servlet.RequestDispatcher;
@@ -33,9 +34,6 @@ import dao.ProdottoDAOImp;
 import model.Prodotto;
 import dao.UtenteDAO;
 import dao.UtenteDAOImp;
-import dao.IndirizzoDAO;
-import dao.IndirizzoDAOImp;
-import model.Indirizzo;
 
 @WebServlet("/admin/ordini")
 @MultipartConfig(
@@ -44,129 +42,165 @@ import model.Indirizzo;
     maxRequestSize = 1024 * 1024 * 50
 )
 public class gestioneOrdiniControl extends HttpServlet {
-	private OrdineDAO ordineDao;
-	private RigaOrdineDAO rigaOrdineDao;
-	private ProdottoDAO prodottoDao;
-	private UtenteDAO utenteDao;
-    private IndirizzoDAO indirizzoDao;
 
-	@Override
-	public void init(ServletConfig servletConfig) throws ServletException {
-	    super.init(servletConfig);
-	    DataSource ds = (DataSource) getServletContext().getAttribute("DataSource");
-	    if (ds == null) {
-	        throw new ServletException("DataSource non disponibile");
-	    }
-	    ordineDao = new OrdineDAOImp(ds);
-	    rigaOrdineDao = new RigaOrdineDAOImp(ds);
-	    prodottoDao = new ProdottoDAOImp(ds);
-	    utenteDao = new UtenteDAOImp(ds);
-	    indirizzoDao = new IndirizzoDAOImp(ds);
-	}
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	    
-	    HttpSession session = request.getSession(false);
-	    Utente utente = null;
-	    if (session != null) {
-	        utente = (Utente) session.getAttribute("utente");
-	    }
-	    
-	    if (utente == null || !"admin".equalsIgnoreCase(utente.getRuolo())) {
-	        response.sendRedirect(request.getContextPath() + "/login");
-	        return;
-	    }
-	    
-	    String action = request.getParameter("action");
+    private OrdineDAO ordineDao;
+    private RigaOrdineDAO rigaOrdineDao;
+    private ProdottoDAO prodottoDao;
+    private UtenteDAO utenteDao;
 
-	    if ("dettaglioAjax".equalsIgnoreCase(action)) {
+    @Override
+    public void init(ServletConfig servletConfig) throws ServletException {
+        super.init(servletConfig);
+        DataSource ds = (DataSource) getServletContext().getAttribute("DataSource");
+        if (ds == null) {
+            throw new ServletException("DataSource non disponibile");
+        }
+        ordineDao = new OrdineDAOImp(ds);
+        rigaOrdineDao = new RigaOrdineDAOImp(ds);
+        prodottoDao = new ProdottoDAOImp(ds);
+        utenteDao = new UtenteDAOImp(ds);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        
+        HttpSession session = request.getSession(false);
+        Utente utente = null;
+        if (session != null) {
+            utente = (Utente) session.getAttribute("utente");
+        }
+        
+        if (utente == null || !"admin".equalsIgnoreCase(utente.getRuolo())) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        
+        String action = request.getParameter("action");
+
+        if ("dettaglioAjax".equalsIgnoreCase(action)) {
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
-	        int idOrdine = Integer.parseInt(request.getParameter("idOrdine"));
-	        
-	        try {
-	            List<RigaOrdine> righe = rigaOrdineDao.doRetrieveByOrdine(idOrdine);
-	            JSONArray jsonArray = new JSONArray();
+            int idOrdine = Integer.parseInt(request.getParameter("idOrdine"));
+            
+            try {
+                List<RigaOrdine> righe = rigaOrdineDao.doRetrieveByOrdine(idOrdine);
+                JSONArray jsonArray = new JSONArray();
 
-	            for (int i = 0; i < righe.size(); i++) {
-	                RigaOrdine r = righe.get(i);
-	                JSONObject jsonItem = new JSONObject();
-	                
-	                Prodotto p = prodottoDao.doRetrieveByKey(r.getIdProdotto());
-	                
-	                String nomeProdotto;
-	                nomeProdotto = p.getNome();
-	                jsonItem.put("idProdotto", r.getIdProdotto());
-	                jsonItem.put("nomeProdotto", nomeProdotto);
-	                jsonItem.put("quantita", r.getQuantita());
-	                jsonItem.put("prezzo", r.getPrezzoOg());
-	                
-	                if (r.getDescrizioneComm() != null) {
-	                    jsonItem.put("note", r.getDescrizioneComm());
-	                } else {
-	                    jsonItem.put("note", "");
-	                }
-	                
-	                if (r.getRefComm() != null) {
-	                    jsonItem.put("ref", r.getRefComm());
-	                } else {
-	                    jsonItem.put("ref", "");
-	                }
+                for (int i = 0; i < righe.size(); i++) {
+                    RigaOrdine r = righe.get(i);
+                    JSONObject jsonItem = new JSONObject();
+                    
+                    Prodotto p = prodottoDao.doRetrieveByKey(r.getIdProdotto());
+                    
+                    String nomeProdotto = p.getNome();
+                    jsonItem.put("idProdotto", r.getIdProdotto());
+                    jsonItem.put("nomeProdotto", nomeProdotto);
+                    jsonItem.put("quantita", r.getQuantita());
+                    jsonItem.put("prezzo", r.getPrezzoOg());
+                    
+                    if (r.getDescrizioneComm() != null) {
+                        jsonItem.put("note", r.getDescrizioneComm());
+                    } else {
+                        jsonItem.put("note", "");
+                    }
+                    
+                    if (r.getRefComm() != null) {
+                        jsonItem.put("ref", r.getRefComm());
+                    } else {
+                        jsonItem.put("ref", "");
+                    }
 
-	                jsonArray.put(jsonItem);
-	            }
+                    jsonArray.put(jsonItem);
+                }
 
-	            response.getWriter().write(jsonArray.toString());
-	            return;
-	            
-	        } catch (SQLException e) {
-	            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-	            return;
-	        }
-	    }
+                response.getWriter().write(jsonArray.toString());
+                return;
+                
+            } catch (SQLException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
+            }
+        }
 
-	    try {
-	        List<Ordine> listaOrdini = ordineDao.doRetrieveAll();
-	        List<Utente> listaUtenti = new ArrayList<>();
-	        List<Indirizzo> listaIndirizzi = new ArrayList<>();
+        String idUtenteParam = request.getParameter("idUtente");
+        String dataInizioParam = request.getParameter("dataInizio");
+        String dataFineParam = request.getParameter("dataFine");
 
-	        if (listaOrdini != null) {
-	            for (int i = 0; i < listaOrdini.size(); i++) {
-	                Ordine ord = listaOrdini.get(i);
-	                
-	                if (ord.getIdUtente() > 0) {
-	                    Utente u = utenteDao.doRetrieveByKey(ord.getIdUtente());
-	                    listaUtenti.add(u);
-	                } else {
-	                    listaUtenti.add(null);
-	                }
-	                
-	                if (ord.getIdIndirizzo() > 0) {
-	                    Indirizzo ind = indirizzoDao.doRetrieveByKey(ord.getIdIndirizzo());
-	                    listaIndirizzi.add(ind);
-	                } else {
-	                    listaIndirizzi.add(null);
-	                }
-	            }
-	        }
+        boolean filtroCliente = (idUtenteParam != null && !idUtenteParam.trim().isEmpty());
+        boolean filtroDate = (dataInizioParam != null && !dataInizioParam.trim().isEmpty() && dataFineParam != null && !dataFineParam.trim().isEmpty());
 
-	        request.setAttribute("listaOrdini", listaOrdini);
-	        request.setAttribute("listaUtenti", listaUtenti);
-	        request.setAttribute("listaIndirizzi", listaIndirizzi);
+        String modoFiltro = "TUTTI";
+        if (filtroCliente && filtroDate) {
+            modoFiltro = "CLIENTE_E_DATE";
+        } else if (filtroCliente) {
+            modoFiltro = "CLIENTE";
+        } else if (filtroDate) {
+            modoFiltro = "DATE";
+        }
 
-	        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/admin/gestioneOrdiniView.jsp");
-	        dispatcher.forward(request, response);
+        try {
+            List<Ordine> listaOrdini;
 
-	    } catch (SQLException e) {
-	        System.err.println("Errore recupero ordini admin: " + e.getMessage());
-	        e.printStackTrace();
-	        response.sendRedirect(request.getContextPath() + "/catalogo?errore=db");
-	    }
-	}
+            switch (modoFiltro) {
+                case "CLIENTE_E_DATE":
+                    int idUtente = Integer.parseInt(idUtenteParam);
+                    Timestamp start = Timestamp.valueOf(dataInizioParam + " 00:00:00");
+                    Timestamp end = Timestamp.valueOf(dataFineParam + " 23:59:59");
+                    listaOrdini = ordineDao.doRetrieveByUtenteAndIntervalloData(idUtente, start, end);
+                    break;
+
+                case "CLIENTE":
+                    listaOrdini = ordineDao.doRetrieveByUtente(Integer.parseInt(idUtenteParam));
+                    break;
+
+                case "DATE":
+                    Timestamp dataInizio = Timestamp.valueOf(dataInizioParam + " 00:00:00");
+                    Timestamp dataFine = Timestamp.valueOf(dataFineParam + " 23:59:59");
+                    listaOrdini = ordineDao.doRetrieveByIntervalloData(dataInizio, dataFine);
+                    break;
+
+                default:
+                    listaOrdini = ordineDao.doRetrieveAll();
+                    break;
+            }
+
+            List<Utente> tuttiIClienti = utenteDao.doRetrieveAll();
+
+            List<Utente> listaUtenti = new ArrayList<>();
+            if (listaOrdini != null) {
+                for (int i = 0; i < listaOrdini.size(); i++) {
+                    Ordine ord = listaOrdini.get(i);
+                    if (ord.getIdUtente() > 0) {
+                        Utente u = utenteDao.doRetrieveByKey(ord.getIdUtente());
+                        listaUtenti.add(u);
+                    } else {
+                        listaUtenti.add(null);
+                    }
+                }
+            }
+
+            request.setAttribute("listaOrdini", listaOrdini);
+            request.setAttribute("listaUtenti", listaUtenti);
+            request.setAttribute("tuttiIClienti", tuttiIClienti);
+
+            request.setAttribute("selectedIdUtente", idUtenteParam);
+            request.setAttribute("selectedDataInizio", dataInizioParam);
+            request.setAttribute("selectedDataFine", dataFineParam);
+
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/admin/gestioneOrdiniView.jsp");
+            dispatcher.forward(request, response);
+
+        } catch (SQLException e) {
+            System.err.println("Errore recupero ordini admin: " + e.getMessage());
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/catalogo?errore=db");
+        }
+    }
         
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
         HttpSession session = request.getSession(false);
         Utente utente = null;
