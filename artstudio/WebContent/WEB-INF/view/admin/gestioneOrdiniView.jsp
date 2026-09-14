@@ -47,9 +47,9 @@
                                 String valId = String.valueOf(cl.getIdUtente());
                                 boolean isSelected = valId.equals(selectedIdUtente);
                     %>
-                        <option value="<%= cl.getIdUtente() %>" <%= isSelected ? "selected" : "" %>>
-                            <%= cl.getNome() %> <%= cl.getCognome() %> (<%= cl.getEmail() %>)
-                        </option>
+                       <option value="<%= cl.getIdUtente() %>" <% if (isSelected) { %>selected<% } %>>
+    						<%= cl.getNome() %> <%= cl.getCognome() %> (<%= cl.getEmail() %>)
+					   </option>
                     <% 
                             }
                         } 
@@ -161,13 +161,7 @@
             <button type="submit" class="btn-opzione" style="padding: 6px 12px; margin-left: 5px;">Aggiorna</button>
         </form>
 
-        <form action="<%=request.getContextPath()%>/admin/ordini" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="action" value="uploadFoto">
-            <input type="hidden" name="idOrdine" id="formFotoIdOrdine">
-            <label><strong>Immagine Consegna:</strong></label><br>
-            <input type="file" name="immagineConsegna" accept="image/*" required style="margin-top: 5px;"><br>
-            <button type="submit" class="btn-opzione" style="padding: 6px 12px; margin-top: 5px;">Carica Foto</button>
-        </form>
+       
     </div>
 </div>
 </body>
