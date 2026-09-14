@@ -19,21 +19,22 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import javax.sql.DataSource;
-import org.json.JSONObject;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import dao.OrdineDAO;
 import dao.OrdineDAOImp;
-import model.Ordine;
-import model.Utente;
-import model.RigaOrdine;
-import dao.RigaOrdineDAO;
-import dao.RigaOrdineDAOImp;
 import dao.ProdottoDAO;
 import dao.ProdottoDAOImp;
-import model.Prodotto;
+import dao.RigaOrdineDAO;
+import dao.RigaOrdineDAOImp;
 import dao.UtenteDAO;
 import dao.UtenteDAOImp;
+
+import model.Ordine;
+import model.Prodotto;
+import model.RigaOrdine;
+import model.Utente;
 
 @WebServlet("/admin/ordini")
 @MultipartConfig(
@@ -78,49 +79,75 @@ public class gestioneOrdiniControl extends HttpServlet {
         }
         
         String action = request.getParameter("action");
+        if (action == null || action.trim().isEmpty()) {
+            action = request.getParameter("azione");
+        }
 
-        if ("dettaglioAjax".equalsIgnoreCase(action)) {
-            response.setContentType("application/json");
+        String isAjaxParam = request.getParameter("ajax");
+        boolean isAjax = "true".equalsIgnoreCase(isAjaxParam) || "dettaglioAjax".equalsIgnoreCase(action);
+
+        if ("dettaglioAjax".equalsIgnoreCase(action) || isAjax) {
+            response.setContentType("application/json"); 
             response.setCharacterEncoding("UTF-8");
-            int idOrdine = Integer.parseInt(request.getParameter("idOrdine"));
             
-            try {
-                List<RigaOrdine> righe = rigaOrdineDao.doRetrieveByOrdine(idOrdine);
-                JSONArray jsonArray = new JSONArray();
+            String idOrdineStr = request.getParameter("idOrdine");
+            if (idOrdineStr != null && !idOrdineStr.trim().isEmpty()) {
+                try {
+                    int idOrdine = Integer.parseInt(idOrdineStr);
+                    List<RigaOrdine> righe = rigaOrdineDao.doRetrieveByOrdine(idOrdine);
+                    JSONArray jsonArray = new JSONArray();
 
-                for (int i = 0; i < righe.size(); i++) {
-                    RigaOrdine r = righe.get(i);
-                    JSONObject jsonItem = new JSONObject();
-                    
-                    Prodotto p = prodottoDao.doRetrieveByKey(r.getIdProdotto());
-                    
-                    String nomeProdotto = p.getNome();
-                    jsonItem.put("idProdotto", r.getIdProdotto());
-                    jsonItem.put("nomeProdotto", nomeProdotto);
-                    jsonItem.put("quantita", r.getQuantita());
-                    jsonItem.put("prezzo", r.getPrezzoOg());
-                    
-                    if (r.getDescrizioneComm() != null) {
-                        jsonItem.put("note", r.getDescrizioneComm());
-                    } else {
-                        jsonItem.put("note", "");
-                    }
-                    
-                    if (r.getRefComm() != null) {
-                        jsonItem.put("ref", r.getRefComm());
-                    } else {
-                        jsonItem.put("ref", "");
+                    for (int i = 0; i < righe.size(); i++) {
+                        RigaOrdine r = righe.get(i);
+                        JSONObject jsonItem = new JSONObject();
+                        
+                        Prodotto p = prodottoDao.doRetrieveByKey(r.getIdProdotto());
+                        
+                        String nomeProdotto = "";
+                        if (p != null) {
+                            nomeProdotto = p.getNome();
+                        }
+
+                        jsonItem.put("idRiga", r.getIdRiga());
+                        jsonItem.put("idOrdine", r.getIdOrdine());
+                        jsonItem.put("idProdotto", r.getIdProdotto());
+                        jsonItem.put("nomeProdotto", nomeProdotto);
+                        jsonItem.put("quantita", r.getQuantita());
+                        jsonItem.put("prezzo", r.getPrezzoOg());
+
+                        String note = "";
+                        if (r.getDescrizioneComm() != null) {
+                            note = r.getDescrizioneComm();
+                        }
+                        jsonItem.put("note", note);
+
+                        String ref = "";
+                        if (r.getRefComm() != null) {
+                            ref = r.getRefComm();
+                        }
+                        jsonItem.put("ref", ref);
+
+                        String fileFinale = "";
+                        if (r.getFileFinale() != null) {
+                            fileFinale = r.getFileFinale();
+                        }
+                        jsonItem.put("fileFinale", fileFinale);
+                        jsonArray.put(jsonItem);
                     }
 
-                    jsonArray.put(jsonItem);
+                    response.getWriter().write(jsonArray.toString());
+                    return;
+                    
+                } catch (SQLException e) {
+                    System.err.println("Errore SQL in dettaglioAjax admin: " + e.getMessage());
+                    e.printStackTrace();
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    return;
+                } catch (NumberFormatException e) {
+                    System.err.println("ID Ordine non valido: " + e.getMessage());
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    return;
                 }
-
-                response.getWriter().write(jsonArray.toString());
-                return;
-                
-            } catch (SQLException e) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                return;
             }
         }
 
@@ -214,12 +241,28 @@ public class gestioneOrdiniControl extends HttpServlet {
         }
 
         String action = request.getParameter("action");
+        if (action == null || action.trim().isEmpty()) {
+            action = request.getParameter("azione");
+        }
 
         try {
-            if ("uploadFoto".equalsIgnoreCase(action)) {
-                int idOrdine = Integer.parseInt(request.getParameter("idOrdine"));
-                Part filePart = request.getPart("immagineConsegna");
-                if (filePart != null && filePart.getSize() > 0) {
+            if ("cambiaStato".equalsIgnoreCase(action)) {
+                String idOrdineStr = request.getParameter("idOrdine");
+                String nuovoStato = request.getParameter("nuovoStato");
+                
+                if (idOrdineStr != null && nuovoStato != null && !nuovoStato.trim().isEmpty()) {
+                    int idOrdine = Integer.parseInt(idOrdineStr);
+                    ordineDao.doUpdateStato(idOrdine, nuovoStato);
+                }
+                response.sendRedirect(request.getContextPath() + "/admin/ordini?esito=ok");
+                return;
+            } else if ("uploadFotoSingola".equalsIgnoreCase(action)) {
+                String idRigaStr = request.getParameter("idRiga");
+                Part filePart = request.getPart("fileFinale");
+
+                if (idRigaStr != null && filePart != null && filePart.getSize() > 0) {
+                    int idRiga = Integer.parseInt(idRigaStr);
+
                     String originalName = filePart.getSubmittedFileName();
                     String extension = "";
                     if (originalName != null && originalName.contains(".")) {
@@ -234,23 +277,19 @@ public class gestioneOrdiniControl extends HttpServlet {
                     }
 
                     filePart.write(uploadPath + File.separator + uniqueFileName);
-                    ordineDao.doUpdateImmagineConsegna(idOrdine, uniqueFileName);
+                    
+                    rigaOrdineDao.doUpdateFileFinale(idRiga, uniqueFileName);
                 }
-            } else if ("cambiaStato".equalsIgnoreCase(action)) {
-                int idOrdine = Integer.parseInt(request.getParameter("idOrdine"));
-                String nuovoStato = request.getParameter("nuovoStato");
-                
-                if (nuovoStato != null && !nuovoStato.trim().isEmpty()) {
-                    ordineDao.doUpdateStato(idOrdine, nuovoStato);
-                }
+                response.sendRedirect(request.getContextPath() + "/admin/ordini?esito=ok");
+                return;
             }
-
-            response.sendRedirect(request.getContextPath() + "/admin/ordini?esito=ok");
-
         } catch (SQLException e) {
-            System.err.println("Errore gestione ordine admin: " + e.getMessage());
+            System.err.println("Errore SQL in doPost admin: " + e.getMessage());
             e.printStackTrace();
             response.sendRedirect(request.getContextPath() + "/admin/ordini?errore=1");
+            return;
         }
+
+        doGet(request, response);
     }
 }
