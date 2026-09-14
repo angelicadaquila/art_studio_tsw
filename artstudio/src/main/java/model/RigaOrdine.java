@@ -3,6 +3,7 @@ import java.io.Serializable;
 
 
 public class RigaOrdine implements Serializable{
+	private int idRiga;
     private int idOrdine;
     private int idProdotto;
     private Double prezzoOg;
@@ -14,14 +15,23 @@ public class RigaOrdine implements Serializable{
     public RigaOrdine() {
     }
 
-    public RigaOrdine(int idOrdine, int idProdotto, Double prezzoOg, int quantita, String descrizioneComm, String refComm, String fileFinale) {
-        this.idOrdine = idOrdine;
+    public RigaOrdine(int idRiga, int idOrdine, int idProdotto, Double prezzoOg, int quantita, String descrizioneComm, String refComm, String fileFinale) {
+        this.idRiga = idRiga;
+    	this.idOrdine = idOrdine;
         this.idProdotto = idProdotto;
         this.prezzoOg = prezzoOg;
         this.quantita = quantita;
         this.descrizioneComm = descrizioneComm;
         this.refComm = refComm;
         this.fileFinale = fileFinale;
+    }
+    
+    public int getIdRiga() {
+        return idRiga;
+    }
+
+    public void setIdRiga(int idRiga) {
+        this.idRiga = idRiga;
     }
 
     public int getIdOrdine() {
