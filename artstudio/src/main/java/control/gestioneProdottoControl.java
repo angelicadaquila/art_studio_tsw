@@ -67,18 +67,79 @@ public class gestioneProdottoControl extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/admin/prodotti");
                 return;
             } 
-            
             else if ("modifica".equalsIgnoreCase(action)) {
                 int id = Integer.parseInt(request.getParameter("idProdotto"));
                 Prodotto prod = prodottoDao.doRetrieveByKey(id);
                 request.setAttribute("prodotto", prod);
+                request.setAttribute("isModifica", true);
+                request.setAttribute("titoloPagina", "Modifica Prodotto");
+                request.setAttribute("idProdotto", prod.getIdProdotto());
+                
+                String nomeVal = "";
+                if (prod.getNome() != null) {
+                    nomeVal = prod.getNome();
+                }
+                request.setAttribute("nome", nomeVal);
+  
+                String descrizioneVal = "";
+                if (prod.getDescrizione() != null) {
+                    descrizioneVal = prod.getDescrizione();
+                }
+                request.setAttribute("descrizione", descrizioneVal); 
+                request.setAttribute("prezzo", String.format(java.util.Locale.ITALY, "%.2f", prod.getPrezzo()));
+                request.setAttribute("disponibile", prod.isDisponibile());
+                
+                String immagineVal = "";
+                if (prod.getImmagine() != null) {
+                    immagineVal = prod.getImmagine();
+                }
+                request.setAttribute("immagineAttuale", immagineVal);
+                request.setAttribute("menuProdotto", "disabled");
+
+                String tipoProdotto = "";
+                String dimensione = "";
+                int quantita = 0;
+                String tempo = "";
+
+                if (prod instanceof Stampa) {
+                    tipoProdotto = "stampa";
+                    Stampa s = (Stampa) prod;
+                    if (s.getDimensione() != null) {
+                        dimensione = s.getDimensione();
+                    }
+                    quantita = s.getQuantita();
+                } else if (prod instanceof Commissione) {
+                    tipoProdotto = "commissione";
+                    Commissione c = (Commissione) prod;
+                    if (c.getTempo() != null) {
+                        tempo = c.getTempo();
+                    }
+                }
+                
+                request.setAttribute("tipoProdotto", tipoProdotto);
+                request.setAttribute("dimensione", dimensione);
+                request.setAttribute("quantita", quantita);
+                request.setAttribute("tempo", tempo);
                 
                 RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/admin/formProdotto.jsp");
                 dispatcher.forward(request, response);
                 return;
             } 
-            
-            else if ("addForm".equalsIgnoreCase(action)) {
+            else if ("aggiungi".equalsIgnoreCase(action)) {
+                request.setAttribute("isModifica", false);
+                request.setAttribute("titoloPagina", "Aggiungi Nuovo Prodotto");
+                request.setAttribute("idProdotto", "");
+                request.setAttribute("nome", "");
+                request.setAttribute("descrizione", "");
+                request.setAttribute("prezzo", "");
+                request.setAttribute("disponibile", true);
+                request.setAttribute("immagineAttuale", "");
+                request.setAttribute("menuProdotto", "");
+                request.setAttribute("tipoProdotto", "");
+                request.setAttribute("dimensione", "");
+                request.setAttribute("quantita", 0);
+                request.setAttribute("tempo", "");
+
                 RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/admin/formProdotto.jsp");
                 dispatcher.forward(request, response);
                 return;
@@ -120,8 +181,10 @@ public class gestioneProdottoControl extends HttpServlet {
                 String nome = request.getParameter("nome");
                 String descrizione = request.getParameter("descrizione");
                 String prezzoStr = request.getParameter("prezzo");
+                
                 double prezzo = 0.0;
                 if (prezzoStr != null && !prezzoStr.trim().isEmpty()) {
+                    prezzoStr = prezzoStr.replace(",", ".");
                     prezzo = Double.parseDouble(prezzoStr);
                 }
                 
@@ -155,7 +218,7 @@ public class gestioneProdottoControl extends HttpServlet {
                     }
                 }
                 
-                Prodotto prodotto;
+                Prodotto prodotto = null;
 
                 if ("stampa".equalsIgnoreCase(tipoProdotto)) {
                     Stampa stampa = new Stampa();
@@ -170,7 +233,7 @@ public class gestioneProdottoControl extends HttpServlet {
                     stampa.setFisico(true);
                     
                     prodotto = stampa;
-                } else {
+                } else if ("commissione".equalsIgnoreCase(tipoProdotto)) {
                     Commissione commissione = new Commissione();
                     
                     String tempoStr = request.getParameter("tempo");
@@ -181,6 +244,9 @@ public class gestioneProdottoControl extends HttpServlet {
                     commissione.setFisico(false);
                     
                     prodotto = commissione;
+                } else {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Tipo prodotto non specificato.");
+                    return;
                 }
 
                 prodotto.setNome(nome);
@@ -204,6 +270,7 @@ public class gestioneProdottoControl extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Errore nel salvataggio del prodotto sul Database.");
             } catch (NumberFormatException e) {
                 System.err.println("Errore nei dati numerici: " + e.getMessage());
+                e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "I valori numerici inseriti non sono validi.");
             }
         } else {
