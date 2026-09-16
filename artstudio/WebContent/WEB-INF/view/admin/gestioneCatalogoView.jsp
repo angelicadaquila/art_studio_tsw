@@ -15,17 +15,18 @@
 </head>
 <body>
 <jsp:include page="/WEB-INF/view/barraSuperioreView.jsp" />
-<div style="padding: 20px; max-width: 1200px; margin: 0 auto;">
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+<div class="catalogo-admin-container">
+
+    <div class="catalogo-header">
         <h2>Gestione Catalogo Prodotti</h2>
-        <a href="<%= request.getContextPath() %>/admin/prodotti?action=addForm" class="btn-aggiungi">+ Aggiungi Prodotto</a>
+        <a href="<%= request.getContextPath() %>/admin/prodotti?action=aggiungi" class="btn-aggiungi">+ Aggiungi Prodotto</a>
     </div>
 
     <%
         String message = (String) request.getAttribute("message");
         if (message != null) {
-            out.print("<p style=\"color: green; font-weight: bold;\">" + message + "</p>");
+            out.print("<p class=\"messaggio-successo\">" + message + "</p>");
         }
 
         List<Prodotto> prodotti = (List<Prodotto>) request.getAttribute("prodotti");
@@ -38,19 +39,16 @@
         %>
             <div class="singolo-prod">
                 <% if (p.getImmagine() != null && !p.getImmagine().trim().isEmpty()) { %>
-    					<img src="<%= request.getContextPath() %>/immagine?action=show&id=<%= p.getIdProdotto() %>" 
-    					alt="<%= p.getNome() %>" 
-						width="80" 
-         				height="80" 
-         				style="object-fit: cover;"
-         				onerror="this.src='<%= request.getContextPath() %>/images/placeholder.png';">
-				<% } else { %>
-    					<img src="<%= request.getContextPath() %>/images/placeholder.png" 
-         				alt="Nessuna immagine disponibile" 
-        				width="80" 
-         				height="80" 
-         				style="object-fit: cover;">
-				<% } %>
+                    <img src="<%= request.getContextPath() %>/immagine?action=show&id=<%= p.getIdProdotto() %>" 
+                         alt="<%= p.getNome() %>" 
+                         class="img-prodotto-catalogo"
+                         onerror="this.src='<%= request.getContextPath() %>/images/placeholder.png';">
+                <% } else { %>
+                    <img src="<%= request.getContextPath() %>/images/placeholder.png" 
+                         alt="Nessuna immagine disponibile" 
+                         class="img-prodotto-catalogo">
+                <% } %>
+
                 <h3><%= p.getNome() %></h3>
                 <p><strong>ID:</strong> <%= p.getIdProdotto() %></p>
                 <p><strong>Prezzo:</strong> &euro; <%= String.format("%.2f", p.getPrezzo()) %></p>
@@ -63,7 +61,7 @@
                     <% } %>
                 </div>
 
-                <p style="font-size: 0.9em; margin-top: 10px;">
+                <p class="dettaglio-prodotto-testo">
                     <%
                         if (p instanceof Stampa) {
                             Stampa s = (Stampa) p;
@@ -75,18 +73,18 @@
                     %>
                 </p>
 
-                <p>
-                    <h2>Disponibile:</h2> 
+                <div class="disponibilita-box">
+                    <span class="disponibilita-titolo">Disponibile:</span> 
                     <% if (p.isDisponibile()) { %>
-                        <span style="color: green; font-weight: bold;">Sì</span>
+                        <span class="testo-disponibile-si">Sì</span>
                     <% } else { %>
-                        <span style="color: red; font-weight: bold;">No</span>
+                        <span class="testo-disponibile-no">No</span>
                     <% } %>
-                </p>
+                </div>
 
-                <div style="margin-top: 15px; justify-content: center; gap: 10px;">
-                    <a href="<%= request.getContextPath() %>/admin/prodotti?action=modifica&idProdotto=<%= p.getIdProdotto() %>" class="btn-opzione" style="padding: 5px 10px; font-size: 0.9em;">Modifica</a>
-                    <a href="<%= request.getContextPath() %>/admin/prodotti?action=elimina&idProdotto=<%= p.getIdProdotto() %>" class="btn-indietro" style="background-color: #dc3545; padding: 5px 10px; font-size: 0.9em;" onclick="return confirm('Sei sicuro di voler eliminare questo prodotto?');">Elimina</a>
+                <div class="azioni-prodotto-card">
+                    <a href="<%= request.getContextPath() %>/admin/prodotti?action=modifica&idProdotto=<%= p.getIdProdotto() %>" class="btn-opzione btn-piccolo">Modifica</a>
+                    <a href="<%= request.getContextPath() %>/admin/prodotti?action=elimina&idProdotto=<%= p.getIdProdotto() %>" class="btn-indietro btn-elimina-piccolo" onclick="return confirm('Sei sicuro di voler eliminare questo prodotto? Non verrà eliminato dal db ma verrà reso non disponibile');">Elimina</a>
                 </div>
             </div>
         <%
