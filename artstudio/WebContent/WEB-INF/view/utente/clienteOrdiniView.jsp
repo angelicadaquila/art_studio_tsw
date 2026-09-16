@@ -2,26 +2,24 @@
 <%@ page import="java.util.List" %>
 <%@ page import="model.Ordine" %>
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link href="<%=request.getContextPath()%>/styles/base.css" rel="stylesheet" type="text/css">
-    <link href="<%=request.getContextPath()%>/styles/componenti.css" rel="stylesheet" type="text/css">
-    <link href="<%=request.getContextPath()%>/styles/catalogo.css" rel="stylesheet" type="text/css">
-    
     <title>I Miei Ordini</title>
     
-    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/ajax/ajax.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/ajax/ordiniDettagli.js"></script>
+    <link href="<%=request.getContextPath()%>/styles/base.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/styles/componenti.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/styles/ordini.css" rel="stylesheet" type="text/css">
+    
+    <script type="text/javascript" src="<%=request.getContextPath()%>/scripts/ajax/ajax.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/scripts/ajax/ordiniDettagli.js"></script>
 </head>
 <body>
+<jsp:include page="/WEB-INF/view/barraSuperioreView.jsp"/>
 <div class="container">
-    <jsp:include page="/WEB-INF/view/barraSuperioreView.jsp" />
-
-    <h2>I Miei Ordini e Commissioni</h2>
 
     <% if ("ok".equals(request.getParameter("esito"))) { %>
-        <p style="color: green; font-weight: bold; background-color: #d4edda; padding: 10px; border-radius: 4px;">
+        <p class="msg-successo">
             Ordine completato con successo!
         </p>
     <% } %>
@@ -30,47 +28,47 @@
         List<Ordine> listaOrdini = (List<Ordine>) request.getAttribute("listaOrdini");
         if (listaOrdini != null && !listaOrdini.isEmpty()) {
     %>
-        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-    <thead>
-        <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-            <th style="padding: 10px; text-align: left;">ID Ordine</th>
-            <th style="padding: 10px; text-align: left;">Indirizzo Spedizione</th>
-            <th style="padding: 10px; text-align: left;">Totale</th>
-            <th style="padding: 10px; text-align: left;">Stato</th>
-            <th style="padding: 10px; text-align: center;">Azione</th>
-        </tr>
-    </thead>
-    <tbody>
-        <% for (int i = 0; i < listaOrdini.size(); i++) { 
-            Ordine ord = listaOrdini.get(i);
-        %>
-            <tr style="border-bottom: 1px solid #dee2e6;">
-                <td style="padding: 10px;">#<%= ord.getIdOrdine() %></td>
-                <td style="padding: 10px;">
-                    <% if (ord.getViaSpedizione() != null && !ord.getViaSpedizione().trim().isEmpty()) { %>
-                        <%= ord.getViaSpedizione() %>, <%= ord.getCivicoSpedizione() %><br>
-                        <small style="color: #555;"><%= ord.getCittaSpedizione() %> (<%= ord.getRegioneSpedizione() %>)</small>
-                    <% } else { %>
-                        <span style="color: gray;">Non disponibile</span>
-                    <% } %>
-                </td>
+        <table class="tabella-ordini-admin">
+            <thead>
+                <tr>
+                    <th class="testo-sinistra">ID Ordine</th>
+                    <th class="testo-sinistra">Indirizzo Spedizione</th>
+                    <th class="testo-sinistra">Totale</th>
+                    <th class="testo-sinistra">Stato</th>
+                    <th class="testo-centro">Azione</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (int i = 0; i < listaOrdini.size(); i++) { 
+                    Ordine ord = listaOrdini.get(i);
+                %>
+                    <tr>
+                        <td>#<%= ord.getIdOrdine() %></td>
+                        <td>
+                            <% if (ord.getViaSpedizione() != null && !ord.getViaSpedizione().trim().isEmpty()) { %>
+                                <%= ord.getViaSpedizione() %>, <%= ord.getCivicoSpedizione() %><br>
+                                <small class="testo-dettaglio-grigio"><%= ord.getCittaSpedizione() %> (<%= ord.getRegioneSpedizione() %>)</small>
+                            <% } else { %>
+                                <span class="testo-dettaglio-grigio">Non disponibile</span>
+                            <% } %>
+                        </td>
 
-                <td style="padding: 10px;">€ <%= String.format("%.2f", ord.getTotaleOrdine()) %></td>
-                <td style="padding: 10px;">
-                    <span style="font-weight: bold;"><%= ord.getStato() %></span>
-                </td>
-                
-                <td style="padding: 10px; text-align: center;">
-                    <button type="button" class="btn-opzione" onclick="caricaDettaglioOrdine(<%= ord.getIdOrdine() %>, '<%= request.getContextPath() %>', '/utente/mieiOrdini')">
-                        Dettagli
-                    </button>
-                </td>
-            </tr>
-        <% } %>
-    </tbody>
-</table>
+                        <td>&euro; <%= String.format("%.2f", ord.getTotaleOrdine()) %></td>
+                        <td>
+                            <strong><%= ord.getStato() %></strong>
+                        </td>
+                        
+                        <td class="testo-centro">
+                            <button type="button" class="btn-opzione" onclick="caricaDettaglioOrdine(<%= ord.getIdOrdine() %>, '<%= request.getContextPath() %>', '/utente/mieiOrdini')">
+                                Dettagli
+                            </button>
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
     <% } else { %>
-        <p style="margin-top: 20px; color: gray;">Non hai ancora effettuato alcun ordine.</p>
+        <p class="testo-nessun-ordine">Non hai ancora effettuato alcun ordine.</p>
     <% } %>
 
 </div>
@@ -80,10 +78,10 @@
         <button type="button" class="close-finestra-btn" onclick="chiudiFinestra()">&times;</button>
         
         <h3>Dettaglio Ordine <span id="finestraIdOrdine"></span></h3>
-        <hr style="margin-bottom: 15px; border: 0; border-top: 1px solid #eee;">
+        <hr class="separatore-dettagli">
 
         <h4>Articoli Acquistati</h4>
-        <ul id="listaArticoliFinestra" style="padding-left: 20px; margin-bottom: 20px;">
+        <ul id="listaArticoliFinestra" class="lista-articoli-dettagli">
         </ul>
     </div>
 </div>

@@ -7,7 +7,6 @@
     <link href="<%=request.getContextPath()%>/styles/base.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath()%>/styles/componenti.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath()%>/styles/form.css" rel="stylesheet" type="text/css">
-    
 </head>
 <body>
 
@@ -19,21 +18,21 @@
 
     <form id="formProdotto" action="<%= request.getContextPath() %>/admin/prodotti?action=salva" method="post" enctype="multipart/form-data" class="form-layout">
 
-        <input type="hidden" name="idProdotto" value="${idProdotto}">
+        <input type="hidden" name="idProdotto" value="<%= request.getAttribute("idProdotto") %>">
 
         <div class="form-gruppo">
             <label for="nome">Nome Prodotto:</label>
-            <input type="text" id="nome" name="nome" value="${nome}" required>
+            <input type="text" id="nome" name="nome" value="<%= request.getAttribute("nome") %>" required>
         </div>
 
         <div class="form-gruppo">
             <label for="descrizione">Descrizione:</label>
-            <textarea id="descrizione" name="descrizione" rows="3">${descrizione}</textarea>
+            <textarea id="descrizione" name="descrizione" rows="3"><%= request.getAttribute("descrizione") %></textarea>
         </div>
 
         <div class="form-gruppo">
             <label for="prezzo">Prezzo (&euro;):</label>
-            <input type="text" id="prezzo" name="prezzo" value="${prezzo}" required>
+            <input type="text" id="prezzo" name="prezzo" value="<%= request.getAttribute("prezzo") %>" required>
         </div>
 
         <div class="form-gruppo">
@@ -44,7 +43,7 @@
                     <option value="stampa" <% if ("stampa".equals(request.getAttribute("tipoProdotto"))) { out.print("selected"); } %>>Stampa</option>
                     <option value="commissione" <% if ("commissione".equals(request.getAttribute("tipoProdotto"))) { out.print("selected"); } %>>Commissione</option>
                 </select>
-                <input type="hidden" name="tipoProdotto" value="${tipoProdotto}">
+                <input type="hidden" name="tipoProdotto" value="<%= request.getAttribute("tipoProdotto") %>">
             <% } else { %>
                 <select id="tipoProdotto" name="tipoProdotto" onchange="gestisciCampiTipo()" required>
                     <option value="">Seleziona Tipo</option>
@@ -57,18 +56,18 @@
         <div id="campiStampa" class="box-stampa-admin">
             <div class="form-gruppo">
                 <label for="dimensione">Dimensione:</label>
-                <input type="text" id="dimensione" name="dimensione" value="${dimensione}">
+                <input type="text" id="dimensione" name="dimensione" value="<%= request.getAttribute("dimensione") %>">
             </div>
             <div class="form-gruppo">
                 <label for="quantita">Quantita:</label>
-                <input type="number" id="quantita" name="quantita" value="${quantita}">
+                <input type="number" id="quantita" name="quantita" value="<%= request.getAttribute("quantita") %>">
             </div>
         </div>
 
         <div id="campiCommissione" class="box-commissione-admin">
             <div class="form-gruppo">
                 <label for="tempo">Tempo di realizzazione (giorni):</label>
-                <input type="text" id="tempo" name="tempo" value="${tempo}">
+                <input type="text" id="tempo" name="tempo" value="<%= request.getAttribute("tempo") %>">
             </div>
         </div>
 
@@ -77,10 +76,10 @@
             <input type="file" id="immagine" name="immagine" accept="image/*">
             
             <% if ((Boolean) request.getAttribute("isModifica")) { %>
-                <input type="hidden" name="immagineVecchia" value="${immagineAttuale}">
+                <input type="hidden" name="immagineVecchia" value="<%= request.getAttribute("immagineAttuale") %>">
                 <% if (request.getAttribute("immagineAttuale") != null && !((String)request.getAttribute("immagineAttuale")).trim().isEmpty()) { %>
                     <p class="testo-info-file">
-                        File attuale: <strong>${immagineAttuale}</strong> (seleziona un file solo se desideri sostituirlo).
+                        File attuale: <strong><%= request.getAttribute("immagineAttuale") %></strong> (seleziona un file solo se desideri sostituirlo).
                     </p>
                 <% } %>
             <% } %>
