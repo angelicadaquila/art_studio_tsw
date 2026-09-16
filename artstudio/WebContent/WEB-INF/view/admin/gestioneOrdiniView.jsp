@@ -3,13 +3,14 @@
 <%@ page import="model.Ordine" %>
 <%@ page import="model.Utente" %>
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Admin - Gestione Ordini</title>
+    
     <link href="<%=request.getContextPath()%>/styles/base.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath()%>/styles/componenti.css" rel="stylesheet" type="text/css">
-    <link href="<%=request.getContextPath()%>/styles/catalogo.css" rel="stylesheet" type="text/css">
-    <title>Admin - Gestione Ordini</title>
+    <link href="<%=request.getContextPath()%>/styles/ordini.css" rel="stylesheet" type="text/css">
 
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/ajax/ajax.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/ajax/ordiniDettagli.js"></script>
@@ -34,12 +35,12 @@
         if (selectedDataFine == null) { selectedDataFine = ""; }
     %>
 
-    <form action="<%= request.getContextPath() %>/admin/ordini" method="get" style="margin-top: 20px; margin-bottom: 25px; padding: 15px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px;">
-        <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+    <form action="<%= request.getContextPath() %>/admin/ordini" method="get" class="box-filtri-ordini">
+        <div class="riga-filtri-ordini">
             <div>
                 <label for="idUtente"><strong>Filtra per Cliente:</strong></label><br>
-                <select name="idUtente" id="idUtente" style="padding: 6px; margin-top: 5px;">
-                    <option value="" <% if ("".equals(selectedIdUtente)) { out.print("selected"); } %>>-- Tutti i Clienti --</option>
+                <select name="idUtente" id="idUtente" class="select-filtro-ordini">
+                    <option value="" <% if ("".equals(selectedIdUtente)) { out.print("selected"); } %>>Tutti i Clienti</option>
                     <% 
                         if (tuttiIClienti != null) {
                             for (int i = 0; i < tuttiIClienti.size(); i++) {
@@ -48,8 +49,8 @@
                                 boolean isSelected = valId.equals(selectedIdUtente);
                     %>
                        <option value="<%= cl.getIdUtente() %>" <% if (isSelected) { %>selected<% } %>>
-    						<%= cl.getNome() %> <%= cl.getCognome() %> (<%= cl.getEmail() %>)
-					   </option>
+                            <%= cl.getNome() %> <%= cl.getCognome() %> (<%= cl.getEmail() %>)
+                       </option>
                     <% 
                             }
                         } 
@@ -58,17 +59,17 @@
             </div>
             <div>
                 <label for="dataInizio"><strong>Da Data:</strong></label><br>
-                <input type="date" name="dataInizio" id="dataInizio" value="<%= selectedDataInizio %>" style="padding: 5px; margin-top: 5px;">
+                <input type="date" name="dataInizio" id="dataInizio" value="<%= selectedDataInizio %>" class="input-data-ordini">
             </div>
 
             <div>
                 <label for="dataFine"><strong>A Data:</strong></label><br>
-                <input type="date" name="dataFine" id="dataFine" value="<%= selectedDataFine %>" style="padding: 5px; margin-top: 5px;">
+                <input type="date" name="dataFine" id="dataFine" value="<%= selectedDataFine %>" class="input-data-ordini">
             </div>
 
-            <div>
-                <button type="submit" class="btn-opzione" style="padding: 6px 15px;">Filtra</button>
-                <a href="<%= request.getContextPath() %>/admin/ordini" style="margin-left: 10px; text-decoration: none; color: #555; font-size: 0.9em;">Mostra tutti</a>
+            <div class="azioni-filtro-ordini">
+                <button type="submit" class="btn-opzione btn-filtra-ordini">Filtra</button>
+                <a href="<%= request.getContextPath() %>/admin/ordini" class="link-reset-filtri">Mostra tutti</a>
             </div>
         </div>
     </form>
@@ -76,16 +77,16 @@
     <%
         if (listaOrdini != null && !listaOrdini.isEmpty()) {
     %>
-        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+        <table class="tabella-ordini-admin">
             <thead>
-                <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-                    <th style="padding: 10px; text-align: left;">ID</th>
-                    <th style="padding: 10px; text-align: left;">Cliente</th>
-                    <th style="padding: 10px; text-align: left;">Indirizzo Spedizione</th>
-                    <th style="padding: 10px; text-align: left;">Data</th>
-                    <th style="padding: 10px; text-align: left;">Totale</th>
-                    <th style="padding: 10px; text-align: left;">Stato</th>
-                    <th style="padding: 10px; text-align: center;">Azione</th>
+                <tr>
+                    <th class="testo-sinistra">ID</th>
+                    <th class="testo-sinistra">Cliente</th>
+                    <th class="testo-sinistra">Indirizzo Spedizione</th>
+                    <th class="testo-sinistra">Data</th>
+                    <th class="testo-sinistra">Totale</th>
+                    <th class="testo-sinistra">Stato</th>
+                    <th class="testo-centro">Azione</th>
                 </tr>
             </thead>
             <tbody>
@@ -98,31 +99,31 @@
                             u = listaUtenti.get(i);
                         }
                 %>
-                    <tr style="border-bottom: 1px solid #dee2e6;">
-                        <td style="padding: 10px;">#<%= ord.getIdOrdine() %></td>
+                    <tr>
+                        <td>#<%= ord.getIdOrdine() %></td>
                         
-                        <td style="padding: 10px;">
+                        <td>
                             <% if (u != null) { %>
                                 <strong><%= u.getNome() %> <%= u.getCognome() %></strong><br>
-                                <small style="color: #555;"><%= u.getEmail() %></small>
+                                <small class="testo-dettaglio-grigio"><%= u.getEmail() %></small>
                             <% } else { %>
-                                <span style="color: gray;">Utente #<%= ord.getIdUtente() %></span>
+                                <span class="testo-dettaglio-grigio">Utente #<%= ord.getIdUtente() %></span>
                             <% } %>
                         </td>
 
-                        <td style="padding: 10px;">
+                        <td>
                             <% if (ord.getViaSpedizione() != null && !ord.getViaSpedizione().trim().isEmpty()) { %>
                                 <%= ord.getViaSpedizione() %>, <%= ord.getCivicoSpedizione() %><br>
-                                <small style="color: #555;"><%= ord.getCittaSpedizione() %> (<%= ord.getRegioneSpedizione() %>)</small>
+                                <small class="testo-dettaglio-grigio"><%= ord.getCittaSpedizione() %> (<%= ord.getRegioneSpedizione() %>)</small>
                             <% } else { %>
-                                <span style="color: gray;">Non disponibile</span>
+                                <span class="testo-dettaglio-grigio">Non disponibile</span>
                             <% } %>
                         </td>
 
-                        <td style="padding: 10px;"><%= ord.getDataOrdine() %></td>
-                        <td style="padding: 10px;">EUR <%= String.format("%.2f", ord.getTotaleOrdine()) %></td>
-                        <td style="padding: 10px;"><%= ord.getStato() %></td>
-                        <td style="padding: 10px; text-align: center;">
+                        <td><%= ord.getDataOrdine() %></td>
+                        <td>EUR <%= String.format("%.2f", ord.getTotaleOrdine()) %></td>
+                        <td><%= ord.getStato() %></td>
+                        <td class="testo-centro">
                             <button type="button" class="btn-opzione" onclick="caricaDettaglioOrdine(<%= ord.getIdOrdine() %>, '<%= request.getContextPath() %>')">
                                 Dettagli
                             </button>
@@ -132,7 +133,7 @@
             </tbody>
         </table>
     <% } else { %>
-        <p style="margin-top: 20px; color: #777;">Nessun ordine disponibile.</p>
+        <p class="testo-nessun-ordine">Nessun ordine disponibile.</p>
     <% } %>
 </div>
 
@@ -141,27 +142,24 @@
         <button type="button" class="close-finestra-btn" onclick="chiudiFinestra()">&times;</button>
         
         <h3>Dettaglio Ordine <span id="finestraIdOrdine"></span></h3>
-        <hr style="margin-bottom: 15px; border: 0; border-top: 1px solid #eee;">
+        <hr class="separatore-dettagli">
 
         <h4>Articoli Acquistati</h4>
-        <ul id="listaArticoliFinestra" style="padding-left: 20px; margin-bottom: 20px;">
+        <ul id="listaArticoliFinestra" class="lista-articoli-dettagli">
         </ul>
 
-        <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+        <hr class="separatore-dettagli">
 
-        <form action="<%=request.getContextPath()%>/admin/ordini" method="post" style="margin-bottom: 15px;">
+        <form action="<%=request.getContextPath()%>/admin/ordini" method="post" class="form-cambia-stato-dettagli">
             <input type="hidden" name="action" value="cambiaStato">
             <input type="hidden" name="idOrdine" id="formStatoIdOrdine">
             <label><strong>Cambia Stato:</strong></label><br>
-            <select name="nuovoStato" style="padding: 6px; margin-top: 5px;">
+            <select name="nuovoStato" class="select-stato-ordini">
                 <option value="In lavorazione">In lavorazione</option>
                 <option value="Completato">Completato</option>
-                <option value="Annullato">Annullato</option>
             </select>
-            <button type="submit" class="btn-opzione" style="padding: 6px 12px; margin-left: 5px;">Aggiorna</button>
+            <button type="submit" class="btn-opzione btn-aggiorna-stato">Aggiorna</button>
         </form>
-
-       
     </div>
 </div>
 </body>
