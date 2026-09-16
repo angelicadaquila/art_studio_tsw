@@ -12,12 +12,12 @@
     <link href="<%=request.getContextPath()%>/styles/componenti.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath()%>/styles/ordini.css" rel="stylesheet" type="text/css">
 
-    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/ajax/ajax.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/ajax/ordiniDettagli.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/scripts/ajax/ajax.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/scripts/ajax/ordiniDettagli.js"></script>
 </head>
 <body>
+<jsp:include page="/WEB-INF/view/barraSuperioreView.jsp"/>
 <div class="container">
-    <jsp:include page="/WEB-INF/view/barraSuperioreView.jsp" />
 
     <h2>Pannello Admin - Gestione Ordini</h2>
 
@@ -67,7 +67,7 @@
                 <input type="date" name="dataFine" id="dataFine" value="<%= selectedDataFine %>" class="input-data-ordini">
             </div>
 
-            <div class="azioni-filtro-ordini">
+            <div class="form-azioni">
                 <button type="submit" class="btn-opzione btn-filtra-ordini">Filtra</button>
                 <a href="<%= request.getContextPath() %>/admin/ordini" class="link-reset-filtri">Mostra tutti</a>
             </div>
@@ -150,7 +150,7 @@
 
         <hr class="separatore-dettagli">
 
-        <form action="<%=request.getContextPath()%>/admin/ordini" method="post" class="form-cambia-stato-dettagli">
+        <form action="<%=request.getContextPath()%>/admin/ordini" method="post" class="form-gruppo">
             <input type="hidden" name="action" value="cambiaStato">
             <input type="hidden" name="idOrdine" id="formStatoIdOrdine">
             <label><strong>Cambia Stato:</strong></label><br>

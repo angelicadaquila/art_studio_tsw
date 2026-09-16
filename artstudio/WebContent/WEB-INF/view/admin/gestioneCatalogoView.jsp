@@ -9,14 +9,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Gestione Catalogo Prodotti</title>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/base.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/componenti.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/catalogo.css">
+    <link href="<%=request.getContextPath()%>/styles/base.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/styles/componenti.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/styles/catalogo.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <jsp:include page="/WEB-INF/view/barraSuperioreView.jsp" />
 
-<div class="catalogo-admin-container">
+<div class="container">
 
     <div class="catalogo-header">
         <h2>Gestione Catalogo Prodotti</h2>
@@ -26,7 +26,7 @@
     <%
         String message = (String) request.getAttribute("message");
         if (message != null) {
-            out.print("<p class=\"messaggio-successo\">" + message + "</p>");
+            out.print("<p class=\"msg-successo\">" + message + "</p>");
         }
 
         List<Prodotto> prodotti = (List<Prodotto>) request.getAttribute("prodotti");
@@ -84,7 +84,7 @@
 
                 <div class="azioni-prodotto-card">
                     <a href="<%= request.getContextPath() %>/admin/prodotti?action=modifica&idProdotto=<%= p.getIdProdotto() %>" class="btn-opzione btn-piccolo">Modifica</a>
-                    <a href="<%= request.getContextPath() %>/admin/prodotti?action=elimina&idProdotto=<%= p.getIdProdotto() %>" class="btn-indietro btn-elimina-piccolo" onclick="return confirm('Sei sicuro di voler eliminare questo prodotto? Non verrà eliminato dal db ma verrà reso non disponibile');">Elimina</a>
+                    <a href="<%= request.getContextPath() %>/admin/prodotti?action=elimina&idProdotto=<%= p.getIdProdotto() %>" class="btn-elimina-piccolo" onclick="return confirm('Sei sicuro di voler eliminare questo prodotto? Non verrà eliminato dal db ma verrà reso non disponibile');">Elimina</a>
                 </div>
             </div>
         <%

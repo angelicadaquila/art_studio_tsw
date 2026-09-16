@@ -4,12 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title><%= request.getAttribute("titoloPagina") %></title>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/base.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/componenti.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/catalogo.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/form.css">
+    <link href="<%=request.getContextPath()%>/styles/base.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/styles/componenti.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/styles/form.css" rel="stylesheet" type="text/css">
     
-    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/formProdotto.js"></script>
 </head>
 <body>
 
@@ -19,7 +17,7 @@
 
     <h2><%= request.getAttribute("titoloPagina") %></h2>
 
-    <form action="<%= request.getContextPath() %>/admin/prodotti?action=salva" method="post" enctype="multipart/form-data" class="form-layout-admin">
+    <form id="formProdotto" action="<%= request.getContextPath() %>/admin/prodotti?action=salva" method="post" enctype="multipart/form-data" class="form-layout">
 
         <input type="hidden" name="idProdotto" value="${idProdotto}">
 
@@ -56,18 +54,18 @@
             <% } %>
         </div>
 
-        <div id="campiStampa" class="box-stampa-admin" style="display: <% if ("stampa".equals(request.getAttribute("tipoProdotto"))) { out.print("block"); } else { out.print("none"); } %>;">
+        <div id="campiStampa" class="box-stampa-admin">
             <div class="form-gruppo">
                 <label for="dimensione">Dimensione:</label>
                 <input type="text" id="dimensione" name="dimensione" value="${dimensione}">
             </div>
-            <div class="form-gruppo" style="margin-top: 10px;">
+            <div class="form-gruppo">
                 <label for="quantita">Quantita:</label>
                 <input type="number" id="quantita" name="quantita" value="${quantita}">
             </div>
         </div>
 
-        <div id="campiCommissione" class="box-commissione-admin" style="display: <% if ("commissione".equals(request.getAttribute("tipoProdotto"))) { out.print("block"); } else { out.print("none"); } %>;">
+        <div id="campiCommissione" class="box-commissione-admin">
             <div class="form-gruppo">
                 <label for="tempo">Tempo di realizzazione (giorni):</label>
                 <input type="text" id="tempo" name="tempo" value="${tempo}">
@@ -89,7 +87,7 @@
         </div>
 
         <div class="form-gruppo">
-            <label for="disponibile" class="label-inline">Disponibile subito:</label>
+            <label for="disponibile">Disponibile subito:</label>
             <input type="checkbox" id="disponibile" name="disponibile" value="true" <% if ((Boolean) request.getAttribute("disponibile")) { out.print("checked"); } %>>
         </div>
 
@@ -101,12 +99,13 @@
                     Aggiungi Prodotto
                 <% } %>
             </button>
-            <a href="${pageContext.request.contextPath}/admin/prodotti" class="btn-indietro">Annulla</a>
+            <a href="<%= request.getContextPath() %>/admin/prodotti" class="btn-indietro">Annulla</a>
         </div>
 
     </form>
 
 </div>
 
+<script type="text/javascript" src="<%=request.getContextPath()%>/scripts/formProdotto.js" defer></script>
 </body>
 </html>
