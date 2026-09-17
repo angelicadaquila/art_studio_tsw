@@ -1,53 +1,61 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link href="<%=request.getContextPath()%>/styles/base.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath()%>/styles/componenti.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath()%>/styles/form.css" rel="stylesheet" type="text/css">
-	<title>Login</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="<%=request.getContextPath()%>/styles/base.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/styles/componenti.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/styles/form.css" rel="stylesheet" type="text/css">
+    <title>Login</title>
 </head>
 <body>
 
-	<a href="<%=request.getContextPath()%>/catalogo?tipo=tutti" class="btn-indietro"> Torna al Catalogo</a>
+    <div style="padding: 20px;">
+        <a href="<%=request.getContextPath()%>/catalogo?tipo=tutti" class="btn-indietro">Torna al Catalogo</a>
+    </div>
 
-	<h2>Accedi al tuo Account</h2>
-	<%
-		String errore = (String) request.getAttribute("errore");
-		if (errore != null) {
-	%>
-		<p id="errore" style="color: red; font-weight: bold;"><%= errore %></p>
-	<%
-		} else {
-	%>
-		<p id="errore" style="display: none; color: red; font-weight: bold;"></p>
-	<%
-		}
-	%>
+    <div class="form-container-admin">
 
-	<form id="formLogin" action="<%=request.getContextPath()%>/login" method="post">
-		
-		<div class="form-gruppo">
-			<label for="email">Email:</label>
-			<input type="email" id="email" name="email" required>
-		</div>
+        <h2>Accedi al tuo Account</h2>
 
-		<div class="form-gruppo">
-			<label for="password">Password:</label>
-			<input type="password" id="password" name="password" required>
-		</div>
+        <%
+            String errore = (String) request.getAttribute("errore");
+            if (errore != null && !errore.trim().isEmpty()) {
+        %>
+            <p id="errore" class="msg-errore"><%= errore %></p>
+        <%
+            } else {
+        %>
+            <p id="errore" class="msg-errore" style="display: none;"></p>
+        <%
+            }
+        %>
 
-		<div class="form-azioni">
-			<input type="submit" class="btn-invio" value="Accedi">
-		</div>
-	</form>
+        <form id="formLogin" action="<%=request.getContextPath()%>/login" method="post" class="form-layout">
+            
+            <div class="form-gruppo">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
 
-	<p style="margin-top: 15px;">
-		Non hai ancora un account? 
-		<a href="<%=request.getContextPath()%>/registrazione">Registrati</a>
-	</p>
+            <div class="form-gruppo">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
 
-	<script src="<%=request.getContextPath()%>/scripts/validazioneLogin.js"></script>
+            <div class="form-azioni">
+                <button type="submit" class="btn-invio">Accedi</button>
+            </div>
+        </form>
+
+        <p class="testo-info-file">
+            Non hai ancora un account? 
+            <a href="<%=request.getContextPath()%>/registrazione">Registrati</a>
+        </p>
+
+    </div>
+
+    <script src="<%=request.getContextPath()%>/scripts/validazioneLogin.js"></script>
 </body>
 </html>
