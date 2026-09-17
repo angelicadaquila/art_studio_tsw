@@ -1,34 +1,34 @@
-.container {
-    width: 80%;
-    margin: 20px auto;
-    font-family: sans-serif;
-}
-
 .tabella-carrello {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
+    background-color: rgba(242, 255, 233, 0.6);
 }
 
 .tabella-carrello th, 
 .tabella-carrello td {
-    border: 1px solid #ccc;
+    border: 1px solid #E5D4C5;
     padding: 8px 12px;
     text-align: left;
+    color: #090087;
 }
 
 .tabella-carrello th {
-    background-color: #f2f2f2;
+    background-color: #3078A4;
+    color: #F2FFE9;
 }
 
 .note-commissione {
     font-size: 0.9em;
-    color: #444;
+    color: #090087;
 }
 
 .allegato-commissione img {
-    margin-top: 5px;
-    border: 1px solid #999;
+    max-width: 100%;
+  	height: auto;
+ 	margin-top: 5px;
+  	border: 1px solid #E5D4C5;
+  	display: block;
 }
 
 .form-quantita {
@@ -37,15 +37,18 @@
 
 .form-quantita input[type="number"] {
     width: 50px;
+  	max-width: 100%;
+  	box-sizing: border-box;
 }
 
 .btn-elimina {
-    color: red;
+    color: #F2A4A5;
 }
 
 .riepilogo-carrello {
     text-align: right;
     margin-top: 20px;
+    color: #090087;
 }
 
 .azioni-carrello {
@@ -54,9 +57,11 @@
 
 .azioni-carrello a {
     margin-left: 10px;
+    color: #3078A4;
 }
 
 .carrello-vuoto {
     text-align: center;
     margin-top: 40px;
+    color: #090087;
 }

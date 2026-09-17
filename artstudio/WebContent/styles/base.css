@@ -2,8 +2,10 @@ body {
   padding: 0px;
   margin: 0px;
   font-family: Verdana, Geneva, sans-serif;
-  line-height: 1.2em;
-  background: url(../images/grid.png) no-repeat;
+  line-height: 1.3em;
+  background: linear-gradient(180deg, #F2FFE9 0%, #E5D4C5 50%, #3078A4 100%);
+  background-attachment: fixed;
+  color: #090087;
   font-size: 1em;
 }
 
@@ -12,10 +14,33 @@ header, nav, footer, h1, h2, h3 {
 }
 
 h1 {
-  line-height: 100%;
+  line-height: 1.2;
   font-size: 1.6em;
+  color: #3078A4;
 }
 
 h2 {
   font-size: 1.2em;
+  color: #090087;
+}
+
+h3 {
+  color: #3078A4;
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 30px auto;
+  box-sizing: border-box;
+  background-color: rgba(229, 212, 197, 0.9);
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(9, 0, 135, 0.15);
+}
+
+img, video, object, embed {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }

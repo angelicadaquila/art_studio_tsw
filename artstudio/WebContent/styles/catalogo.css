@@ -5,18 +5,25 @@
 }
 
 .singolo-prod {
-    border: 1px solid #ddd;
+    border: 1px solid #E5D4C5;
     border-radius: 8px;
     padding: 15px;
     text-align: center;
-    background-color: #ffffff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background-color: rgba(242, 255, 233, 0.7);
+    box-shadow: 0 2px 5px rgba(9, 0, 135, 0.1);
 }
 
 .singolo-prod img {
     max-width: 100%;
-    height: auto;
     border-radius: 4px;
+}
+
+.img-prodotto-catalogo {
+    width: 80px;
+    height: 80px !important;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
 }
 
 .catalogo-selezione {
@@ -32,17 +39,116 @@
     gap: 15px;
 }
 
-.btn-opzione {
-    display: inline-block;
-    padding: 15px 25px;
-    background-color: #eb9036;
-    color: #ffffff;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+.catalogo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.btn-opzione:hover {
-    background-color: #d97716;
+.dettaglio-prodotto-testo {
+    font-size: 0.9em;
+    margin-top: 10px;
+    color: #090087;
 }
+
+.disponibilita-box {
+    margin-top: 10px;
+    font-size: 0.9em;
+}
+
+.disponibilita-titolo {
+    font-weight: bold;
+    color: #090087;
+}
+
+.testo-disponibile-si {
+    color: #3078A4;
+    font-weight: bold;
+}
+
+.testo-disponibile-no {
+    color: #F2A4A5;
+    font-weight: bold;
+}
+
+.azioni-prodotto-card {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-piccolo {
+    padding: 5px 10px;
+    font-size: 0.9em;
+}
+
+.btn-elimina-piccolo {
+    background-color: #F2A4A5;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    text-decoration: none;
+    color: #090087;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.dettaglio-prodotto-box {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.dettaglio-colonna-img {
+    flex: 1;
+    max-width: 450px;
+}
+
+.img-prodotto-dettaglio {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 2px 5px rgba(9, 0, 135, 0.15);
+}
+
+.dettaglio-colonna-info {
+    flex: 2;
+    color: #090087;
+}
+
+.prezzo-dettaglio {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #3078A4;
+    margin: 15px 0;
+}
+
+.descrizione-dettaglio {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    color: #090087;
+}
+
+.dettagli-specifici {
+    margin-bottom: 15px;
+    color: #090087;
+}
+
+.prezzo-dettaglio {
+        font-size: 1.4rem;
+        margin: 8px 0;
+    }
+
+.descrizione-dettaglio {
+        font-size: 0.95rem;
+        margin-bottom: 10px;
+    }
+
+.dettaglio-colonna-info .btn-invio {
+        width: 100%;
+        padding: 12px;
+        box-sizing: border-box;
+    }

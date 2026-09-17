@@ -1,20 +1,20 @@
 .btn-indietro {
     padding: 8px 15px;
-    background-color: #6c757d;
-    color: white;
+    background-color: #3078A4;
+    color: #F2FFE9;
     text-decoration: none;
     border-radius: 5px;
     transition: background-color 0.2s;
 }
 
 .btn-indietro:hover {
-    background-color: #5a6268;
+    background-color: #090087;
 }
 
 .btn-aggiungi {
     padding: 8px 15px;
-    background-color: #ff00ff;
-    color: white;
+    background-color: #3078A4;
+    color: #F2FFE9;
     text-decoration: none;
     border-radius: 5px;
     transition: background-color 0.2s;
@@ -25,22 +25,58 @@
     padding: 4px 8px;
     font-size: 0.8em;
     border-radius: 4px;
-    color: white;
+    color: #F2FFE9;
     margin-top: 5px;
 }
 
+.finestra-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(9, 0, 135, 0.4);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.finestra-content {
+    background-color: #E5D4C5;
+    padding: 25px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(9, 0, 135, 0.3);
+    color: #090087;
+}
+
+.close-finestra-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #090087;
+}
+
 .badge-stampa { 
-    background-color: #28a745; 
+    background-color: #3078A4; 
 }
 
 .badge-commissione { 
-    background-color: #17a2b8; 
+    background-color: #F2A4A5; 
+    color: #090087;
 }
 
 .nessuno-trovato {
     text-align: center;
     font-size: 1.2em;
-    color: #777;
+    color: #090087;
     margin-top: 40px;
 }
 
@@ -49,6 +85,16 @@
     font-size: 0.85em;
     margin-top: 4px;
     display: block;
+}
+
+.msg-successo {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-bottom: 15px;
 }
 
 .contenitore-login-top {
@@ -64,4 +110,67 @@
 .testo-benvenuto {
     font-size: 0.95rem;
     margin-right: 5px;
+    color: #090087;
+}
+
+.btn-opzione {
+    display: inline-block;
+    padding: 15px 25px;
+    background-color: #3078A4;
+    color: #F2FFE9;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-opzione:hover {
+    background-color: #090087;
+}
+
+#listaArticoliFinestra {
+    max-height: 50vh;
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-right: -5px;
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo-container img {
+    width: 200px;
+    height: auto;
+    display: inline-block;
+}
+
+@media screen and (max-width: 768px) {
+    .catalogo-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .dettaglio-prodotto-box {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .dettaglio-colonna-img {
+        max-width: 100%;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .img-prodotto-dettaglio {
+        max-height: 250px;
+        width: auto;
+        object-fit: contain;
+    }
+
+    .dettaglio-colonna-info {
+        width: 100%;
+    }
 }
