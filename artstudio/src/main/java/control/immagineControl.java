@@ -15,9 +15,9 @@ import model.Prodotto;
 
 @WebServlet("/immagine")
 @MultipartConfig(
-    maxFileSize = 200 * 1024 * 1024,      
-    maxRequestSize = 50 * 1024 * 1024, 
-    fileSizeThreshold = 5 * 1024 * 1024  
+		fileSizeThreshold = 1024 * 1024 * 5,   
+	    maxFileSize = 1024 * 1024 * 50,  
+	    maxRequestSize = 1024 * 1024 * 200 
 )
 public class immagineControl extends HttpServlet {
 
