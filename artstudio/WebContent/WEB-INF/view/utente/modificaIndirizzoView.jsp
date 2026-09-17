@@ -9,38 +9,38 @@
 	<title>Modifica Indirizzo</title>
 </head>
 <body>
-
+<div class="container">
 	<a href="<%=request.getContextPath()%>/utente/profilo" class="btn-indietro">Annulla e Torna al Profilo</a>
 
 	<h2>Modifica Indirizzo</h2>
 
 	<%
-		String errore = (String) request.getAttribute("errore");
-		if (errore != null) {
+    	String errore = (String) request.getAttribute("errore");
+    	if (errore != null) {
 	%>
-		<p id="errore" style="color: red; font-weight: bold;"><%= errore %></p>
+    	<p id="errore" class="msg-errore"><%= errore %></p>
 	<% } %>
 
 	<form id="formModificaIndirizzo" action="<%=request.getContextPath()%>/utente/modificaIndirizzo" method="post">
 		
 		<div class="form-gruppo">
 			<label for="via">Via/Piazza:</label>
-			<input type="text" id="via" name="via" required>
+			<input type="text" id="via" name="via">
 		</div>
 
 		<div class="form-gruppo">
 			<label for="civico">Numero Civico:</label>
-			<input type="text" id="civico" name="civico" required>
+			<input type="text" id="civico" name="civico">
 		</div>
 
 		<div class="form-gruppo">
 			<label for="citta">Città:</label>
-			<input type="text" id="citta" name="citta" required>
+			<input type="text" id="citta" name="citta">
 		</div>
 
 		<div class="form-gruppo">
 			<label for="regione">Regione:</label>
-			<input type="text" id="regione" name="regione" required>
+			<input type="text" id="regione" name="regione">
 		</div>
 
 		<div class="form-azioni">
