@@ -3,18 +3,21 @@
 <%@ page import="model.Indirizzo" %>
 <%@ page import="java.util.List" %>
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link href="<%=request.getContextPath()%>/styles/base.css" rel="stylesheet" type="text/css">
 	<link href="<%=request.getContextPath()%>/styles/componenti.css" rel="stylesheet" type="text/css">
 	<link href="<%=request.getContextPath()%>/styles/form.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath()%>/styles/catalogo.css" rel="stylesheet" type="text/css">
+	<link href="<%=request.getContextPath()%>/styles/ordini.css" rel="stylesheet" type="text/css">
 	<title>Profilo Utente</title>
 </head>
 <body>
-<div class="container">
+
 <jsp:include page="/WEB-INF/view/barraSuperioreView.jsp" />
+
+<div class="container">
+
 	<h2>Il Mio Profilo</h2>
 
 	<%
@@ -28,7 +31,7 @@
 		<div class="form-gruppo"><p><strong>Cognome:</strong> <%= utente.getCognome() %></p></div>
 		<div class="form-gruppo"><p><strong>Email:</strong> <%= utente.getEmail() %></p></div>
 
-		<hr style="margin: 20px 0;">
+		<hr class="separatore-dettagli">
 
 		<h3>Indirizzo Predefinito di Spedizione</h3>
 
@@ -37,25 +40,27 @@
 		%>
 
 		<% if (ind != null) { %>
-    		<div class="form-gruppo" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+    		<div class="campi">
         		<p><strong>Via/Piazza:</strong> <%= ind.getVia() %>, <%= ind.getCivico() %></p>
         		<p><strong>Città:</strong> <%= ind.getCitta() %></p>
         		<p><strong>Regione:</strong> <%= ind.getRegione() %></p>
-        		<div style="margin-top: 10px;">
-            		<a href="<%=request.getContextPath()%>/utente/modificaIndirizzo" class="btn-opzione" style="text-decoration: none; padding: 6px 12px; background-color: #0d6efd; color: white; border-radius: 4px;">Modifica Indirizzo</a>
+        		<div class="form-azioni">
+            		<a href="<%=request.getContextPath()%>/utente/modificaIndirizzo" class="btn-opzione">Modifica Indirizzo</a>
         		</div>
     		</div>
 		<% } else { %>
-    		<p style="color: gray;">Nessun indirizzo salvato.</p>
+    		<p class="testo-dettaglio-grigio">Nessun indirizzo salvato.</p>
 		<% } %>
 
 	<% } else { %>
-		<p id="errore" style="color: red; font-weight: bold;">Nessun utente trovato in sessione.</p>
+		<p id="errore" class="msg-errore">Nessun utente trovato in sessione.</p>
 	<% } %>
 
-	<div class="form-azioni" style="margin-top: 20px;">
-		<a href="<%=request.getContextPath()%>/logout" class="btn-indietro" style="background-color: #dc3545; text-decoration: none; display: inline-block;">Logout</a>
+	<div class="form-azioni">
+		<a href="<%=request.getContextPath()%>/logout" class="btn-cancella">Logout</a>
 	</div>
+
 </div>
+
 </body>
 </html>
