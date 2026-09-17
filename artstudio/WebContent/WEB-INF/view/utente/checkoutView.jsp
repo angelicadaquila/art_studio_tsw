@@ -26,10 +26,9 @@
         Carrello carrello = (Carrello) session.getAttribute("carrello");
         Indirizzo ind = (Indirizzo) request.getAttribute("indirizzo");
         String errore = (String) request.getAttribute("errore");
+        if (errore != null) {
     %>
-
-    <% if (errore != null) { %>
-        <p class="msg-errore"><%= errore %></p>
+        <p id="errore" class="msg-errore"><%= errore %></p>
     <% } %>
 
     <form action="<%= request.getContextPath() %>/utente/checkout" method="POST" class="form-layout">
