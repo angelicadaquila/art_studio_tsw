@@ -1,0 +1,82 @@
+.box-filtri-ordini {
+    margin: 20px 0 25px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+}
+
+.riga-filtri-ordini {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.select-filtro-ordini,
+.select-stato-ordini,
+.input-data-ordini {
+    padding: 6px;
+    margin-top: 5px;
+}
+
+.link-reset-filtri {
+    margin-left: 10px;
+    text-decoration: none;
+    color: #555;
+    font-size: 0.9em;
+}
+
+.tabella-ordini-admin {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.tabella-ordini-admin thead tr {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.tabella-ordini-admin th,
+.tabella-ordini-admin td {
+    padding: 10px;
+}
+
+.tabella-ordini-admin tbody tr {
+    border-bottom: 1px solid #dee2e6;
+}
+
+.testo-sinistra { 
+	text-align: left; 
+}
+
+.testo-centro { 
+	text-align: center; 
+}
+
+.testo-dettaglio-grigio { 
+	color: #555; 
+}
+
+.testo-nessun-ordine {
+	margin-top: 20px; color: #777;
+}
+
+.separatore-dettagli {
+    margin: 15px 0;
+    border: 0;
+    border-top: 1px solid #eee;
+}
+
+.lista-articoli-dettagli {
+    padding-left: 20px;
+    margin-bottom: 20px;
+}
+
+.btn-filtra-ordini {
+	padding: 6px 15px; 
+}
+.btn-aggiorna-stato { 
+	padding: 6px 12px; margin-left: 5px; 
+}
