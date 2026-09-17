@@ -9,14 +9,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Prodotti</title>
-   		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/base.css">
-		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/componenti.css">
-		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/styles/catalogo.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/styles/base.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/styles/componenti.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/styles/catalogo.css">
 </head>
 <body>
 
+<jsp:include page="/WEB-INF/view/barraSuperioreView.jsp"/>
+
 <div class="container">
-<jsp:include page="/WEB-INF/view/barraSuperioreView.jsp" />
+
     <% 
         List<Prodotto> prodotti = (List<Prodotto>) request.getAttribute("prodotti");
         String selectedTipo = (String) request.getAttribute("selectedtipo");
@@ -30,7 +32,7 @@
         }
     %>
 
-    <div>
+    <div class="catalogo-header">
         <h1>
             Catalogo: 
             <% 
@@ -44,15 +46,15 @@
             %>
         </h1>
         
-        <form action="<%= request.getContextPath() %>/catalogo" method="get">
+        <form action="<%= request.getContextPath() %>/catalogo" method="get" class="form-gruppo">
             <input type="hidden" name="tipo" value="<%= selectedTipo %>">
             <label for="ordinamento">Ordina per:</label>
             <select name="ordinamento" id="ordinamento" onchange="this.form.submit()">
-    			<option value="" <% if ("".equals(ordinamento)) { out.print("selected"); } %>>Predefinito</option>
-    			<option value="nome" <% if ("nome".equals(ordinamento)) { out.print("selected"); } %>>Nome</option>
-    			<option value="prezzo_crescente" <% if ("prezzo_crescente".equals(ordinamento)) { out.print("selected"); } %>>Prezzo: crescente</option>
-    			<option value="prezzo_decrescente" <% if ("prezzo_decrescente".equals(ordinamento)) { out.print("selected"); } %>>Prezzo: decrescente</option>
-			</select>
+                <option value="" <% if ("".equals(ordinamento)) { out.print("selected"); } %>>Predefinito</option>
+                <option value="nome" <% if ("nome".equals(ordinamento)) { out.print("selected"); } %>>Nome</option>
+                <option value="prezzo_crescente" <% if ("prezzo_crescente".equals(ordinamento)) { out.print("selected"); } %>>Prezzo: crescente</option>
+                <option value="prezzo_decrescente" <% if ("prezzo_decrescente".equals(ordinamento)) { out.print("selected"); } %>>Prezzo: decrescente</option>
+            </select>
         </form>
     </div>
     
@@ -64,31 +66,31 @@
                     Prodotto p = prodotti.get(i);
             %>
                 <div class="singolo-prod">
-                	<% if (p.getImmagine() != null && !p.getImmagine().trim().isEmpty()) { %>
-    					<img src="<%= request.getContextPath() %>/immagine?action=show&id=<%= p.getIdProdotto() %>" 
-    					alt="<%= p.getNome() %>" 
-						width="80" 
-         				height="80" 
-         				style="object-fit: cover;"
-         				onerror="this.src='<%= request.getContextPath() %>/images/placeholder.png';">
-				<% } else { %>
-    					<img src="<%= request.getContextPath() %>/images/placeholder.png" 
-         				alt="Nessuna immagine disponibile" 
-        				width="80" 
-         				height="80" 
-         				style="object-fit: cover;">
-				<% } %>
+                    <% if (p.getImmagine() != null && !p.getImmagine().trim().isEmpty()) { %>
+                        <img src="<%= request.getContextPath() %>/immagine?action=show&id=<%= p.getIdProdotto() %>" 
+                             alt="<%= p.getNome() %>" 
+                             class="img-prodotto-catalogo"
+                             onerror="this.src='<%= request.getContextPath() %>/images/placeholder.png';">
+                    <% } else { %>
+                        <img src="<%= request.getContextPath() %>/images/placeholder.png" 
+                             alt="Nessuna immagine disponibile" 
+                             class="img-prodotto-catalogo">
+                    <% } %>
+
                     <h3><%= p.getNome() %></h3>
                     <p><strong>Prezzo:</strong> <%= String.format("%.2f", p.getPrezzo()) %> &euro;</p>
                 
-                    <% if (p instanceof Stampa) { %>
-                        <span class="badge badge-stampa">Stampa</span>
-                    <% } else if (p instanceof Commissione) { %>
-                        <span class="badge badge-commissione">Commissione</span>
-                    <% } %>
+                    <div>
+                        <% if (p instanceof Stampa) { %>
+                            <span class="badge badge-stampa">Stampa</span>
+                        <% } else if (p instanceof Commissione) { %>
+                            <span class="badge badge-commissione">Commissione</span>
+                        <% } %>
+                    </div>
 
-                    <br><br>
-                    <a href="<%= request.getContextPath() %>/dettaglioProdotto?id=<%= p.getIdProdotto() %>">Vedi dettagli</a>
+                    <div class="azioni-prodotto-card">
+                        <a href="<%= request.getContextPath() %>/dettaglioProdotto?id=<%= p.getIdProdotto() %>" class="btn-opzione">Vedi dettagli</a>
+                    </div>
                 </div>
             <% } %>
         </div>
