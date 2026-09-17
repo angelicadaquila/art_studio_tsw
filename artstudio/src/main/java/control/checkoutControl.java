@@ -70,7 +70,7 @@ public class checkoutControl extends HttpServlet {
             Indirizzo indirizzo = indirizzoDao.doRetrieveByUtente(utente.getIdUtente());
             request.setAttribute("indirizzo", indirizzo);
 
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/checkoutView.jsp");
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/view/utente/checkoutView.jsp");
             dispatcher.forward(request, response);
 
         } catch (SQLException e) {
