@@ -11,7 +11,6 @@
 		<welcome-file>default.jsp</welcome-file>
 		<welcome-file>default.xhtml</welcome-file>
 	</welcome-file-list>
-	
 
 	<resource-ref>
 		<res-ref-name>jdbc/art_studio</res-ref-name>
