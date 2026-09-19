@@ -39,18 +39,19 @@
         <div class="form-gruppo">
             <label for="tipoProdotto">Tipo Prodotto:</label>
             
-            <% if ((Boolean) request.getAttribute("isModifica")) { %>
-                <select id="tipoProdottoSelect" disabled>
-                    <option value="stampa" <% if ("stampa".equals(request.getAttribute("tipoProdotto"))) { out.print("selected"); } %>>Stampa</option>
-                    <option value="commissione" <% if ("commissione".equals(request.getAttribute("tipoProdotto"))) { out.print("selected"); } %>>Commissione</option>
-                </select>
-                <input type="hidden" name="tipoProdotto" value="<%= request.getAttribute("tipoProdotto") %>">
-            <% } else { %>
-                <select id="tipoProdotto" name="tipoProdotto" onchange="gestisciCampiTipo()" required>
-                    <option value="">Seleziona Tipo</option>
-                    <option value="stampa" <% if ("stampa".equals(request.getAttribute("tipoProdotto"))) { out.print("selected"); } %>>Stampa</option>
-                    <option value="commissione" <% if ("commissione".equals(request.getAttribute("tipoProdotto"))) { out.print("selected"); } %>>Commissione</option>
-                </select>
+            <% 
+                boolean isModifica = (Boolean) request.getAttribute("isModifica");
+                String tipoProdVal = (String) request.getAttribute("tipoProdotto");
+            %>
+
+            <select id="tipoProdotto" name="tipoProdotto" <% if (isModifica) { %>disabled<% } %> required>
+                <option value="">Seleziona Tipo</option>
+                <option value="stampa" <% if ("stampa".equals(tipoProdVal)) { out.print("selected"); } %>>Stampa</option>
+                <option value="commissione" <% if ("commissione".equals(tipoProdVal)) { out.print("selected"); } %>>Commissione</option>
+            </select>
+
+            <% if (isModifica) { %>
+                <input type="hidden" name="tipoProdotto" value="<%= tipoProdVal %>">
             <% } %>
         </div>
 

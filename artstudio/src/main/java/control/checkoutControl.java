@@ -18,6 +18,8 @@ import dao.IndirizzoDAO;
 import dao.IndirizzoDAOImp;
 import dao.OrdineDAO;
 import dao.OrdineDAOImp;
+import dao.ProdottoDAO;
+import dao.ProdottoDAOImp;
 import model.Carrello;
 import model.Indirizzo;
 import model.Ordine;
@@ -25,6 +27,7 @@ import model.Utente;
 import model.ElementoCarrello;
 import model.Commissione;
 import model.Prodotto;
+import model.Stampa;
 
 @WebServlet("/utente/checkout")
 public class checkoutControl extends HttpServlet {
@@ -134,6 +137,34 @@ public class checkoutControl extends HttpServlet {
         nuovoOrdine.setTotaleOrdine(totaleOrdine);
 
         try {
+        	DataSource ds = (DataSource) getServletContext().getAttribute("DataSource");
+        	ProdottoDAO prodottoDao = new ProdottoDAOImp(ds);
+            List<ElementoCarrello> elementiCarrello = carrello.getElementi();
+            
+            if (elementiCarrello != null) {
+                for (int i = 0; i < elementiCarrello.size(); i++) {
+                    ElementoCarrello item = elementiCarrello.get(i);
+                    Prodotto prod = item.getProdotto();
+                    
+                    if (prod instanceof Stampa) {
+                        Stampa stampa = (Stampa) prod;
+                        int quantitaOrdinata = item.getQuantita();
+                        
+                        Prodotto dbProd = prodottoDao.doRetrieveByKey(stampa.getIdProdotto());
+                        if (dbProd instanceof Stampa) {
+                            Stampa stampaDb = (Stampa) dbProd;
+                            int stockAttuale = stampaDb.getQuantita();
+                            
+                            int nuovaGiacenza = stockAttuale - quantitaOrdinata;
+                            if (nuovaGiacenza < 0) {
+                                nuovaGiacenza = 0;
+                            }
+                            
+                            prodottoDao.doUpdateQuantita(stampaDb.getIdProdotto(), nuovaGiacenza);
+                        }
+                    }
+                }
+            }
             if (idIndirizzo > 0) {
                 ordineDao.doSaveConCarrello(nuovoOrdine, carrello, idIndirizzo);
             } else {
