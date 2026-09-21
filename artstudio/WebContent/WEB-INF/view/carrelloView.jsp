@@ -72,7 +72,7 @@
                     boolean stampa = (prod instanceof Stampa);
                     boolean commissione = (prod instanceof Commissione);
             %>
-                <tr id="riga-prod-<%= idProd %>">
+                <tr id="riga-prod-<%= i %>">
                     <td class="testo-sinistra">
                         <strong><%= prod.getNome() %></strong>
                     </td>
@@ -127,9 +127,9 @@
                     <td id="subtotale-<%= idProd %>"><%= String.format("%.2f", item.getTotale()) %> &euro;</td>
 
                     <td>
-                        <button type="button" class="btn-cancella" onclick="aggiornaQuantita(<%= idProd %>, 'elimina', '<%= request.getContextPath() %>')">
-                           Rimuovi
-                        </button>
+                       <button type="button" class="btn-cancella" onclick="rimuoviDinamico(this, '<%= request.getContextPath() %>')">
+      						 Rimuovi
+   					</button>
                     </td>
                 </tr>
             <%

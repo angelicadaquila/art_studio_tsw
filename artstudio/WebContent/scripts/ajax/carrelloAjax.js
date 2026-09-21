@@ -10,35 +10,41 @@ function aggiornaQuantita(idProdotto, azioneRichiesta, contextPath) {
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
                 rimuoviMessaggioErrore();
-                try {
-                    var data = JSON.parse(xhr.responseText);
-                    
-                    if (data.carrelloVuoto) {
-                        var container = document.getElementById("contenutoCarrello");
-                        if (container) {
-                            container.innerHTML = '<div class="carrello-vuoto">' +
-                                                  '<p>Il tuo carrello è attualmente vuoto.</p>' +
-                                                  '<a href="' + contextPath + '/catalogo?tipo=tutti" class="btn-catalogo">Torna al Catalogo</a>' +
-                                                  '</div>';
-                        }
-                    } else if (data.rimosso) {
-                        var riga = document.getElementById("riga-prod-" + idProdotto);
-                        if (riga) {
-                            riga.remove();
-                        }
-                        aggiornaTotali(data);
-                    } else {
-                        var elemQuantita = document.getElementById("qta-" + idProdotto);
-                        var elemSubtotale = document.getElementById("subtotale-" + idProdotto);
-                        
-                        if (elemQuantita) elemQuantita.textContent = data.nuovaQuantita;
-                        if (elemSubtotale) elemSubtotale.textContent = data.nuovoSubtotale.toFixed(2) + " €";
-                        
-                        aggiornaTotali(data);
-                    }
-                } catch (e) {
-                    console.error("Errore nel parsing JSON:", e);
-                }
+				try {
+				    console.log("Risposta dal server:", xhr.responseText);
+				    var data = JSON.parse(xhr.responseText);
+				    
+				    if (data.carrelloVuoto) {
+				        var container = document.getElementById("contenutoCarrello");
+				        if (container) {
+				            container.innerHTML = '<div class="nessuno-trovato">' +
+				                                  '<p>Il tuo carrello è attualmente vuoto.</p>' +
+				                                  '<a href="' + contextPath + '/catalogo?tipo=tutti" class="btn-opzione">Torna al Catalogo</a>' +
+				                                  '</div>';
+				        }
+				    } else if (data.rimosso) {
+				        var riga = document.getElementById("riga-prod-" + idProdotto);
+				        if (riga) {
+				            riga.remove();
+				        }
+				        aggiornaTotali(data);
+						
+						var righeRimaste = document.querySelectorAll('tr[id^="riga-prod-"]');
+						    if (righeRimaste.length === 0) {					      
+						        window.location.href = contextPath + "/carrello";
+						    }
+				    } else {
+				        var elemQuantita = document.getElementById("qta-" + idProdotto);
+				        var elemSubtotale = document.getElementById("subtotale-" + idProdotto);
+				        
+				        if (elemQuantita) elemQuantita.textContent = data.nuovaQuantita;
+				        if (elemSubtotale) elemSubtotale.textContent = data.nuovoSubtotale.toFixed(2) + " €";
+				        
+				        aggiornaTotali(data);
+				    }
+				} catch (e) {
+				    console.error("ERRORE CATTURATO:", e);
+				}
             } else if (xhr.status === 400) {
                 mostraMessaggioErrore("Attenzione! La quantità richiesta supera la disponibilità attuale in magazzino.");
             }
@@ -79,4 +85,55 @@ function aggiornaTotali(data) {
     if (elemTotaleOrdine && data.totaleOrdine !== undefined) {
         elemTotaleOrdine.textContent = data.totaleOrdine.toFixed(2);
     }
+}
+
+function rimuoviDinamico(button, contextPath) {
+    var tr = button.closest('tr');
+    var tbody = tr.parentNode;
+    
+    var righe = Array.from(tbody.querySelectorAll('tr'));
+    var indiceReale = righe.indexOf(tr);
+    
+    tr.id = "riga-target-corrente";
+    
+    aggiornaQuantitaDaIndiceReale(indiceReale, 'elimina', contextPath, tr);
+}
+
+function aggiornaQuantitaDaIndiceReale(indice, azioneRichiesta, contextPath, rigaElemento) {
+    var xhr = new XMLHttpRequest();
+    var url = contextPath + "/carrello";
+    
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            try {
+                var data = JSON.parse(xhr.responseText);
+                
+                if (data.carrelloVuoto) {
+                    var container = document.getElementById("contenutoCarrello");
+                    if (container) {
+                        container.innerHTML = '<div class="nessuno-trovato">' +
+                                              '<p>Il tuo carrello è attualmente vuoto.</p>' +
+                                              '<a href="' + contextPath + '/catalogo?tipo=tutti" class="btn-opzione">Torna al Catalogo</a>' +
+                                              '</div>';
+                    }
+                } else if (data.rimosso) {
+                    if (rigaElemento) {
+                        rigaElemento.remove();
+                    }
+                    aggiornaTotali(data);
+                }
+            } catch (e) {
+                console.error("Errore:", e);
+            }
+        }
+    };
+
+    var params = "azione=" + encodeURIComponent(azioneRichiesta) + 
+                 "&idProdotto=" + encodeURIComponent(indice) + 
+                 "&ajax=true";
+                 
+    xhr.send(params);
 }

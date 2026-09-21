@@ -89,21 +89,11 @@ public class Carrello implements Serializable {
             return;
         }
 
-        boolean trovato = false;
-        for (int i = 0; i < elementi.size(); i++) {
-            ElementoCarrello item = elementi.get(i);
-            if (item.getProdotto().getIdProdotto() == prod.getIdProdotto()) {
-                item.setQuantita(item.getQuantita() + quantita);
-                trovato = true;
-                break;
-            }
-        }
-
-        if (!trovato) {
-            ElementoCarrello nuovo = new ElementoCarrello();
-            nuovo.setProdotto(prod);
-            nuovo.setQuantita(quantita);
-            elementi.add(nuovo);
+    }
+    
+    public void eliminaElementoPerIndice(int indice) {
+        if (elementi != null && indice >= 0 && indice < elementi.size()) {
+            elementi.remove(indice);
         }
     }
 }

@@ -182,51 +182,54 @@ public class carrelloControl extends HttpServlet {
                             }
                         }
                     }
-                } else if ("elimina".equalsIgnoreCase(azione) || "rimuovi".equalsIgnoreCase(azione)) {
-                    String idStr = request.getParameter("idProdotto");
-                    if (idStr != null && !idStr.trim().isEmpty()) {
-                        int idProdotto = Integer.parseInt(idStr);
-                        carrello.eliminaProd(idProdotto);
+                }else if ("elimina".equalsIgnoreCase(azione) || "rimuovi".equalsIgnoreCase(azione)) {
+                   
+                    String indexStr = request.getParameter("idProdotto"); 
+                    if (indexStr != null && !indexStr.trim().isEmpty()) {
+                        int indice = Integer.parseInt(indexStr);
+                        carrello.eliminaElementoPerIndice(indice);
                     }
-                } else if ("svuota".equalsIgnoreCase(azione)) {
+                
+                }else if ("svuota".equalsIgnoreCase(azione)) {
                     carrello.svuota();
                 }
 
                 if (isAjax) {
-                    double speseSpedizione = calcolaSpedizione(carrello);
-                    double totaleOrdine = carrello.getTotale() + speseSpedizione;
-
                     response.setContentType("application/json");
                     response.setCharacterEncoding("UTF-8");
                     
                     JSONObject json = new JSONObject();
-
                     if (carrello.getElementi() == null || carrello.getElementi().isEmpty()) {
                         json.put("carrelloVuoto", true);
                     } else {
                         json.put("carrelloVuoto", false);
 
-                        String idStr = request.getParameter("idProdotto");
-                        if (idStr != null && !idStr.trim().isEmpty()) {
-                            int idProdotto = Integer.parseInt(idStr);
-                            ElementoCarrello elem = null;
+                        if ("elimina".equalsIgnoreCase(azione) || "rimuovi".equalsIgnoreCase(azione)) {
+                            json.put("rimosso", true);
+                        } else {
+                            String idStr = request.getParameter("idProdotto");
+                            if (idStr != null && !idStr.trim().isEmpty()) {
+                                int idProdotto = Integer.parseInt(idStr);
+                                ElementoCarrello elem = null;
 
-                            for (int i = 0; i < carrello.getElementi().size(); i++) {
-                                ElementoCarrello item = carrello.getElementi().get(i);
-                                if (item.getProdotto().getIdProdotto() == idProdotto) {
-                                    elem = item;
-                                    break;
+                                for (int i = 0; i < carrello.getElementi().size(); i++) {
+                                    ElementoCarrello item = carrello.getElementi().get(i);
+                                    if (item.getProdotto().getIdProdotto() == idProdotto) {
+                                        elem = item;
+                                        break;
+                                    }
+                                }
+
+                                if (elem != null) {
+                                    json.put("rimosso", false);
+                                    json.put("nuovaQuantita", elem.getQuantita());
+                                    json.put("nuovoSubtotale", elem.getTotale());
                                 }
                             }
-
-                            if (elem == null) {
-                                json.put("rimosso", true);
-                            } else {
-                                json.put("rimosso", false);
-                                json.put("nuovaQuantita", elem.getQuantita());
-                                json.put("nuovoSubtotale", elem.getTotale());
-                            }
                         }
+
+                        double speseSpedizione = calcolaSpedizione(carrello);
+                        double totaleOrdine = carrello.getTotale() + speseSpedizione;
 
                         json.put("totaleProdotti", carrello.getTotale());
                         json.put("speseSpedizione", speseSpedizione);
