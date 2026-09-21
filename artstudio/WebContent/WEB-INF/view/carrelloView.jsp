@@ -16,6 +16,7 @@
     <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/styles/componenti.css">
     <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/styles/form.css">
     <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/styles/carrello.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/styles/ordini.css">
 </head>
 <body>
 
@@ -49,6 +50,7 @@
 
         if (elementi != null && !elementi.isEmpty()) {
     %>
+    <div class="tabella-responsive">
         <table class="tabella-carrello">
             <thead>
                 <tr>
@@ -135,6 +137,7 @@
             %>
             </tbody>
         </table>
+</div>
 
         <div class="riepilogo-carrello">
             <%
