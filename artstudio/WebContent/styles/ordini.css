@@ -27,10 +27,15 @@
     font-size: 0.9em;
 }
 
+.tabella-responsive {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
 .tabella-ordini-admin {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
 }
 
 .tabella-ordini-admin thead tr {
@@ -41,6 +46,7 @@
 .tabella-ordini-admin th,
 .tabella-ordini-admin td {
     padding: 10px;
+    white-space: nowrap;
 }
 
 .tabella-ordini-admin tbody tr {

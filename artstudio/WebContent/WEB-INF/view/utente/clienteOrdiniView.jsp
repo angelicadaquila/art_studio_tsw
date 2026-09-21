@@ -29,6 +29,7 @@
         List<Ordine> listaOrdini = (List<Ordine>) request.getAttribute("listaOrdini");
         if (listaOrdini != null && !listaOrdini.isEmpty()) {
     %>
+    <div class="tabella-responsive">
         <table class="tabella-ordini-admin">
             <thead>
                 <tr>
@@ -68,6 +69,7 @@
                 <% } %>
             </tbody>
         </table>
+        </div>
     <% } else { %>
         <p class="testo-nessun-ordine">Non hai ancora effettuato alcun ordine.</p>
     <% } %>

@@ -21,5 +21,11 @@ function gestisciCampiTipo() {
 }
 
 window.addEventListener("DOMContentLoaded", function() {
-    gestisciCampiTipo();
+	gestisciCampiTipo();
+	    var tipoSelect = document.getElementById("tipoProdotto");
+	    if (tipoSelect) {
+	        tipoSelect.addEventListener("change", function() {
+	            gestisciCampiTipo();
+	        });
+	    }
 });

@@ -1,4 +1,4 @@
-.btn-indietro {
+.btn-indietro, .btn-aggiungi {
     padding: 8px 15px;
     background-color: #3078A4;
     color: #F2FFE9;
@@ -9,15 +9,6 @@
 
 .btn-indietro:hover {
     background-color: #090087;
-}
-
-.btn-aggiungi {
-    padding: 8px 15px;
-    background-color: #3078A4;
-    color: #F2FFE9;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.2s;
 }
 
 .badge {

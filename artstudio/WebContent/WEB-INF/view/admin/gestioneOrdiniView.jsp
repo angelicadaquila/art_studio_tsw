@@ -78,6 +78,7 @@
     <%
         if (listaOrdini != null && !listaOrdini.isEmpty()) {
     %>
+    <div class="tabella-responsive">
         <table class="tabella-ordini-admin">
             <thead>
                 <tr>
@@ -133,6 +134,7 @@
                 <% } %>
             </tbody>
         </table>
+        </div>
     <% } else { %>
         <p class="testo-nessun-ordine">Nessun ordine disponibile.</p>
     <% } %>
