@@ -95,25 +95,14 @@
             </div>
         </fieldset>
 
-        <div class="riepilogo-carrello">
-            <h3>Totale da Pagare: 
-            <% 
-                double totale = 0.0;
-                if (carrello != null) {
-                    totale = carrello.getTotale();
-                }
-            %>
-            <%= String.format("%.2f", totale) %> &euro;</h3>
+        <div class="form-azioni">
+            <a href="<%= request.getContextPath() %>/carrello" class="btn-indietro">
+                Torna al Carrello
+            </a>
 
-            <div class="form-azioni">
-                <a href="<%= request.getContextPath() %>/carrello" class="btn-indietro">
-                    Torna al Carrello
-                </a>
-
-                <button type="submit" class="btn-invio">
-                    Conferma e Paga
-                </button>
-            </div>
+            <button type="submit" class="btn-invio">
+                Conferma e Paga
+            </button>
         </div>
     </form>
 </div>
